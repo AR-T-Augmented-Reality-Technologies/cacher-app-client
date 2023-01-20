@@ -5,7 +5,7 @@ interface LoginScreenProps {
     navigation: any;
 }
 
-export const LoginScreen = ({}: LoginScreenProps) => {
+export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     return <View>
         LoginScreen
         <Button title="Press me" onPress={() => {
