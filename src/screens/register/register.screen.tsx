@@ -9,12 +9,20 @@ interface RegisterScreenProps {
 
 export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
 
+    const validateForm = () => {
+        return false;
+    };
+
+    const submitForm = () => {
+        return true;
+    };
+
     return <>
         <div className="vline1"></div>
         <div className="vline2"></div>
         <div className="vline3"></div>
         <div style={{"margin": "10px"}}>
-                    <button onClick={() => {navigation.navigate('Login')}}>Back</button>
+                    <button onClick={() => {navigation.navigate('Login')}}>Login</button>
                 </div>
         <img className="logo" src={"images/cacherr.png"} alt="cacher logo" style={{"width": "10%"}} />
         <div className="register">
@@ -57,7 +65,7 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                     </div>
                 </div>
                 <div style={{"margin": "10px"}}>
-                    <button onClick={() => {navigation.navigate('Login')}}>Register</button>
+                    <button onClick={() => {validateForm() && submitForm()}}>Register</button>
                 </div>
             </form>
 

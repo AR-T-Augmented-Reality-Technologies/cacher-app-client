@@ -9,6 +9,16 @@ interface LoginScreenProps {
 
 export const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
+    const validateForm = () => {
+        // TODO: Form validation here
+        return false;
+    };
+
+    const submitForm = () => {
+        // TODO: Form submit to server using REST API.
+        return true;
+    };
+
     return <>
         <div className="vline1"></div>
         <div className="vline2"></div>
@@ -24,7 +34,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
                 </div>
                 <div style={{"margin": "10px"}}>
                     <button onClick={() => {navigation.navigate('Register')}}>Register</button>
-                    <button>Login</button>
+                    <button onClick={() => {validateForm() && submitForm()}}>Login</button>
                 </div>
             </form>
         </div>
