@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { Button, View, ImageBackground } from "react-native";
 
 import "./register.styles.css";
