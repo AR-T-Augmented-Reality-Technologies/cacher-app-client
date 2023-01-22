@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button, View, ImageBackground } from "react-native";
 
 import "./register.styles.css";
@@ -81,8 +81,6 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                     <button onClick={(e) => {validateForm(e) && submitForm()}}>Register</button>
                 </div>
             </form>
-
-        
         </div>
     </>
 };
