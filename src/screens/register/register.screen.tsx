@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { Button, View, ImageBackground } from "react-native";
 
 import "./register.styles.css";
@@ -8,8 +8,17 @@ interface RegisterScreenProps {
 }
 
 export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [password_confirm, setPasswordConfirm] = useState("");
+    const [username, setUsername] = useState("");
+    const [fname, setFname] = useState("");
+    const [lname, setLname] = useState("");
+    const [dob, setDob] = useState("");
+    const [registerCheckbox, setRegisterCheckbox] = useState(false);
 
-    const validateForm = () => {
+    const validateForm = (e: any) => {
+        e.preventDefault();
         return false;
     };
 
@@ -30,19 +39,19 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                 <div className="forminner">
                     <div className="formInput">
                     <label htmlFor="email"> Email: </label>
-                    <input type="text" id="email" name="Email" placeholder="E-mail"/>
+                    <input type="text" id="email" name="Email" placeholder="E-mail" onChange={(e) => setEmail(e.target.value)}/>
                     </div>
                     <div className="formInput">
                     <label htmlFor="password"> Password: </label>
-                    <input type="password" id="password" name="Password" placeholder="Password"/>
+                    <input type="password" id="password" name="Password" placeholder="Password" onChange={(e) => setPassword(e.target.value)}/>
                     </div>	
                     <div className="formInput">
                     <label htmlFor="password_confirm"> Confirm Password: </label>
-                    <input type="password" id="password_confirm" name="Password" placeholder="Confirm Password"/>
+                    <input type="password" id="password_confirm" name="Password" placeholder="Confirm Password" onChange={(e) => setPasswordConfirm(e.target.value)}/>
                     </div>
                     <div className="formInput">
                     <label htmlFor="username"> Username: </label>
-                    <input type="text" id="username" name="Username" placeholder="Username"/>
+                    <input type="text" id="username" name="Username" placeholder="Username" onChange={(e) => setUsername(e.target.value)}/>
                     </div>
 
                     <div style={{"marginBottom": "35px", "marginTop": "35px"}}>
@@ -52,24 +61,22 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
 
                     <div className="formInputBottom">
                     <label htmlFor="name"> Name: </label>
-                    <input type="text" id="fname" name="fname" placeholder="First Name"/>
-                    <input type="text" id="lname" name="lname" placeholder="Surname"/>
+                    <input type="text" id="fname" name="fname" placeholder="First Name" onChange={(e) => setFname(e.target.value)}/>
+                    <input type="text" id="lname" name="lname" placeholder="Surname" onChange={(e) => setLname(e.target.value)}/>
                     </div>
                     <div className="formInputBottom">
                     <label htmlFor="dob"> Date of Birth: </label>
-                    <input type="date" id="dob" name="dob"/>
+                    <input type="date" id="dob" name="dob" onChange={(e) => setDob(e.target.value)}/>
                     </div>
                     <div style={{"marginTop": "35px"}}>
-                    <input type="checkbox" id="registerCheckbox" name="registerCheckbox" value="registerAgree"/>
+                    <input type="checkbox" id="registerCheckbox" name="registerCheckbox" value="registerAgree" onChange={(e) => setRegisterCheckbox(true)}/>
                     <label htmlFor="registerCheckbox">I agree to my details being processed</label>
                     </div>
                 </div>
                 <div style={{"margin": "10px"}}>
-                    <button onClick={() => {validateForm() && submitForm()}}>Register</button>
+                    <button onClick={(e) => {validateForm(e) && submitForm()}}>Register</button>
                 </div>
             </form>
-
-        
         </div>
     </>
 };
