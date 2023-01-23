@@ -29,7 +29,7 @@ export const  MapScreen = ({ navigation }: MapScreenProps) => {
             </div>
         </form>
         <div className = "options">
-            <img id="options" src="images/options.png" onclick="openImg()" onClick={() => {navigation.navigate('MapScreenwithOptions')}}>  
+            <img id="options" src="images/options.png" onClick={() => {navigation.navigate('MapScreenwithOptions')}}/>  
 
         </div>
     </>
