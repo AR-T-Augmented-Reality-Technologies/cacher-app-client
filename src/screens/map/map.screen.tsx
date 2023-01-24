@@ -6,7 +6,7 @@ interface MapScreenProps {
     navigation: any;
 }
 
-export const  MapScreen = ({ navigation }: MapScreenProps) => {
+export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [location, setLocation] = useState("");
     const validateForm = (e: any) => {
         e.preventDefault();

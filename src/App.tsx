@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // import Screens
 import { LoginScreen } from './screens/login/login.screen';
 import { RegisterScreen } from './screens/register/register.screen';
+import { MapScreen } from './screens/map/map.screen';
 
 // assets
 import logo from './logo.svg';
@@ -29,9 +30,10 @@ const Stack = createNativeStackNavigator();
 
 const App = () => {
   return <NavigationContainer>
-    <Stack.Navigator initialRouteName="Register">
+    <Stack.Navigator initialRouteName="RegisterScreen">
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
+      <Stack.Screen name="MapScreen" component={MapScreen} />
     </Stack.Navigator>
   </NavigationContainer>
 };
