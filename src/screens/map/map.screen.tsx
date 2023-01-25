@@ -22,6 +22,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     };
 
     return<>
+    <h1 className="font-bold underline text-3xl">Map Screen</h1>
         <form>
             <div className = "searchbar">
             <input type="text" id="search" name="SearchBar" value = "Search" onChange={(e) => setLocation(e.target.value)}/><br />

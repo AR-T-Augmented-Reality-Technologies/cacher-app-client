@@ -6,23 +6,12 @@ interface ImageScreenProps {
     navigation: any;
 }
 
-export const  ImageScreen = ({ navigation }: ImageScreenProps) => {
+export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     const [location, setLocation] = useState("");
-    const validateForm = (e: any) => {
-        e.preventDefault();
-
-        // TODO: Form validation here
-        
-        return false;
-    };
-
-    const submitForm = () => {
-        // TODO: Form submit to server using REST API.
-        return true;
-    };
 
     return <>
-        <div className = "homebut">
+        <h1 className="font-bold underline text-3xl">Image Screen</h1>
+        {/* <div className = "homebut">
             <button onClick={() => {navigation.navigate('MapScreen')}}>Comment</button>
         </div>
         <div className = "userengage">
@@ -34,6 +23,8 @@ export const  ImageScreen = ({ navigation }: ImageScreenProps) => {
             <img id="options" src="images/options.png" onClick={() => {navigation.navigate('MapScreenwithOptions')}}/>  
         </div>
         <label htmlFor="Caption">Caption:</label>
-        <input type="text" id="Caption" name="Caption" placeholder="User Caption"> </input>
+        <input type="text" id="Caption" name="Caption" placeholder="User Caption"> </input> */}
+
+        {/* TODO: above components break displaying the page. Need to fix. */}
     </>
     };

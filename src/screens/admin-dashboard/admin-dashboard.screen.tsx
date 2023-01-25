@@ -1,8 +1,13 @@
 import React from "react";
+import { Button, View, ImageBackground } from "react-native";
 
-const AdminDashboardScreen = () => {
+interface AdminScreenProps {
+    navigation: any;
+}
+
+export const AdminDashboardScreen = ({ navigation }: AdminScreenProps) => {
     return <>
-        This is the Admin Dashboard Screen.
+        <h1 className="font-bold underline text-3xl">Admin dashboard</h1>
         {/* TODO: Create components to add here */}
     </>
 };

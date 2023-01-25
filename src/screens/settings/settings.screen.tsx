@@ -1,11 +1,13 @@
-import { View, Text } from 'react-native';
+import React, { useState } from "react";
+import { Button, View, ImageBackground } from "react-native";
+
 
 interface SettingsScreenProps {
     navigation: any;
 };
 
-export const SettingsScreen = ({}: SettingsScreenProps) => {
+export const SettingsScreen = ({navigation}: SettingsScreenProps) => {
     return <View>
-        <Text>This is the settings screen</Text>
+        <h1 className="font-bold underline text-3xl">Settings Screen</h1>
     </View>
 }
