@@ -37,7 +37,7 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
         <div style={{"margin": "10px"}}>
                     <button onClick={() => {navigation.navigate('Login')}}>Login</button>
                 </div>
-        <img className="logo" src={"images/cacherr.png"} alt="cacher logo" style={{"width": "10%"}} />
+        <img className="logo" src={"images/cacher-logo.png"} alt="cacher logo" style={{"width": "10%"}} />
         <div className="register">
             <form>
                 <div className="forminner">
