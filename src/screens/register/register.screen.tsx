@@ -1,8 +1,6 @@
 import React, {useState} from "react";
 import { Button, View, ImageBackground } from "react-native";
 
-import "./register.styles.css";
-
 interface RegisterScreenProps {
     navigation: any;
 }
@@ -20,9 +18,7 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
 
     const validateForm = (e: any) => {
         e.preventDefault(); 
-        
         // TODO: form validation
-
         return false;
     };
 
@@ -31,56 +27,73 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
     };
 
     return <>
-        <div className="vline1"></div>
-        <div className="vline2"></div>
-        <div className="vline3"></div>
-        <div style={{"margin": "10px"}}>
-                    <button onClick={() => {navigation.navigate('Login')}}>Login</button>
-                </div>
-        <img className="logo" src={"images/cacher-logo.png"} alt="cacher logo" style={{"width": "10%"}} />
-        <div className="register">
-            <form>
-                <div className="forminner">
-                    <div className="formInput">
-                    <label htmlFor="email"> Email: </label>
-                    <input type="text" id="email" name="Email" placeholder="E-mail" onChange={(e) => setEmail(e.target.value)}/>
-                    </div>
-                    <div className="formInput">
-                    <label htmlFor="password"> Password: </label>
-                    <input type="password" id="password" name="Password" placeholder="Password" onChange={(e) => setPassword(e.target.value)}/>
-                    </div>	
-                    <div className="formInput">
-                    <label htmlFor="password_confirm"> Confirm Password: </label>
-                    <input type="password" id="password_confirm" name="Password" placeholder="Confirm Password" onChange={(e) => setPasswordConfirm(e.target.value)}/>
-                    </div>
-                    <div className="formInput">
-                    <label htmlFor="username"> Username: </label>
-                    <input type="text" id="username" name="Username" placeholder="Username" onChange={(e) => setUsername(e.target.value)}/>
-                    </div>
+        <div className="grid grid-cols-8 min-h-screen">
 
-                    <div style={{"marginBottom": "35px", "marginTop": "35px"}}>
-                    <div className="hline"></div>
-                    <div className="hline"></div>
+            {/* Left column to display the back button*/}
+            {/* The arrow icon on back button will only appear when viewed on larger screens due to limited column size on mobile*/}
+            <div className="col-start-1 col-span-1 mt-2 ml-2">
+            <button className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
+                focus:outline-none focus:shadow-outline" type="button" onClick={() => {navigation.navigate('Login')}}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 hidden md:inline-block">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>Back</button>
+            </div>
+            {/* Middle column with the logo and register form */}
+            <div className="col-start-2 col-span-6">
+                <img src="images/cacher-logo.png" alt="Logo" className="w-1/2 md:w-1/6 mx-auto mt-4"></img>
+                <form className="w-full max-w-sm sm:w-full mt-4 mx-auto">
+                    <div className="mb-4">
+                        <label className="block text-gray-500 font-bold mb-2" htmlFor="emailLabel">Email</label>
+                        <input className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
+                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="email-label" type="email"/>
                     </div>
-
-                    <div className="formInputBottom">
-                    <label htmlFor="name"> Name: </label>
-                    <input type="text" id="fname" name="fname" placeholder="First Name" onChange={(e) => setFirstname(e.target.value)}/>
-                    <input type="text" id="lname" name="lname" placeholder="Surname" onChange={(e) => setLastname(e.target.value)}/>
+                    <div className="mb-4">
+                        <label className="block text-gray-500 font-bold mb-2" htmlFor="usernameLabel">Username</label>
+                        <input className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
+                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="username-label" type="text"/>
                     </div>
-                    <div className="formInputBottom">
-                    <label htmlFor="dob"> Date of Birth: </label>
-                    <input type="date" id="dob" name="dob" onChange={(e) => setDob(e.target.value)}/>
+                    <div className="mb-4">
+                        <label className="block text-gray-500 font-bold mb-2" htmlFor="passwordLabel">Password</label>
+                        <input className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
+                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="password-label" type="password"/>
                     </div>
-                    <div style={{"marginTop": "35px"}}>
-                    <input type="checkbox" id="registerCheckbox" name="registerCheckbox" value="registerAgree" checked={registerCheckbox} onChange={(e) => setRegisterCheckbox(!registerCheckbox)}/>
-                    <label htmlFor="registerCheckbox">I agree to my details being processed</label>
+                    <div className="mb-4">
+                        <label className="block text-gray-500 font-bold mb-2" htmlFor="passwordLabel">Confirm Password</label>
+                        <input className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
+                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="confirmPassword-label" type="password"/>
                     </div>
-                </div>
-                <div style={{"margin": "10px"}}>
-                    <button onClick={(e) => {validateForm(e) && submitForm()}}>Register</button>
-                </div>
-            </form>
+                    <div className="flex items-center justify-between">
+                    <div className="mb-4">
+                        <label className="block text-gray-500 font-bold mb-2" htmlFor="fnameLabel">First Name</label>
+                        <input className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
+                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="fname-label" type="text"/>
+                    </div>
+                    <div className="ml-6 mb-4">
+                        <label className="block text-gray-500 font-bold mb-2" htmlFor="lnameLabel">Last Name</label>
+                        <input className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
+                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="lname-label" type="text"/>
+                    </div>
+                    </div>
+                    <div className="mb-6">
+                        <label className="block text-gray-500 font-bold mb-2" htmlFor="dobLabel">Date of Birth</label>
+                        <input className="bg-gray-200 appearance-none border-2 h-10 border-gray-200 rounded w-full py-2 px-4
+                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="dob-label" type="date"/>
+                    </div>
+                    <div className="flex mb-8">
+                        <input className="form-checkbox accent-custom-blue" type="checkbox" id="registerCheckbox" />
+                        <label className="ml-2" htmlFor="registerCheckbox">I agree to my details being registered</label>
+                    </div>
+                    <div className="flex justify-center mb-8">
+                        <button className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
+                        focus:outline-none focus:shadow-outline" type="button" onClick={() => {navigation.navigate('Login')}}>Register</button>
+                    </div>
+                </form>
+            </div>
+            {/* A column on the right of the screen to display vertial lines. All 3 lines will be displayed on desktop. On mobile devices only 2 lines will be displayed to save space*/}
+            <div className="col-start-8 col-span-1 flex h-full">
+            <div className="border-r-2 border-custom-orange h-full ml-4"></div>
+            <div className="border-r-4 border-custom-orange h-full ml-5"></div>
+            <div className="hidden md:block border-r-8 border-custom-orange h-full ml-6"></div>
+            </div>
         </div>
     </>
 };
