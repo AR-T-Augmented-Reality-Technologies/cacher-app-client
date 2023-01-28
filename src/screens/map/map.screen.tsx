@@ -13,8 +13,12 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [value, setValue] = useState("");
 
     // Keys
-    const API_KEY = process.env.W3W_API_KEY;
-    const MAP_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+    // const API_KEY = process.env.W3W_API_KEY;
+    // const MAP_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+
+    // Temporary solution
+    const API_KEY = "08GV0ZDL";
+    const MAP_API_KEY = "AIzaSyB76yjKhPw2y6Fmx6Ym5OlOSFnb-HsZQzc";
 
     const validateForm = (e: any) => {
         e.preventDefault();
@@ -30,7 +34,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     };
 
     return<>
-    <h1 className="font-bold underline text-3xl">Map Screen</h1>
     <What3wordsMap
       api_key={API_KEY}
       map_api_key={MAP_API_KEY}
@@ -46,7 +49,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
       current_location_control_position={9}
       disable_default_ui={true}
       map_type_id="satellite"
-      words="filled.count.soap"
+      words="motor.pushed.deals"
     >
       <div slot="map" style={{ width: "100%", height: "97vh" }} />
       <div slot="search-control" style={{ margin: "10px 0 0 10px" }}>
@@ -68,15 +71,5 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             onChange={(e) => setValue(e.target.value)}
             />
       </What3wordsAutosuggest> */}
-        <form>
-            <div className = "searchbar">
-            <input type="text" id="search" name="SearchBar" value = "Search" onChange={(e) => setLocation(e.target.value)}/><br />
-            <button onClick={(e) => {validateForm(e) && submitForm()}}>Search</button>
-            </div>
-        </form>
-        <div className = "options">
-            <img id="options" src="images/options.png" onClick={() => {navigation.navigate('MapScreenwithOptions')}}/>  
-
-        </div>
     </>
     };
