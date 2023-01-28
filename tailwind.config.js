@@ -5,6 +5,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontSize:{
+        'tiny' : '.5rem',
+      },
       colors: {
         'custom-blue': '#7cdbf5',
         'custom-blue-hover': '#92e1f7',
