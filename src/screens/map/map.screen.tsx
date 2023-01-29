@@ -50,6 +50,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
       disable_default_ui={true}
       map_type_id="satellite"
       words="motor.pushed.deals"
+      marker_icon="images/map-marker.png"
+      watch_location={true}
     >
       <div slot="map" style={{ width: "100%", height: "100vh" }} />
       <div slot="search-control" style={{ margin: "10px 0 0 10px" }}>
