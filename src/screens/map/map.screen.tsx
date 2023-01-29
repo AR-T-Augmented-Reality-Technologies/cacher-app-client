@@ -11,6 +11,10 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [location, setLocation] = useState("");
     const [value, setValue] = useState("");
 
+    const displayOptions = () => {
+      console.log("Options button clicked");
+    };
+
     // Keys
     // const API_KEY = process.env.W3W_API_KEY;
     // const MAP_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
@@ -18,19 +22,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     // Temporary solution
     const API_KEY = "08GV0ZDL";
     const MAP_API_KEY = "AIzaSyB76yjKhPw2y6Fmx6Ym5OlOSFnb-HsZQzc";
-
-    const validateForm = (e: any) => {
-        e.preventDefault();
-
-        // TODO: Form validation here
-        
-        return false;
-    };
-
-    const submitForm = () => {
-        // TODO: Form submit to server using REST API.
-        return true;
-    };
 
     return<>
     <What3wordsMap
@@ -62,20 +53,13 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             autoComplete="off"
           />
         </What3wordsAutosuggest>
-        <button className="w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-2 left-2"><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 mx-auto my-auto">
+
+        {/* options button */}
+        <button className="w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-2 left-2" onClick={() => {displayOptions()}}><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 mx-auto my-auto">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
         </svg>Options</button>
+
       </div>
-      {/* options button */}
-      
     </What3wordsMap>
-        {/* <What3wordsAutosuggest api_key="2EKIDB1X">
-            <input
-            id="w3w"
-            type="text"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            />
-      </What3wordsAutosuggest> */}
     </>
     };
