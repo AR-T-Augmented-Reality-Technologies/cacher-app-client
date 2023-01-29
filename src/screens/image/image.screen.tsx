@@ -23,10 +23,10 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         <div className="">
         <Splide aria-label="Image carousel" options={{arrows: false, pagination: false, autoHeight: true}}>
         <SplideSlide>
-        <img className="h-screen" src="images/image1.jpg" alt="Image 1"/>
+        <img className="h-screen w-screen" src="images/image1.jpg" alt="Image 1"/>
         </SplideSlide>
         <SplideSlide>
-        <img className="h-screen" src="images/image2.jpg" alt="Image 2"/>
+        <img className="h-screen w-screen" src="images/image2.jpg" alt="Image 2"/>
         </SplideSlide>
         </Splide>
         </div>
