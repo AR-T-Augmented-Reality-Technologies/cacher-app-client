@@ -3,7 +3,6 @@ import { What3wordsAutosuggest, What3wordsMap } from "@what3words/react-componen
 import { Button, View, ImageBackground } from "react-native";
 import { config } from "dotenv";
 
-
 interface MapScreenProps {
     navigation: any;
 }
