@@ -18,7 +18,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     const [comments, setComments] = useState<string[]>([]);
     const [newComment, setNewComment] = useState('');
     const [commentTimes, setCommentTimes] = useState<number[]>([]);
-    const [images, setImages] = useState([]);
+    const [images, setImages] = useState<string[]>([]);
       
     // Adding comments
     const handleAddComment = () => {
@@ -76,6 +76,15 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         setShowLikeCount(false);
     }, 2000);
 
+    useEffect(() => {
+      setImages(["images/image2.jpg", 
+      "images/image1.jpg"]);
+  }, [setImages]);
+
+    const displayImages = () => {
+    setImages(["images/image1.jpg", "images/image2.jpg"]);
+    console.log('images: ', images);
+    };
 
     // Comment post
     const commentPost = () => {
@@ -96,8 +105,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         {/* Image slider */}
         <div>
         <Splide aria-label="Image carousel" options={{arrows: false, pagination: false}}>
-          {images.forEach((imgSrc) => {
-            <ImageSliderChild srcUrl={img} />
+           {images.map((imgSrc) => {
+            return <ImageSliderChild srcUrl={imgSrc} />
           })}
         </Splide>
         </div>
@@ -199,7 +208,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
             ))}
             </div>
             
-            <div className="grid grid-cols-5 grid-rows-1 pl-5 pr-5 pt-3 bg-transparent static bottom-2 top-2">
+            <div className="grid grid-cols-5 grid-rows-1 pl-5 pr-5 pt-3 bg-transparent bottom-2 top-2">
                 <input className="bg-white border-solid border border-black left-5 right-5 pl-2 h-auto rounded-lg col-span-4 col-start-1" type="text" value={newComment} onChange={(event) => setNewComment(event.target.value)}/>
                 <button className="bg-gray-400 hover:bg-gray-500 text-white focus:outline-none focus:shadow-outline text-sm border h-full border-black ml-5 rounded-lg mb-5 col-start-5 col-span-1"
                 onClick={() => (newComment.trim().length > 0 ? handleAddComment() : {})}>Post
