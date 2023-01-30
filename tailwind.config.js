@@ -12,6 +12,7 @@ module.exports = {
         'custom-blue': '#7cdbf5',
         'custom-blue-hover': '#92e1f7',
         'custom-orange': '#ffb253',
+        'like-button-orange': '#ff6624',
       }
     },
   },

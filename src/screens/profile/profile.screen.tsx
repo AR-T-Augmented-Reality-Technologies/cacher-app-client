@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Button, View, ImageBackground } from "react-native";
 
-interface SettingsScreenProps {
+interface ProfileScreenProps {
     navigation: any;
 };
 
-export const SettingsScreen = ({navigation}: SettingsScreenProps) => {
+export const ProfileScreen = ({navigation}: ProfileScreenProps) => {
 
     // Delete account 
     const deleteAccount = () => {
@@ -21,6 +21,8 @@ export const SettingsScreen = ({navigation}: SettingsScreenProps) => {
 
     // Sign out
     const signOut = () => {
+    //TODO end session
+    navigation.navigate('Login');
     };
 
     // Display public scrabooks
@@ -71,19 +73,19 @@ export const SettingsScreen = ({navigation}: SettingsScreenProps) => {
 
         {/* Profile picture*/}
         <div className="col-start-4 col-span-2 row-start-1 row-span-1 pt-3 pr-5 pb-2">
-        <button onClick={() => {changeProfilePicture()}}><img src="images/avatar-image.jpg" alt="Logo" className="border-solid border-2 border-black rounded"></img></button>
+        <button onClick={changeProfilePicture}><img src="images/avatar-image.jpg" className="border-solid border-2 border-black rounded"></img></button>
 
         {/* Edit my info button */}
         <button className="bg-gray-400 hover:bg-gray-500 text-white pr-2 pl-2 pb-2 mb-2 rounded-md
-        focus:outline-none focus:shadow-outline pt-2 text-sm w-full" type="button" onClick={() => {editDetails()}}>Edit details </button>
+        focus:outline-none focus:shadow-outline pt-2 text-sm w-full" type="button" onClick={editDetails}>Edit details </button>
 
         {/* Sing out button */}
         <button className="bg-gray-400 hover:bg-gray-500 text-white pr-2 pl-2 pb-2 rounded-md
-        focus:outline-none focus:shadow-outline pt-2 text-sm w-full" type="button" onClick={() => {signOut()}}>Sign out </button>
+        focus:outline-none focus:shadow-outline pt-2 text-sm w-full" type="button" onClick={signOut}>Sign out </button>
 
         {/* Delete account button */}
         <button className="bg-red-500 hover:bg-red-700 text-white pr-2 pl-2 pb-2 mt-6 rounded-md
-        focus:outline-none focus:shadow-outline pt-2 text-sm w-full" type="button" onClick={() => {signOut()}}>Delete account </button>
+        focus:outline-none focus:shadow-outline pt-2 text-sm w-full" type="button" onClick={deleteAccount}>Delete account </button>
         </div>
     </div>
 

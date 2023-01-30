@@ -8,7 +8,7 @@ import { RegisterScreen } from './screens/register/register.screen';
 import { MapScreen } from './screens/map/map.screen';
 import { AdminDashboardScreen } from './screens/admin-dashboard/admin-dashboard.screen';
 import { ImageScreen } from './screens/image/image.screen';
-import { SettingsScreen } from './screens/settings/settings.screen';
+import { ProfileScreen } from './screens/profile/profile.screen';
 import { DevScreen } from './screens/dev/dev.screen';
 
 // assets
@@ -25,7 +25,7 @@ const App = () => {
       <Stack.Screen name="Map" component={MapScreen} />
       <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
       <Stack.Screen name="Image" component={ImageScreen} />
-      <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Dev" component={DevScreen} />
     </Stack.Navigator>
   </NavigationContainer>
