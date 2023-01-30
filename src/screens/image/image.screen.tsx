@@ -19,6 +19,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     const [newComment, setNewComment] = useState('');
     const [commentTimes, setCommentTimes] = useState<number[]>([]);
     const [images, setImages] = useState<string[]>([]);
+    const [shared, setShared] = useState(false);
       
     // Adding comments
     const handleAddComment = () => {
@@ -56,9 +57,18 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         };
       }, []);
 
-    // Share post
-    const sharePost = () => {
-    };
+      const sharePost = async () => {
+        try {
+          await navigator.share({
+            title: 'Share Title',
+            text: 'Share Text',
+            url: window.location.href,
+          });
+          setShared(true);
+        } catch (err) {
+          console.error('Could not share:');
+        }
+      }
 
     // Like post
     const likePost = () => {
@@ -118,7 +128,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>Home</button>
 
         {/* share button */}
-        <button className="w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-40 right-2" onClick={() => {sharePost()}}><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 mx-auto my-auto">
+        <button className="w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-40 right-2" onClick={sharePost}><svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 mx-auto my-auto">
         <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
         </svg> Share</button>
 
