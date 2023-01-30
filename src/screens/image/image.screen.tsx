@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button, View, ImageBackground } from "react-native";
-import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
+import { Splide, SplideTrack } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
+import { ImageSliderChild } from "../../components/ImageSliderChild.component";
 
 interface ImageScreenProps {
     navigation: any;
@@ -17,6 +18,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     const [comments, setComments] = useState<string[]>([]);
     const [newComment, setNewComment] = useState('');
     const [commentTimes, setCommentTimes] = useState<number[]>([]);
+    const [images, setImages] = useState([]);
       
     // Adding comments
     const handleAddComment = () => {
@@ -94,12 +96,9 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         {/* Image slider */}
         <div>
         <Splide aria-label="Image carousel" options={{arrows: false, pagination: false}}>
-        <SplideSlide>
-        <img className="h-screen w-screen" src="images/image1.jpg" alt="Image 1"/>
-        </SplideSlide>
-        <SplideSlide>
-        <img className="h-screen w-screen" src="images/image2.jpg" alt="Image 2"/>
-        </SplideSlide>
+          {images.forEach((imgSrc) => {
+            <ImageSliderChild srcUrl={img} />
+          })}
         </Splide>
         </div>
 
