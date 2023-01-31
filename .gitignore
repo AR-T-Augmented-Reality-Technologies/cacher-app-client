@@ -24,3 +24,6 @@ yarn-error.log*
 
 # API keys
 .env
+
+# example cypress tests
+cypress/e2e/Examples

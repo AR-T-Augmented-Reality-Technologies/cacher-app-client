@@ -155,7 +155,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </div>
 
         {/* Name and DoB */}
-        <div className="col-start-1 col-span-5 row-start-2 pt-6 pl-5 flex h-16">
+        <div className="col-start-1 col-span-5 row-start-2 pt-6 pl-5 flex h-32">
           <div>
             <label
               className="block text-gray-500 font-bold mb-2"
@@ -233,7 +233,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </div>
 
         {/* Scrapbooks and friends buttons */}
-        <div className="col-start-1 col-span-5 row-start-2 row-span-1 pt-28 pb-3">
+        <div className="col-start-1 col-span-5 row-start-3 row-span-1 pb-3">
           <div className="flex ml-5 mr-5">
             <button
               className="bg-gray-400 hover:bg-gray-500 text-white px-2 py-2 rounded-md focus:outline-none focus:shadow-outline text-sm mr-5 w-32"
