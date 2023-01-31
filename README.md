@@ -1,4 +1,4 @@
-# Lanching the cacher app
+# Launching the cacher app
 
 ## Available Scripts
 
