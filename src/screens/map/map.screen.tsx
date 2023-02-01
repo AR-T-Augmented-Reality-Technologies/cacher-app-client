@@ -59,6 +59,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 mx-auto my-auto">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
         </svg>Options</button>
+        <button onClick={() => {navigation.navigate('Image')}}>
+          <img src="images/map-marker.png" className="rounded-full text-xs font-bold absolute left-48 top-64" alt="marker"/>
+        </button>
 
       </div>
       </What3wordsMap>
