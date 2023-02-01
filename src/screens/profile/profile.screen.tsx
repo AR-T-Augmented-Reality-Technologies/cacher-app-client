@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, View, ImageBackground } from "react-native";
 
 interface ProfileScreenProps {
@@ -11,6 +11,38 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [showChangeProfilePicture, setShowChangeProfilePicture] =
     useState(false);
   const [showLabel, setShowLabel] = useState("Public Scrabooks");
+
+  // Profile Fields
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [dob, setDob] = useState();
+
+  const getData = async () => {
+    try {
+        const response = await fetch('http://localhost:4000/api/users/2', {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                // "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InpheHF1aXRAcG0ubWUiLCJpYXQiOjE2NzUyMzc3MjQsImV4cCI6MTY3NTIzOTUyNH0.BkAeLITwhDD6vwZMjfg6IrwihayoZ1oRageAVwX1YP8"
+            },
+            mode: 'cors'
+        });
+
+        const data = await response.json();
+        
+        setUsername(data.user.user_username);
+        setFirstname(data.user.user_firstname);
+        setLastname(data.user.user_lastname);
+        setEmail(data.user.user_email);
+        setDob(data.user.user_dob);
+    } catch (e) {
+        console.log(e);
+    }
+  };
+
+  useEffect(() => { getData() }, []);
 
   // Delete account
   const deleteAccountPopup = () => {
@@ -133,6 +165,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             id="username-input"
             name="usernameInput"
             disabled={enabled}
+            value={username}
           />
 
           <label
@@ -147,6 +180,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             id="email-input"
             name="emailLabel"
             disabled={enabled}
+            value={email}
           />
 
           <label
@@ -179,6 +213,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
               id="name-input"
               name="nameInput"
               disabled={enabled}
+              value={firstname+" "+lastname}
             />
           </div>
           <div className="ml-5">
@@ -194,6 +229,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
               id="dob-input"
               name="dobInput"
               disabled={enabled}
+              value={dob}
             />
           </div>
         </div>

@@ -32,19 +32,18 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             "username": username
         };
 
-        fetch('http://localhost:4000/api/users/create', {
+        fetch('http://176.58.114.213:4000/api/users/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
         })
-        .then((res) => res.json())
-        .then((data) => {
-            // Set our user
-            return data;
-        }
-        );
+        .then((res) => res);
+        // .then((data) => {
+        //     // Set our user
+        //     return data;
+        //
 
         navigation.navigate('Login')
     };
