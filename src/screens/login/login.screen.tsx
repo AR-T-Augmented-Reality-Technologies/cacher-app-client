@@ -10,8 +10,7 @@ interface LoginScreenProps {
 export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
-    const user = useSelector((state) => state.users);
+    
     const dispatch = useDispatch();
 
     const validateForm = (e: any) => {
