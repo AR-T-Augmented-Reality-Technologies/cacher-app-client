@@ -9,8 +9,8 @@ context('Actions', () => {
 
   it('.type() - type into a DOM element', () => {
     // https://on.cypress.io/type
-    cy.get('.css-view-175oi2r > :nth-child(4)').click()
-      cy.get('#email-input')
+    cy.get('.max-w-sm > .flex > :nth-child(2)').click()
+    cy.get('[style="background-color: rgb(242, 242, 242); display: flex;"] > :nth-child(1) > .css-view-175oi2r > .grid > .col-start-2 > .max-w-sm > :nth-child(1) > #email-input')
 
       // .type() with special character sequences
       .type('{leftarrow}{rightarrow}{uparrow}{downarrow}')
@@ -37,8 +37,8 @@ context('Actions', () => {
       .type('{shift}')
       .type('testusername123').should('have.value', 'testusername123')
 
-      cy.get('#password-input')
-
+      cy.get(':nth-child(3) > #password-input')
+      
       // .type() with special character sequences
       .type('{leftarrow}{rightarrow}{uparrow}{downarrow}')
       .type('{del}{selectall}{backspace}')
@@ -96,6 +96,14 @@ context('Actions', () => {
       cy.get('#registerCheckbox').click()
 
       cy.get('.justify-center > .bg-custom-blue').click()
+
+      cy.get('[style="background-color: rgb(242, 242, 242); display: flex;"] > :nth-child(1) > .css-view-175oi2r > .grid > .col-start-2 > .max-w-sm > :nth-child(1) > #email-input')
+      .type('testusername123').should('have.value', 'testusername123')
+
+      cy.get(':nth-child(2) > #password-input')
+      .type('password123').should('have.value', 'password123')
+
+      cy.get('[style="background-color: rgb(242, 242, 242); display: flex;"] > :nth-child(1) > .css-view-175oi2r > .grid > .col-start-2 > .max-w-sm > .flex > :nth-child(1)').click()
 
   })
 
