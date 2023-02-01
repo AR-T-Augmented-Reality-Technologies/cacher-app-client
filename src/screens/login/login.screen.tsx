@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, View, Text } from "react-native";
 
 interface LoginScreenProps {
@@ -13,12 +13,31 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
         e.preventDefault();
 
         // TODO: Form validation here
-        return false;
+        return true;
     };
 
     const submitForm = () => {
         // TODO: Form submit to server using REST API.
-        return true;
+        const payload = {
+            email: email,
+            password: password
+        };
+
+        fetch('http://localhost:4000/api/users/login', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload),
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            // Set our user
+            console.log(data);
+            const token = data.token;
+        });
+
+        navigation.navigate('Map');
     };
 
     return <>
@@ -39,7 +58,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
                     </div>
                     <div className="flex items-center justify-between">
                         <button className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
-                        focus:outline-none focus:shadow-outline" type="button" onClick={() => {navigation.navigate('Map')}}>Sign In</button>
+                        focus:outline-none focus:shadow-outline" type="button" onClick={(e) => {validateForm(e) && submitForm()}}>Sign In</button>
                         <button className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
                         focus:outline-none focus:shadow-outline" type="button" onClick={() => {navigation.navigate('Register')}}>Register</button>
                     </div>
