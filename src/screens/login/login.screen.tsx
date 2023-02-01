@@ -19,8 +19,8 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     const submitForm = async () => {
         // TODO: Form submit to server using REST API.
         const payload = {
-            email: email,
-            password_unhashed: password
+            "email": email,
+            "password_unhashed": password
         };
 
         const response = await fetch('http://176.58.114.213:4000/api/users/login', {
@@ -50,12 +50,12 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
                     <div className="mb-6">
                         <label className="block text-gray-500 font-bold mb-2" htmlFor="emailLabel">Email</label>
                         <input className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
-                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="email-input" type="email"/>
+                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="email-input" type="email" onChange={(e) => setEmail(e.target.value)}/>
                     </div>
                     <div className="mb-6">
                         <label className="block text-gray-500 font-bold mb-2" htmlFor="passwordLabel">Password</label>
                         <input className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
-                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="password-input" type="password"/>
+                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="password-input" type="password" onChange={(e) => setPassword(e.target.value)}/>
                     </div>
                     <div className="flex items-center justify-between">
                         <button className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
