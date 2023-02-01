@@ -26,7 +26,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const getData = async () => {
     try {
         console.log(user);
-        const response = await fetch('http://localhost:4000/api/users/2', {
+        const response = await fetch('http://176.58.114.213:4000/api/users/2', {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
