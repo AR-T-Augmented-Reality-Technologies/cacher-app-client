@@ -39,7 +39,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
         
         const data = await response.json();
 
-        dispatch(add_user(await data.user.user_id));
+        dispatch(add_user(await data.data.user.user_id));
 
         console.log("Finished Login");
 
