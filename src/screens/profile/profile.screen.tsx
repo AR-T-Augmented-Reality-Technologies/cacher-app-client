@@ -21,11 +21,11 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [dob, setDob] = useState();
 
   // Use our user store
-  const user = useSelector((state) => state.users.value);
+  const user = useSelector((state: any) => state.users.value);
 
   const getData = async () => {
     try {
-        console.log(user);
+        console.log("User state data: " + user);
         const response = await fetch('http://176.58.114.213:4000/api/users/2', {
             method: "GET",
             headers: {
