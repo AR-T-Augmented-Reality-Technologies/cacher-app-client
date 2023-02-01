@@ -10,6 +10,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showChangeProfilePicture, setShowChangeProfilePicture] =
     useState(false);
+  const [showLabel, setShowLabel] = useState("Public Scrabooks");
 
   // Delete account
   const deleteAccountPopup = () => {
@@ -57,29 +58,38 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     setEnabled(!enabled);
   };
 
-   // Display public scrabooks
-   const displayPublicSB = () => {
-// Temporary solution to render placeholder public scrabooks
-  const numOfImages = 15;
+  // Display public scrabooks
+  const displayPublicSB = () => {
+    setShowLabel("Public Scrabooks");
+  };
+
+  // Display private scrabooks
+  const displayPrivateSB = () => {
+    setShowLabel("Private Scrabooks");
+  };
+
+  // Display friends list
+  const displayFriendsList = () => {
+    setShowLabel("Friends List");
+  };
+
   const images = [];
-  for (let i = 0; i < numOfImages; i++) {
+  for (let i = 0; i < 15; i++) {
     images.push(
-      <button key={i} className="mx-1 my-1" onClick={() => {navigation.navigate("Image")}}>
+      <button
+        key={i}
+        className="mx-1 my-1"
+        onClick={() => {
+          navigation.navigate("Image");
+        }}
+      >
         <img
           src="images/image-placeholder.png"
           className="border-solid border-2 rounded border-black"
         ></img>
       </button>
     );
-
-   };
-    return images;
-}
-  // Display private scrabooks
-  const displayPrivateSB = () => {};
-
-  // Display friends list
-  const displayFriendsList = () => {};
+  }
 
   return (
     <>
@@ -260,21 +270,20 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-5"></div>
       {/* Gallery to display scrapbooks or friends list */}
-      <div className="grid grid-cols-5">
+      <div>
         <div className="row-span-1 col-span-5 h-16">
           <hr className="w-full border-2 border-custom-orange col-span-5 mt-2" />
           <label
             className="block text-gray-500 font-bold mb-2 ml-5 mt-2"
             htmlFor="galleryLabel"
           >
-            Public Scrapbooks{" "}
+            {showLabel}
           </label>
           <hr className="w-full border-2 border-custom-orange col-span-5 mt-2" />
         </div>
-        {displayPublicSB()}
       </div>
+      <div className="grid grid-cols-5">{images}</div>
 
       {showDeletePopup && (
         <>
