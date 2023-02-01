@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, View, Text } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { add_user } from "../../features/users.slice";
 
 interface LoginScreenProps {
     navigation: any;
@@ -8,6 +10,9 @@ interface LoginScreenProps {
 export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const user = useSelector((state) => state.users);
+    const dispatch = useDispatch();
 
     const validateForm = (e: any) => {
         e.preventDefault();
@@ -35,6 +40,8 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
         const data = await response.json();
         
         console.log(await data);
+
+        dispatch(add_user(data.user));
 
         console.log("Finished Login");
 

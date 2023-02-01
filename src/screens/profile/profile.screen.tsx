@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, View, ImageBackground } from "react-native";
+import { useSelector } from "react-redux";
 
 interface ProfileScreenProps {
   navigation: any;
@@ -19,8 +20,12 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [lastname, setLastname] = useState("");
   const [dob, setDob] = useState();
 
+  // Use our user store
+  const user = useSelector((state) => state.users);
+
   const getData = async () => {
     try {
+        console.log(user);
         const response = await fetch('http://localhost:4000/api/users/2', {
             method: "GET",
             headers: {
