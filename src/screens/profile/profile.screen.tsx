@@ -21,7 +21,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [dob, setDob] = useState();
 
   // Use our user store
-  const user = useSelector((state: any) => state.users.value);
+  const user = useSelector((state: any) => state.users);
 
   const getData = async () => {
     try {
