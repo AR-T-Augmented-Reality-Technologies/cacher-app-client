@@ -16,26 +16,27 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
         return true;
     };
 
-    const submitForm = () => {
+    const submitForm = async () => {
         // TODO: Form submit to server using REST API.
         const payload = {
             email: email,
-            password: password
+            password_unhashed: password
         };
 
-        fetch('http://localhost:4000/api/users/login', {
+        const response = await fetch('http://176.58.114.213:4000/api/users/login', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
+            // mode: "cors",
             body: JSON.stringify(payload),
-        })
-        .then((res) => res.json())
-        .then((data) => {
-            // Set our user
-            console.log(data);
-            const token = data.token;
         });
+        
+        const data = await response.json();
+        
+        console.log(await data);
+
+        console.log("Finished Login");
 
         navigation.navigate('Map');
     };
