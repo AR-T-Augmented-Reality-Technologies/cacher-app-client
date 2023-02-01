@@ -10,12 +10,10 @@ export const usersSlice = createSlice({
     },
     reducers: {
         add_user: (state, action) => {
-            state = {
-                id: action.payload.user.user_id,
-                email: action.payload.user.user_email,
-                username: action.payload.user.user_username,
-                token: action.payload.token
-            };
+            state.id = action.payload.user.user_id;
+            state.email = action.payload.user.user_email;
+            state.username = action.payload.user.user_username;
+            state.token = action.payload.token;
         },
         logout_user: (state) => {
             state = {
