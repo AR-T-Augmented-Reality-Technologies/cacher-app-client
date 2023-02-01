@@ -55,8 +55,20 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   };
 
   // Delete account
-  const deleteAccount = () => {
+  const deleteAccount = async () => {
     //TODO delete account
+    const response = await fetch(`http://176.58.114.213:4000/api/users/${user.id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            // "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InpheHF1aXRAcG0ubWUiLCJpYXQiOjE2NzUyMzc3MjQsImV4cCI6MTY3NTIzOTUyNH0.BkAeLITwhDD6vwZMjfg6IrwihayoZ1oRageAVwX1YP8"
+        },
+        mode: 'cors'
+    });
+
+    const data = await response.json();
+
+    console.log(data);
 
     // Show delete account popup
     setShowDeletePopup(!showDeletePopup);
