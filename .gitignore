@@ -28,3 +28,4 @@ yarn-error.log*
 # Cypress
 cypress/e2e/Examples
 cypress/videos
+.env.details
