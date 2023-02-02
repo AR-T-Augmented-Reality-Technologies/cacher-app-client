@@ -11,7 +11,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showChangeProfilePicture, setShowChangeProfilePicture] =
     useState(false);
-  const [showLabel, setShowLabel] = useState("Public Scrabooks");
+  const [showLabel, setShowLabel] = useState("Public Scrapbooks");
 
   // Profile Fields
   const [username, setUsername] = useState("");
@@ -303,14 +303,14 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
               type="button"
               onClick={() => displayPublicSB()}
             >
-              Public Scrabooks
+              Public Scrapbooks
             </button>
             <button
               className="bg-gray-400 hover:bg-gray-500 text-white px-2 py-2 rounded-md focus:outline-none focus:shadow-outline text-sm mr-5 w-32"
               type="button"
               onClick={() => displayPrivateSB()}
             >
-              Private Scrabooks
+              Private Scrapbooks
             </button>
             <button
               className="bg-gray-400 hover:bg-gray-500 text-white px-2 py-2 rounded-md focus:outline-none focus:shadow-outline text-sm w-32"
