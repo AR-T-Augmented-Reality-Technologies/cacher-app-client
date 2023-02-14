@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { What3wordsAutosuggest, What3wordsMap } from "@what3words/react-components";
 import { Button, View, ImageBackground } from "react-native";
-import { config } from "dotenv";
 
 interface MapScreenProps {
     navigation: any;
@@ -16,12 +15,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
   };
 
     // Keys
-    // const API_KEY = process.env.W3W_API_KEY;
-    // const MAP_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
-
-    // Temporary solution
-    const API_KEY = "08GV0ZDL";
-    const MAP_API_KEY = "AIzaSyB76yjKhPw2y6Fmx6Ym5OlOSFnb-HsZQzc";
+    const API_KEY = process.env.REACT_APP_W3W_API_KEY;
+    const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
     return<>
     <What3wordsMap

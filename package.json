@@ -17,7 +17,6 @@
     "@what3words/api": "^4.0.8",
     "@what3words/react-components": "^4.1.0-alpha.12",
     "cypress": "^12.4.1",
-    "dotenv": "^16.0.3",
     "framer-motion": "^8.5.5",
     "fs": "^0.0.1-security",
     "http-proxy-middleware": "^2.0.6",
@@ -61,10 +60,5 @@
   "devDependencies": {
     "@reduxjs/toolkit": "^1.9.2",
     "tailwindcss": "^3.2.4"
-  },
-  "browser": {
-    "fs": false,
-    "os": false,
-    "path": false
   }
 }

@@ -27,7 +27,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
             "password_unhashed": password
         };
 
-        const response = await fetch(`${process.env.REST_API_HOST}/users/login`, {
+        const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/users/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
