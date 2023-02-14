@@ -65,9 +65,9 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
                     </div>
                     <div className="flex items-center justify-between">
                         <button className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
-                        focus:outline-none focus:shadow-outline" type="button" onClick={(e) => {validateForm(e) && submitForm()}}>Sign In</button>
+                        focus:outline-none focus:shadow-outline" type="button" id="sign-in-button" onClick={(e) => {validateForm(e) && submitForm()}}>Sign In</button>
                         <button className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
-                        focus:outline-none focus:shadow-outline" type="button" onClick={() => {navigation.navigate('Register')}}>Register</button>
+                        focus:outline-none focus:shadow-outline" type="button" id="register-button" onClick={() => {navigation.navigate('Register')}}>Register</button>
                     </div>
                 </form>
             </div>

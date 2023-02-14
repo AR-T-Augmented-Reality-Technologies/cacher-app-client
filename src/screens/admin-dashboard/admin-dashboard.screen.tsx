@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { What3wordsAutosuggest, What3wordsMap } from "@what3words/react-components";
 import { Button, View, ImageBackground } from "react-native";
-import { config } from "dotenv";
 
 interface AdmiDashboardProps {
     navigation: any;

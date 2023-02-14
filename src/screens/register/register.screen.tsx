@@ -56,7 +56,7 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             <div className="col-start-1 col-span-1 mt-2 ml-2">
 
             <button className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
-                focus:outline-none focus:shadow-outline" type="button" onClick={() => {navigation.navigate('Login')}}>
+                focus:outline-none focus:shadow-outline" id="back-button" type="button" onClick={() => {navigation.navigate('Login')}}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 hidden md:inline-block">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>Back</button>
             
@@ -69,7 +69,7 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                     <div className="mb-4">
                         <label className="block text-gray-500 font-bold mb-2" htmlFor="emailLabel">Email</label>
                         <input className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
-                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="email-input" type="email" onChange={(e) => setEmail(e.target.value)}/>
+                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="email-input-register" type="email" onChange={(e) => setEmail(e.target.value)}/>
                     </div>
                     <div className="mb-4">
                         <label className="block text-gray-500 font-bold mb-2" htmlFor="usernameLabel">Username</label>
@@ -79,7 +79,7 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                     <div className="mb-4">
                         <label className="block text-gray-500 font-bold mb-2" htmlFor="passwordLabel">Password</label>
                         <input className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
-                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="password-input" type="password" onChange={(e) => setPassword(e.target.value)}/>
+                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="password-input-register" type="password" onChange={(e) => setPassword(e.target.value)}/>
                     </div>
                     <div className="mb-4">
                         <label className="block text-gray-500 font-bold mb-2" htmlFor="passwordLabel">Confirm Password</label>
@@ -104,12 +104,12 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                          text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="dob-input" type="date" onChange={(e) => setDob(e.target.value)}/>
                     </div>
                     <div className="flex mb-8">
-                        <input className="form-checkbox accent-custom-blue" type="checkbox" id="registerCheckbox" onChange={(e) => setRegisterCheckbox(e.target.checked)}/>
+                        <input className="form-checkbox accent-custom-blue" type="checkbox" id="register-checkbox" onChange={(e) => setRegisterCheckbox(e.target.checked)}/>
                         <label className="ml-2" htmlFor="registerCheckbox">I agree to my details being registered</label>
                     </div>
                     <div className="flex justify-center mb-8">
                         <button className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
-                        focus:outline-none focus:shadow-outline" type="button" onClick={(e) => {validateForm(e) && submitForm()}}>Register</button>
+                        focus:outline-none focus:shadow-outline" id="register-button-register" type="button" onClick={(e) => {validateForm(e) && submitForm()}}>Register</button>
                     </div>
                 </form>
             </div>
