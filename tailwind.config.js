@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
@@ -9,6 +10,7 @@ module.exports = {
         'tiny' : '.5rem',
       },
       colors: {
+        customblue: 'var(--blue-custom)',
         'custom-blue': '#7cdbf5',
         'custom-blue-hover': '#92e1f7',
         'custom-orange': '#ffb253',
@@ -17,4 +19,6 @@ module.exports = {
     },
   },
   plugins: [],
+
+  
 }

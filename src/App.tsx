@@ -10,7 +10,7 @@ import { AdminDashboardScreen } from './screens/admin-dashboard/admin-dashboard.
 import { ImageScreen } from './screens/image/image.screen';
 import { ProfileScreen } from './screens/profile/profile.screen';
 import { SettingsScreen }  from './screens/settings/settings.screen';
-
+import { useState, useEffect } from 'react';
 // assets
 import logo from './logo.svg';
 import './App.css';
@@ -29,6 +29,19 @@ const App = () => {
       <Stack.Screen name="Settings" component={SettingsScreen} />
     </Stack.Navigator>
   </NavigationContainer>
+
+  const [theme,setTheme] = useState("light");
+
+  useEffect(() => {
+    if (theme ==="dark"){
+      document.documentElement.classList.add("dark");
+    } else{
+      document.documentElement.classList.remove("dark");
+    }
+    }, [theme]);
+  const handleThemeSwitch = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
 };
 
 export default App;

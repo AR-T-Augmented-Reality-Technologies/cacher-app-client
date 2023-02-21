@@ -15,3 +15,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.light {
+  --blue-custom: 'black';
+  --blue-custom-hover: '#92e1f7';
+  --custom-orange: '#ffb253';
+  --like-button: '#ff6624';
+}
+
+.dark {
+  --blue-custom: '#ff6624';
+  --blue-custom-hover: '#ffb253';
+  --custom-orange: '#92e1f7';
+  --like-button: '#7cdbf5';
+}

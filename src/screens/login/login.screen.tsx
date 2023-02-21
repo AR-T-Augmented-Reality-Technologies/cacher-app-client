@@ -74,7 +74,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
             {/* A column on the right of the screen to display vertial lines.
             All 3 lines will be displayed on desktop. On mobile devices only 2 lines will be displayed to save space*/}
             <div className="col-start-8 col-span-1 flex h-full">
-            <div className="border-r-2 border-custom-orange h-full ml-4"></div>
+            <div className="border-r-2 border-custom-orange dark:border-custom-blue h-full ml-4"></div>
             <div className="border-r-4 border-custom-orange h-full ml-5"></div>
             <div className="hidden md:block border-r-8 border-custom-orange h-full ml-6"></div>
             </div>

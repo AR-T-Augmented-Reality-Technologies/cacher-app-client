@@ -1,19 +1,32 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { Button, View, ImageBackground } from "react-native";
 
 interface SettingsScreenProps {
     navigation: any;
 }
 
+
+
 export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
     // States for Form data
     const [darkMode, setDarkMode] = useState(false);
     const [privateMode, setPrivateMode] = useState(false);
 
+    const [theme,setTheme] = useState("light");
 
+    useEffect(() => {
+      if (theme ==="dark"){
+        document.documentElement.classList.add("dark");
+      } else{
+        document.documentElement.classList.remove("dark");
+      }
+      }, [theme]);
+    const handleThemeSwitch = () => {
+      setTheme(theme === "dark" ? "light" : "dark");
+    };
 
     return <>
-        <div className="grid grid-cols-8 min-h-screen">
+        <div className="grid grid-cols-8 min-h-screen dark:bg-black">
 
             {/* Left column to display the back button*/}
             {/* The arrow icon on back button will only appear when viewed on larger screens due to limited column size on mobile*/}
@@ -34,8 +47,8 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
                     </div>
                     <div className="flex mb-8">
                         <h1> App Settings</h1>
-                        <input className="form-checkbox accent-custom-blue" type="checkbox" id="darkMode"/>
-                        <label className="ml-2" htmlFor="darkMode">Apply Dark Mode</label>
+                        <br></br>
+                        <button className="bg-white dark:bg-black" type="button" onClick={handleThemeSwitch} > Dark Mode</button>
                     </div>
                 </form>
                 <form className="w-full max-w-sm sm:w-full mt-4 mx-auto">
