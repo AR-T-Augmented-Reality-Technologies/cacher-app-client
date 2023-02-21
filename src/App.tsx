@@ -9,6 +9,7 @@ import { MapScreen } from './screens/map/map.screen';
 import { AdminDashboardScreen } from './screens/admin-dashboard/admin-dashboard.screen';
 import { ImageScreen } from './screens/image/image.screen';
 import { ProfileScreen } from './screens/profile/profile.screen';
+import { SettingsScreen }  from './screens/settings/settings.screen';
 
 // assets
 import logo from './logo.svg';
@@ -25,6 +26,7 @@ const App = () => {
       <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
       <Stack.Screen name="Image" component={ImageScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
     </Stack.Navigator>
   </NavigationContainer>
 };

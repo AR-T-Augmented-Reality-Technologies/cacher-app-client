@@ -282,7 +282,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
           <button
             className="w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-20 left-2 transition duration-500 ease-in-out"
             onClick={() => {
-              navigation.navigate("");
+              navigation.navigate("Settings");
             }}
           >
             <svg

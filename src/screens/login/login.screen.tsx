@@ -21,28 +21,28 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     };
 
     const submitForm = async () => {
-        // TODO: Form submit to server using REST API.
-        const payload = {
-            "email": email,
-            "password_unhashed": password
-        };
+        // // TODO: Form submit to server using REST API.
+        // const payload = {
+        //     "email": email,
+        //     "password_unhashed": password
+        // };
 
-        const response = await fetch('http://176.58.114.213:4000/api/users/login', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            // mode: "cors",
-            body: JSON.stringify(payload),
-        });
+        // const response = await fetch('http://176.58.114.213:4000/api/users/login', {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json"
+        //     },
+        //     // mode: "cors",
+        //     body: JSON.stringify(payload),
+        // });
         
-        const data = await response.json();
+        // const data = await response.json();
 
-        console.log("Our Data:: ", await data.data);
+        // console.log("Our Data:: ", await data.data);
 
-        dispatch(add_user(await data.data));
+        // dispatch(add_user(await data.data));
 
-        console.log("Finished Login");
+        // console.log("Finished Login");
 
         navigation.navigate('Map');
     };
@@ -65,7 +65,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
                     </div>
                     <div className="flex items-center justify-between">
                         <button className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
-                        focus:outline-none focus:shadow-outline" type="button" onClick={(e) => {validateForm(e) && submitForm()}}>Sign In</button>
+                        focus:outline-none focus:shadow-outline" type="button" onClick={(e) => {navigation.navigate('Image')}}>Sign In</button>
                         <button className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
                         focus:outline-none focus:shadow-outline" type="button" onClick={() => {navigation.navigate('Register')}}>Register</button>
                     </div>
