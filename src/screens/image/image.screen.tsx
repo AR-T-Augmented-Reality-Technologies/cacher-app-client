@@ -125,7 +125,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
         {/* Home button */}
         <button
-          className=" text-black bg-white text-sm font-bold py-1 px-2 rounded-full border-solid border-2 border-black fixed top-2 left-2 "
+          className="dark:bg-dback text-black bg-white text-sm font-bold py-1 px-2 rounded-full border-solid border-2 border-black fixed top-2 left-2 "
           type="button"
           onClick={() => {
             navigation.navigate("Map");
@@ -150,7 +150,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
         {/* share button */}
         <button
-          className="w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-40 right-2"
+          className=" dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-40 right-2"
           onClick={sharePost}
         >
           <svg
@@ -171,8 +171,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
         {/* like button */}
         <button
-          className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
-            isLiked ? "border-custom-blue" : "border-black"
+          className={`dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
+            isLiked ? "border-custom-blue dark:bg-dorange" : "border-black"
           } text-center fixed bottom-20 right-2`}
           onClick={likePost}
         >
@@ -194,7 +194,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
         {/* comment button */}
         <button
-          className="w-16 h-16 rounded-full text-tiny text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-2 right-2"
+          className="dark:bg-dback w-16 h-16 rounded-full text-tiny text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-2 right-2"
           onClick={displayComments}
         >
           <svg
@@ -215,8 +215,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
         {/* options button */}
         <button
-          className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
-            showOptions ? "border-custom-blue" : "border-black"
+          className={`dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
+            showOptions ? "border-custom-blue dark:border-dorange" : "border-black"
           } text-center fixed bottom-2 left-2`}
           onClick={displayOptions}
         >
@@ -238,7 +238,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
         {/* Post description */}
         <button
-          className="h-16 bg-white border-solid border-2 border-black fixed bottom-0 left-20 right-20 rounded-t-3xl border-b-0"
+          className="dark:bg-dback h-16 bg-white border-solid border-2 border-black fixed bottom-0 left-20 right-20 rounded-t-3xl border-b-0"
           onClick={displayComments}
         >
           <div className="grid grid-rows-2">
@@ -257,7 +257,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         <>
           {/* Profile button */}
           <button
-            className="w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-40 left-2 transition duration-500 ease-in-out"
+            className="dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-40 left-2 transition duration-500 ease-in-out"
             onClick={() => {
               navigation.navigate("Profile");
             }}
@@ -280,7 +280,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
           {/* Settings button */}
           <button
-            className="w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-20 left-2 transition duration-500 ease-in-out"
+            className="dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-20 left-2 transition duration-500 ease-in-out"
             onClick={() => {
               navigation.navigate("Settings");
             }}
@@ -316,12 +316,12 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
               showLikeCount ? "opacity-100" : "opacity-0"
             } transition-opacity ease-in-out duration-300`}
           >
-            <div className="bg-white p-3 rounded-lg shadow-lg fixed bottom-24 right-20 border border-black">
+            <div className="dark:bg-dback bg-white p-3 rounded-lg shadow-lg fixed bottom-24 right-20 border border-black">
               <svg
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke-width="1.5"
-                className="w-6 h-6 mx-auto my-auto stroke-like-button-orange"
+                className="dark:bg-dback w-6 h-6 mx-auto my-auto stroke-like-button-orange"
               >
                 <path
                   stroke-linecap="round"
@@ -344,7 +344,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
               showComments ? "opacity-100" : "opacity-0"
             } transition-opacity ease-in-out duration-300`}
           >
-            <div className="h-screen bg-white border-solid border-2 border-black fixed top-48 left-2 right-2 rounded-t-3xl border-b-0">
+            <div className="dark:bg-dback h-screen bg-white border-solid border-2 border-black fixed top-48 left-2 right-2 rounded-t-3xl border-b-0">
               {/* Post description*/}
               <div className="grid grid-rows-2">
                 <div className="row-start-1">
@@ -359,11 +359,11 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
               </div>
 
               {/* Comments */}
-              <div className="grid grid-cols-1 pl-5 pr-5 overflow-auto max-h-80">
+              <div className="grid grid-cols-1 pl-5 pr-5 overflow-auto max-h-80 dark:bg-dback">
                 {comments.map((comment, index) => (
                   <div
                     key={index}
-                    className="bg-white border-solid border border-black break-normal h-auto rounded-lg mb-5 grid grid-cols-5 grid-rows-2"
+                    className="dark:bg-dback bg-white border-solid border border-black break-normal h-auto rounded-lg mb-5 grid grid-cols-5 grid-rows-2"
                   >
                     <p
                       className="break-normal px-2 py-2 col-start-1 col-span-3 row-start-1 text-sm overflow-hidden text-justify"
@@ -390,13 +390,13 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
               <div className="grid grid-cols-5 grid-rows-1 pl-5 pr-5 pt-3 bg-transparent bottom-2 top-2">
                 <input
-                  className="bg-white border-solid border border-black left-5 right-5 pl-2 h-auto rounded-lg col-span-4 col-start-1"
+                  className="dark:bg-dback bg-white border-solid border border-black left-5 right-5 pl-2 h-auto rounded-lg col-span-4 col-start-1"
                   type="text"
                   value={newComment}
                   onChange={(event) => setNewComment(event.target.value)}
                 />
                 <button
-                  className="bg-gray-400 hover:bg-gray-500 text-white focus:outline-none focus:shadow-outline text-sm border h-full border-black ml-5 rounded-lg mb-5 col-start-5 col-span-1"
+                  className="dark:bg-dblue hover:dark:bg-dorange bg-gray-400 hover:bg-gray-500 text-white focus:outline-none focus:shadow-outline text-sm border h-full border-black ml-5 rounded-lg mb-5 col-start-5 col-span-1"
                   onClick={() =>
                     newComment.trim().length > 0 ? handleAddComment() : {}
                   }

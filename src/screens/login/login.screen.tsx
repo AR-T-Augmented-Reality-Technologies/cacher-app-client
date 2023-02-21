@@ -48,7 +48,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     };
 
     return <>
-        <div className="grid grid-cols-8 min-h-screen">
+        <div className="grid grid-cols-8 min-h-screen dark:bg-dback">
             {/* Middle column with the logo and login form */}
             <div className="col-start-2 col-span-6">
                 <img src="images/cacher-logo.png" alt="Logo" className="w-1/2 md:w-1/6 mx-auto mt-4"></img>
@@ -64,9 +64,9 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
                          text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="password-input" type="password" onChange={(e) => setPassword(e.target.value)}/>
                     </div>
                     <div className="flex items-center justify-between">
-                        <button className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
+                        <button className="bg-custom-blue hover:bg-custom-blue-hover dark:bg-dblue hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded 
                         focus:outline-none focus:shadow-outline" type="button" onClick={(e) => {navigation.navigate('Image')}}>Sign In</button>
-                        <button className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
+                        <button className="bg-custom-blue hover:bg-custom-blue-hover dark:bg-dblue hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded 
                         focus:outline-none focus:shadow-outline" type="button" onClick={() => {navigation.navigate('Register')}}>Register</button>
                     </div>
                 </form>
@@ -74,9 +74,9 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
             {/* A column on the right of the screen to display vertial lines.
             All 3 lines will be displayed on desktop. On mobile devices only 2 lines will be displayed to save space*/}
             <div className="col-start-8 col-span-1 flex h-full">
-            <div className="border-r-2 border-custom-orange dark:border-custom-blue h-full ml-4"></div>
-            <div className="border-r-4 border-custom-orange h-full ml-5"></div>
-            <div className="hidden md:block border-r-8 border-custom-orange h-full ml-6"></div>
+            <div className="border-r-2 border-custom-orange dark:border-dorange h-full ml-4"></div>
+            <div className="border-r-4 border-custom-orange dark:border-dorange h-full ml-5"></div>
+            <div className="hidden md:block border-r-8 border-custom-orange dark:border-dorange h-full ml-6"></div>
             </div>
         </div>
     </>

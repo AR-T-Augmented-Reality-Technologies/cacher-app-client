@@ -142,10 +142,10 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
   return (
     <>
-      <div className="grid grid-cols-5">
+      <div className="grid grid-cols-5 dark:bg-dback">
         {/* Home button */}
         <button
-          className=" text-black bg-white text-sm font-bold py-1 px-2 rounded-full border-solid border-2 border-black top-3 absolute left-5 "
+          className="dark:bg-dblue text-black bg-white text-sm font-bold py-1 px-2 rounded-full border-solid border-2 border-black top-3 absolute left-5 "
           type="button"
           onClick={() => {
             navigation.navigate("Map");
@@ -169,7 +169,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </button>
 
         {/* Username, Email and password */}
-        <div className="col-start-1 col-span-3 row-start-1 pt-20 pl-5">
+        <div className="col-start-1 col-span-3 row-start-1 pt-20 pl-5 ">
           <label
             className="block text-gray-500 font-bold mb-2"
             htmlFor="usernameLabel"
@@ -325,7 +325,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
       {/* Gallery to display scrapbooks or friends list */}
       <div>
-        <div className="row-span-1 col-span-5 h-16">
+        <div className="row-span-1 col-span-5 h-16 ">
           <hr className="w-full border-2 border-custom-orange col-span-5 mt-2" />
           <label
             className="block text-gray-500 font-bold mb-2 ml-5 mt-2"
