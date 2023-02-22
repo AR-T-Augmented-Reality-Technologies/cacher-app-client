@@ -43,7 +43,8 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     try {
       console.log("User state data: " + user);
       const response = await fetch(
-        `http://localhost:4000/api/users/${user.id}`,
+        // `http://176.58.114.213:4000/api/users/${user.id}`,
+        `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}`, // TODO: Change this to the correct endpoint once server is up
         {
           method: "GET",
           headers: {
@@ -120,7 +121,6 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
   // Sign out
   const signOut = async () => {
-
     // Log out using the logout_user reducer
     dispatch(logout_user());
 
