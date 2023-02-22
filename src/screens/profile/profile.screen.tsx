@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, View, ImageBackground } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { logout_user } from "../../features/users.slice";
 
 interface ProfileScreenProps {
   navigation: any;
@@ -33,6 +34,8 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     localStorage.setItem("currentPage", currentPage);
   }, [currentPage]);
 
+  const dispatch = useDispatch();
+
   // Use our user store
   const user = useSelector((state: any) => state.users);
 
@@ -40,7 +43,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     try {
       console.log("User state data: " + user);
       const response = await fetch(
-        `http://176.58.114.213:4000/api/users/${user.id}`,
+        `http://localhost:4000/api/users/${user.id}`,
         {
           method: "GET",
           headers: {
@@ -76,7 +79,8 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const deleteAccount = async () => {
     //TODO delete account
     const response = await fetch(
-      `http://176.58.114.213:4000/api/users/${user.id}`,
+      // `http://176.58.114.213:4000/api/users/${user.id}`,
+      `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}`, // TODO: Change this to the correct endpoint once server is up
       {
         method: "DELETE",
         headers: {
@@ -115,8 +119,18 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const editDetails = () => {};
 
   // Sign out
-  const signOut = () => {
-    //TODO end session
+  const signOut = async () => {
+
+    // Log out using the logout_user reducer
+    dispatch(logout_user());
+
+    // Clear local storage
+    localStorage.clear();
+
+    // Clear session storage
+    sessionStorage.clear();
+
+    // Navigate to login page
     navigation.navigate("Login");
   };
 

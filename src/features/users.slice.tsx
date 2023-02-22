@@ -16,13 +16,11 @@ export const usersSlice = createSlice({
             state.token = action.payload.token;
         },
         logout_user: (state) => {
-            state = {
-                id: -1,
-                email: "",
-                username: "",
-                token: ""
-            };
-        }
+            state.id = -1;
+            state.email = "";
+            state.username = "";
+            state.token = "";
+          }
     }
 });
 
