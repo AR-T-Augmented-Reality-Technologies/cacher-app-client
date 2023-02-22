@@ -7,6 +7,7 @@ interface ProfileScreenProps {
 }
 
 export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
+  const [currentPage, setCurrentPage] = useState("Profile");
   const [enabled, setEnabled] = useState(true);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showChangeProfilePicture, setShowChangeProfilePicture] =
@@ -20,34 +21,51 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [lastname, setLastname] = useState("");
   const [dob, setDob] = useState();
 
+  // Store current page in local storage
+  useEffect(() => {
+    const storedPage = localStorage.getItem("currentPage");
+    if (storedPage) {
+      setCurrentPage(storedPage);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("currentPage", currentPage);
+  }, [currentPage]);
+
   // Use our user store
   const user = useSelector((state: any) => state.users);
 
   const getData = async () => {
     try {
-        console.log("User state data: " + user);
-        const response = await fetch(`http://176.58.114.213:4000/api/users/${user.id}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                // "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InpheHF1aXRAcG0ubWUiLCJpYXQiOjE2NzUyMzc3MjQsImV4cCI6MTY3NTIzOTUyNH0.BkAeLITwhDD6vwZMjfg6IrwihayoZ1oRageAVwX1YP8"
-            },
-            mode: 'cors'
-        });
+      console.log("User state data: " + user);
+      const response = await fetch(
+        `http://176.58.114.213:4000/api/users/${user.id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            // "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InpheHF1aXRAcG0ubWUiLCJpYXQiOjE2NzUyMzc3MjQsImV4cCI6MTY3NTIzOTUyNH0.BkAeLITwhDD6vwZMjfg6IrwihayoZ1oRageAVwX1YP8"
+          },
+          mode: "cors",
+        }
+      );
 
-        const data = await response.json();
-        
-        setUsername(data.user.user_username);
-        setFirstname(data.user.user_firstname);
-        setLastname(data.user.user_lastname);
-        setEmail(data.user.user_email);
-        setDob(data.user.user_dob);
+      const data = await response.json();
+
+      setUsername(data.user.user_username);
+      setFirstname(data.user.user_firstname);
+      setLastname(data.user.user_lastname);
+      setEmail(data.user.user_email);
+      setDob(data.user.user_dob);
     } catch (e) {
-        console.log(e);
+      console.log(e);
     }
   };
 
-  useEffect(() => { getData() }, []);
+  useEffect(() => {
+    getData();
+  }, []);
 
   // Delete account
   const deleteAccountPopup = () => {
@@ -57,14 +75,17 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   // Delete account
   const deleteAccount = async () => {
     //TODO delete account
-    const response = await fetch(`http://176.58.114.213:4000/api/users/${user.id}`, {
+    const response = await fetch(
+      `http://176.58.114.213:4000/api/users/${user.id}`,
+      {
         method: "DELETE",
         headers: {
-            "Content-Type": "application/json",
-            // "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InpheHF1aXRAcG0ubWUiLCJpYXQiOjE2NzUyMzc3MjQsImV4cCI6MTY3NTIzOTUyNH0.BkAeLITwhDD6vwZMjfg6IrwihayoZ1oRageAVwX1YP8"
+          "Content-Type": "application/json",
+          // "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InpheHF1aXRAcG0ubWUiLCJpYXQiOjE2NzUyMzc3MjQsImV4cCI6MTY3NTIzOTUyNH0.BkAeLITwhDD6vwZMjfg6IrwihayoZ1oRageAVwX1YP8"
         },
-        mode: 'cors'
-    });
+        mode: "cors",
+      }
+    );
 
     const data = await response.json();
 
@@ -230,7 +251,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
               id="name-input"
               name="nameInput"
               disabled={enabled}
-              value={firstname+" "+lastname}
+              value={firstname + " " + lastname}
             />
           </div>
           <div className="ml-5">

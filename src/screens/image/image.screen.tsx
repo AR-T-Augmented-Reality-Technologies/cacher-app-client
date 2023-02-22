@@ -9,6 +9,7 @@ interface ImageScreenProps {
 }
 
 export const ImageScreen = ({ navigation }: ImageScreenProps) => {
+  const [currentPage, setCurrentPage] = useState("Image");
   const [showOptions, setShowOptions] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(45);
@@ -20,6 +21,18 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   const [commentTimes, setCommentTimes] = useState<number[]>([]);
   const [images, setImages] = useState<string[]>([]);
   const [shared, setShared] = useState(false);
+
+  // Store current page in local storage
+  useEffect(() => {
+    const storedPage = localStorage.getItem("currentPage");
+    if (storedPage) {
+      setCurrentPage(storedPage);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("currentPage", currentPage);
+  }, [currentPage]);
 
   // Adding comments
   const handleAddComment = () => {
