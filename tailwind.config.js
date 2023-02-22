@@ -21,6 +21,8 @@ module.exports = {
         'dblue-hover': '#94a7a87',
         'dorange': '#a87638',
         'lb': '#d95821',
+        'dtext':'#354155',
+        'dbord':'#75777A',
       }
     },
   },

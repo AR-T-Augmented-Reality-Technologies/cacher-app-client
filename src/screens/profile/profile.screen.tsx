@@ -171,13 +171,13 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         {/* Username, Email and password */}
         <div className="col-start-1 col-span-3 row-start-1 pt-20 pl-5 ">
           <label
-            className="block text-gray-500 font-bold mb-2"
+            className="block text-gray-500 font-bold mb-2 dark:text-white"
             htmlFor="usernameLabel"
           >
             Username:{" "}
           </label>
           <input
-            className="text-black"
+            className="text-black dark:text-white dark:bg-dtext dark:border-dbord"
             type="text"
             id="username-input"
             name="usernameInput"
@@ -186,13 +186,13 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           />
 
           <label
-            className="block text-gray-500 font-bold mb-2 pt-6 "
+            className="block text-gray-500 font-bold mb-2 pt-6 dark:text-white"
             htmlFor="emailLabel"
           >
             Email:{" "}
           </label>
           <input
-            className="text-black"
+            className="text-black dark:text-white dark:bg-dtext dark:border-dbord"
             type="email"
             id="email-input"
             name="emailLabel"
@@ -201,13 +201,13 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           />
 
           <label
-            className="block text-gray-500 font-bold mb-2 pt-6"
+            className="block text-gray-500 font-bold mb-2 pt-6 dark:text-white"
             htmlFor="paswordLabel"
           >
             Password:{" "}
           </label>
           <input
-            className="text-black"
+            className="text-black dark:text-white dark:bg-dtext dark:border-dbord"
             type="password"
             id="password-input"
             name="passwordInput"
@@ -219,13 +219,13 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         <div className="col-start-1 col-span-5 row-start-2 pt-6 pl-5 flex h-32">
           <div>
             <label
-              className="block text-gray-500 font-bold mb-2"
+              className="block text-gray-500 font-bold mb-2 dark:text-white"
               htmlFor="nameLabel"
             >
               Name:{" "}
             </label>
             <input
-              className="text-black"
+              className="text-black dark:text-white dark:bg-dtext dark:border-dbord"
               type="text"
               id="name-input"
               name="nameInput"
@@ -235,13 +235,13 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           </div>
           <div className="ml-5">
             <label
-              className="block text-gray-500 font-bold mb-2"
+              className="block text-gray-500 font-bold mb-2 dark:text-white"
               htmlFor="dobLabel"
             >
               Date of Birth:{" "}
             </label>
             <input
-              className="text-black bg-white"
+              className="text-black bg-white dark:text-white dark:bg-dtext dark:border-dbord"
               type="date"
               id="dob-input"
               name="dobInput"
