@@ -176,7 +176,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         {/* Flag button */}
         <button
           style={{ bottom: "15rem", color: "orange" }}
-          className="w-16 h-16 rounded-full text-xs bg-white font-bold border-solid border-2 border-black text-center fixed right-2"
+          className="dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs bg-white font-bold border-solid border-2 border-black text-center fixed right-2"
           onClick={flagPostOrComment} // Implement flagPost function
         >
           <svg
@@ -255,7 +255,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
         {/* options button */}
         <button
-          className={`dark:text-white  dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${showOptions ? "border-custom-blue dark:border-dorange" : "border-black"
+          className={`dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${showOptions ? "border-custom-blue dark:border-dorange" : "border-black"
             } text-center fixed bottom-2 left-2`}
           onClick={displayOptions}
         >

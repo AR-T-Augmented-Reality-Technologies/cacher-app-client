@@ -105,7 +105,7 @@ export const AdminDashboardScreen = ({ navigation }: AdmiDashboardProps) => {
 
           {/* Options button */}
           <button
-            className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${showOptions ? "border-custom-blue" : "border-black"
+            className={`dark:bg-dback dark:text-white w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${showOptions ? "border-custom-blue dark:border-dorange" : "border-black"
               } text-center fixed bottom-2 left-2`}
             onClick={displayOptions}
           >
@@ -148,7 +148,7 @@ export const AdminDashboardScreen = ({ navigation }: AdmiDashboardProps) => {
         <>
           {/* Profile button */}
           <button
-            className="w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-40 left-2 transition duration-500 ease-in-out"
+            className="dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-40 left-2 transition duration-500 ease-in-out"
             onClick={() => {
               navigation.navigate("Profile");
             }}
@@ -171,7 +171,7 @@ export const AdminDashboardScreen = ({ navigation }: AdmiDashboardProps) => {
 
           {/* Settings button */}
           <button
-            className="w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-20 left-2 transition duration-500 ease-in-out"
+            className="dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-20 left-2 transition duration-500 ease-in-out"
             onClick={() => {
               navigation.navigate("Settings");
             }}
