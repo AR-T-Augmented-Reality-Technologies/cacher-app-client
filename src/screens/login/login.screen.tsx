@@ -26,8 +26,6 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     localStorage.setItem("currentPage", currentPage);
   }, [currentPage]);
 
-  const dispatch = useDispatch();
-
   const validateForm = (e: any) => {
     e.preventDefault();
 
@@ -100,9 +98,9 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
                          text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue" id="password-input" type="password" onChange={(e) => setPassword(e.target.value)} />
                     </div>
                     <div className="flex items-center justify-between">
-                        <button className="bg-custom-blue hover:bg-custom-blue-hover dark:bg-dblue hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded 
+                        <button className="bg-custom-blue hover:bg-custom-blue-hover dark:bg-dblue hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded
                         focus:outline-none focus:shadow-outline" type="button" onClick={(e) => { navigation.navigate('Image') }}>Sign In</button>
-                        <button className="bg-custom-blue hover:bg-custom-blue-hover dark:bg-dblue hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded 
+                        <button className="bg-custom-blue hover:bg-custom-blue-hover dark:bg-dblue hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded
                         focus:outline-none focus:shadow-outline" type="button" onClick={() => { navigation.navigate('Register') }}>Register</button>
                     </div>
                 </form>
@@ -116,7 +114,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
             </div>
             <div className="flex items-center justify-between">
               <button
-                className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
+                className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded
                         focus:outline-none focus:shadow-outline"
                 type="button"
                 id="sign-in-button"
@@ -127,7 +125,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
                 Sign In
               </button>
               <button
-                className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
+                className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded
                         focus:outline-none focus:shadow-outline"
                 type="button"
                 id="register-button"
