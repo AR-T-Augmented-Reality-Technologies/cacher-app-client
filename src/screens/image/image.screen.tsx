@@ -414,6 +414,10 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                     >
                       ({formatTime(commentTimes[index])})
                     </p>
+                    {/* To flag a comment (add flag functionality) */}
+                    <p className="break-normal px-2 py-2 col-start-2 col-span-1 row-start-2 text-sm overflow-hidden text-justify">
+                      <img onClick={() => { flagPostOrComment() }} style={{ height: "1.25rem", cursor: "pointer" }} src="images/flag-icon.png" alt="" />
+                    </p>
                     <img
                       src="images/avatar-image.jpg"
                       className="border-solid border-2 border-black rounded-lg w-3/4 float-right col-start-5 cols-span-1 mt-2"
