@@ -9,7 +9,7 @@ interface ImageScreenProps {
 }
 
 export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
-    const [currentPage, setCurrentPage] = useState("Image");
+    const [currentPage, setCurrentPage] = useState("ImageAdmin");
     const [showOptions, setShowOptions] = useState(false);
     const [isLiked, setIsLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(45);
@@ -93,14 +93,14 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
         }
     };
 
-    // Like post
+    // Like post { Admin can see number of likes but cannot himself like a post }
     const likePost = () => {
-        setIsLiked(!isLiked);
-        if (!isLiked) {
-            setLikeCount(likeCount + 1);
-        } else {
-            setLikeCount(likeCount - 1);
-        }
+        // setIsLiked(!isLiked);
+        // if (!isLiked) {
+        //     setLikeCount(likeCount + 1);
+        // } else {
+        //     setLikeCount(likeCount - 1);
+        // }
         setShowLikeCount(!showLikeCount);
     };
 
@@ -124,6 +124,15 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
     // Display comments
     const displayComments = () => {
         setShowComments(!showComments);
+    };
+
+    // Delete comment
+    const deleteComment = (index: number) => {
+        comments.splice(index, 1);
+        commentTimes.splice(index, 1);
+        setNewComment(" ");
+        setTimeout(() => { setNewComment("") });
+        // pop-up to explain reason for deletion: to be implemented
     };
 
     // Display options
@@ -151,7 +160,7 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                     className="dark:text-white dark:bg-dback text-black bg-white text-sm font-bold py-1 px-2 rounded-full border-solid border-2 border-black fixed top-2 left-2 "
                     type="button"
                     onClick={() => {
-                        navigation.navigate("Map");
+                        navigation.navigate("AdminDashboard");
                     }}
                 >
                     <svg
@@ -175,7 +184,7 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                 <button
                     style={{ bottom: "15rem", color: "red" }}
                     className="w-16 h-16 rounded-full text-xs bg-white font-bold border-solid border-2 border-black text-center fixed right-2"
-                    onClick={deletePost} // Implement deletePost function
+                    onClick={deletePost} // TODO Implement deletePost function to actually delete post
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -412,6 +421,10 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                                         >
                                             ({formatTime(commentTimes[index])})
                                         </p>
+                                        {/* To delete comment */}
+                                        <p className="break-normal px-2 py-2 col-start-2 col-span-1 row-start-2 text-sm overflow-hidden text-justify">
+                                            <img onClick={() => { deleteComment(index) }} style={{ height: "1.25rem", cursor: "pointer" }} src="images/delete-icon.png" alt="" />
+                                        </p>
                                         <img
                                             src="images/avatar-image.jpg"
                                             className="border-solid border-2 border-black rounded-lg w-3/4 float-right col-start-5 cols-span-1 mt-2"
@@ -422,6 +435,9 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                                     </div>
                                 ))}
                             </div>
+
+                            {/* Admin cannot post comments, only view and delete them
+                            (Not commented out yet to post new comments and test delete comment functionality)*/}
 
                             <div className="grid grid-cols-5 grid-rows-1 pl-5 pr-5 pt-3 bg-transparent bottom-2 top-2">
                                 <input
