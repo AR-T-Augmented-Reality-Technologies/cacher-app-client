@@ -9,7 +9,8 @@ import { MapScreen } from './screens/map/map.screen';
 import { AdminDashboardScreen } from './screens/admin-dashboard/admin-dashboard.screen';
 import { ImageScreen } from './screens/image/image.screen';
 import { ProfileScreen } from './screens/profile/profile.screen';
-
+import { SettingsScreen }  from './screens/settings/settings.screen';
+import { useState, useEffect } from 'react';
 // assets
 import logo from './logo.svg';
 import './App.css';
@@ -18,10 +19,22 @@ const Stack = createNativeStackNavigator();
 
 const App = () => {
   const lastScreen = window.localStorage.getItem('currentPage');
+  const [theme,setTheme] = useState("light");
 
   /* Set the initial screen to the last screen the user was on, 
   or the login screen if they haven't been on the app before. */
   const [currentPage, setCurrentPage] = useState<string>(lastScreen || 'Login');
+
+  useEffect(() => {
+    if (theme ==="dark"){
+      document.documentElement.classList.add("dark");
+    } else{
+      document.documentElement.classList.remove("dark");
+    }
+    }, [theme]);
+  const handleThemeSwitch = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
 
   return (
     <NavigationContainer>
@@ -32,6 +45,7 @@ const App = () => {
         <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
         <Stack.Screen name="Image" component={ImageScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

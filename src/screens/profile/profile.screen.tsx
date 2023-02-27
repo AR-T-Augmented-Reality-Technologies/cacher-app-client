@@ -157,30 +157,31 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     setShowLabel("Friends List");
   };
 
+  
   const images = [];
   for (let i = 0; i < 15; i++) {
     images.push(
       <button
         key={i}
-        className="mx-1 my-1"
+        className="mx-1 my-1 "
         onClick={() => {
           navigation.navigate("Image");
         }}
       >
         <img
           src="images/image-placeholder.png"
-          className="border-solid border-2 rounded border-black"
+          className="border-solid border-2 rounded border-black "
         ></img>
       </button>
     );
   }
 
   return (
-    <>
-      <div className="grid grid-cols-5">
+    <div className="dark:bg-dback">
+      <div className="grid grid-cols-5 dark:bg-dback">
         {/* Home button */}
         <button
-          className=" text-black bg-white text-sm font-bold py-1 px-2 rounded-full border-solid border-2 border-black top-3 absolute left-5 "
+          className="dark:bg-dblue text-black bg-white text-sm font-bold py-1 px-2 rounded-full border-solid border-2 border-black top-3 absolute left-5 "
           type="button"
           onClick={() => {
             navigation.navigate("Map");
@@ -204,15 +205,15 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </button>
 
         {/* Username, Email and password */}
-        <div className="col-start-1 col-span-3 row-start-1 pt-20 pl-5">
+        <div className="col-start-1 col-span-3 row-start-1 pt-20 pl-5 ">
           <label
-            className="block text-gray-500 font-bold mb-2"
+            className="block text-gray-500 font-bold mb-2 dark:text-white"
             htmlFor="usernameLabel"
           >
             Username:{" "}
           </label>
           <input
-            className="text-black"
+            className="text-black dark:text-white dark:bg-dtext dark:border-dbord"
             type="text"
             id="username-input"
             name="usernameInput"
@@ -221,13 +222,13 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           />
 
           <label
-            className="block text-gray-500 font-bold mb-2 pt-6 "
+            className="block text-gray-500 font-bold mb-2 pt-6 dark:text-white"
             htmlFor="emailLabel"
           >
             Email:{" "}
           </label>
           <input
-            className="text-black"
+            className="text-black dark:text-white dark:bg-dtext dark:border-dbord"
             type="email"
             id="email-input"
             name="emailLabel"
@@ -236,13 +237,13 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           />
 
           <label
-            className="block text-gray-500 font-bold mb-2 pt-6"
+            className="block text-gray-500 font-bold mb-2 pt-6 dark:text-white"
             htmlFor="paswordLabel"
           >
             Password:{" "}
           </label>
           <input
-            className="text-black"
+            className="text-black dark:text-white dark:bg-dtext dark:border-dbord"
             type="password"
             id="password-input"
             name="passwordInput"
@@ -254,13 +255,13 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         <div className="col-start-1 col-span-5 row-start-2 pt-6 pl-5 flex h-32">
           <div>
             <label
-              className="block text-gray-500 font-bold mb-2"
+              className="block text-gray-500 font-bold mb-2 dark:text-white"
               htmlFor="nameLabel"
             >
               Name:{" "}
             </label>
             <input
-              className="text-black"
+              className="text-black dark:text-white dark:bg-dtext dark:border-dbord"
               type="text"
               id="name-input"
               name="nameInput"
@@ -270,13 +271,13 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           </div>
           <div className="ml-5">
             <label
-              className="block text-gray-500 font-bold mb-2"
+              className="block text-gray-500 font-bold mb-2 dark:text-white"
               htmlFor="dobLabel"
             >
               Date of Birth:{" "}
             </label>
             <input
-              className="text-black bg-white"
+              className="text-black bg-white dark:text-white dark:bg-dtext dark:border-dbord"
               type="date"
               id="dob-input"
               name="dobInput"
@@ -287,7 +288,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </div>
 
         {/* Profile picture*/}
-        <div className="col-start-4 col-span-2 row-start-1 row-span-1 pt-3 pr-5 pb-2">
+        <div className="col-start-4 col-span-2 row-start-1 row-span-1 pt-3 pr-5 pb-2 ">
           <button onClick={changeProfilePicture}>
             <img
               src="images/avatar-image.jpg"
@@ -331,8 +332,8 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </div>
 
         {/* Scrapbooks and friends buttons */}
-        <div className="col-start-1 col-span-5 row-start-3 row-span-1 pb-3">
-          <div className="flex ml-5 mr-5">
+        <div className="col-start-1 col-span-5 row-start-3 row-span-1 pb-3 dark:bg-dback">
+          <div className="flex ml-5 mr-5  ">
             <button
               className="bg-gray-400 hover:bg-gray-500 text-white px-2 py-2 rounded-md focus:outline-none focus:shadow-outline text-sm mr-5 w-32"
               type="button"
@@ -360,7 +361,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
       {/* Gallery to display scrapbooks or friends list */}
       <div>
-        <div className="row-span-1 col-span-5 h-16">
+        <div className="row-span-1 col-span-5 h-16 dark:bg-dback ">
           <hr className="w-full border-2 border-custom-orange col-span-5 mt-2" />
           <label
             className="block text-gray-500 font-bold mb-2 ml-5 mt-2"
@@ -501,6 +502,6 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           </div>
         </>
       )}
-    </>
+    </div>
   );
 };
