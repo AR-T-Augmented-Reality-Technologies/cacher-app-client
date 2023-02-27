@@ -41,7 +41,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     };
 
     const response = await fetch(
-      `${process.env.REACT_APP_REST_API_HOST}/users/login`,
+      `${process.env.REST_API_HOST}/users/login`,
       {
         method: "POST",
         headers: {
