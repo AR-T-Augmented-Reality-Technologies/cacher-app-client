@@ -16,11 +16,13 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   const [showLikeCount, setShowLikeCount] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
+  const popupRefFlag = useRef<HTMLDivElement>(null);
   const [comments, setComments] = useState<string[]>([]);
   const [newComment, setNewComment] = useState("");
   const [commentTimes, setCommentTimes] = useState<number[]>([]);
   const [images, setImages] = useState<string[]>([]);
   const [shared, setShared] = useState(false);
+  const [showFlagMenu, setShowFlagMenu] = useState(false);
 
   // Store current page in local storage
   useEffect(() => {
@@ -56,10 +58,20 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     }
   };
 
+  // To flag a post
+  const flagPostOrComment = () => {
+    setShowFlagMenu(!showFlagMenu);
+  };
+
   // Dismiss the window when clicking outside
   const handleClickOutside = (event: MouseEvent) => {
-    if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+    if (popupRef.current && popupRefFlag.current && !popupRef.current.contains(event.target as Node) && !popupRefFlag.current.contains(event.target as Node)) {
       setShowComments(false);
+    } else if (popupRef.current && !popupRefFlag.current && !popupRef.current.contains(event.target as Node)) {
+      setShowComments(false);
+    }
+    if (popupRefFlag.current && !popupRefFlag.current.contains(event.target as Node)) {
+      setShowFlagMenu(false);
     }
   };
 
@@ -109,7 +121,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   };
 
   // Comment post
-  const commentPost = () => {};
+  const commentPost = () => { };
 
   // Display comments
   const displayComments = () => {
@@ -161,6 +173,22 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
           Home
         </button>
 
+        {/* Flag button */}
+        <button
+          style={{ bottom: "15rem", color: "orange" }}
+          className="w-16 h-16 rounded-full text-xs bg-white font-bold border-solid border-2 border-black text-center fixed right-2"
+          onClick={flagPostOrComment} // Implement flagPost function
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="33.9 22.3 9.1 7"
+            className="w-6 h-6 mx-auto my-auto"
+          >
+            <path d="M 21 24 M 34.007 22.443 L 34 31 L 35 31 L 35.001 22.416 L 34.034 22.443 M 35 23 Q 38 22 39 23 Q 40 24 43 23 L 43 27 Q 40 28 39 27 Q 38 26 35 27" stroke="#fff" stroke-width="0.08" fill="orange" />
+          </svg>{" "}
+          Flag
+        </button>
+
         {/* share button */}
         <button
           className="dark:text-white  dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-40 right-2"
@@ -184,9 +212,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
         {/* like button */}
         <button
-          className={`dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
-            isLiked ? "border-custom-blue dark:bg-dorange" : "border-black"
-          } text-center fixed bottom-20 right-2`}
+          className={`dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${isLiked ? "border-custom-blue dark:bg-dorange" : "border-black"
+            } text-center fixed bottom-20 right-2`}
           onClick={likePost}
         >
           <svg
@@ -228,9 +255,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
         {/* options button */}
         <button
-          className={`dark:text-white  dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
-            showOptions ? "border-custom-blue dark:border-dorange" : "border-black"
-          } text-center fixed bottom-2 left-2`}
+          className={`dark:text-white  dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${showOptions ? "border-custom-blue dark:border-dorange" : "border-black"
+            } text-center fixed bottom-2 left-2`}
           onClick={displayOptions}
         >
           <svg
@@ -325,9 +351,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         <>
           {/* Like count popup */}
           <div
-            className={`${
-              showLikeCount ? "opacity-100" : "opacity-0"
-            } transition-opacity ease-in-out duration-300`}
+            className={`${showLikeCount ? "opacity-100" : "opacity-0"
+              } transition-opacity ease-in-out duration-300`}
           >
             <div className="dark:bg-dback bg-white p-3 rounded-lg shadow-lg fixed bottom-24 right-20 border border-black">
               <svg
@@ -353,9 +378,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
           {/* Comments popup */}
           <div
             ref={popupRef}
-            className={`${
-              showComments ? "opacity-100" : "opacity-0"
-            } transition-opacity ease-in-out duration-300`}
+            className={`${showComments ? "opacity-100" : "opacity-0"
+              } transition-opacity ease-in-out duration-300`}
           >
             <div className="dark:bg-dback h-screen bg-white border-solid border-2 border-black fixed top-48 left-2 right-2 rounded-t-3xl border-b-0">
               {/* Post description*/}
@@ -421,6 +445,61 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
           </div>
         </>
       )}
+
+      {/* Pop up to explain reason for deletion */}
+      {showFlagMenu && (
+        <>
+          {/* TODO Position pop-up at center of screen */}
+          <div ref={popupRefFlag}
+            className={`${showFlagMenu ? "opacity-100" : "opacity-0"}
+            transition-opacity ease-in-out duration-300`}>
+            <div style={{ color: "rgb(219,219,219)", backgroundColor: "rgb(66,66,66)", position: "fixed", right: "5rem", bottom: "15rem", borderRadius: "5px", border: "0.2rem solid rgb(153,0,0)", textAlign: "left", padding: "20px" }}>
+
+              <span>Why are you flagging this post/comment?</span>
+
+              <br /><br />
+
+              <form action="" method="post" id="reasonForFlag">
+                {/* Reason for deleting */}
+                <div>
+                  <select name="reason" id="reason" form="reasonForFlag" required style={{ color: "rgb(69,69,69)", width: "100%" }}>
+                    <option value="reason 1">Self injury</option>
+                    <option value="reason 2">Harassment or bullying</option>
+                    <option value="reason 3">Sale or promotion of drugs</option>
+                    <option value="reason 4">Sale or promotion of firearms</option>
+                    <option value="reason 5">Nudity or pornography</option>
+                    <option value="reason 6">Violence or harm</option>
+                    <option value="reason 7">Hate speech or symbols</option>
+                    <option value="reason 8">Intellectual property violation</option>
+                    <option value="other" selected>other</option>
+                  </select>
+                </div>
+                <br />
+                {/* If other, explain by text */}
+                <div>
+                  <input type="text" name="otherReason" id="otherReason" placeholder="If other, enter your reason here" style={{ color: "rgb(69,69,69)", width: "100%", borderRadius: "5px" }} />
+                </div>
+                <br />
+                {/* Unique ID of post being deleted */}
+                <div>
+                  <input type="hidden" name="postUniqueID" id="postUniqueID" value={"UNIQUE ID OF POST HERE"} />
+                </div>
+
+                <div style={{ display: "flex", flexWrap: "wrap", alignContent: "space-between" }}>
+                  <div style={{ flex: "1" }}>
+                    <input type="submit" value="Cancel" onClick={() => { flagPostOrComment() }} style={{ cursor: "pointer" }} />
+                  </div>
+                  <div style={{ flex: "0" }}>
+                    <input type="submit" value="Flag" style={{ cursor: "pointer", color: "rgb(230,0,0)" }} />
+                  </div>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </>
+      )}
+
     </div>
   );
 };
