@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   What3wordsAutosuggest,
   What3wordsMap,
@@ -12,6 +12,10 @@ interface AdmiDashboardProps {
 export const AdminDashboardScreen = ({ navigation }: AdmiDashboardProps) => {
   const [showOptions, setShowOptions] = useState(false);
   const [currentPage, setCurrentPage] = useState("AdminDashboard");
+  const [showPostMenu, setShowPostMenu] = useState(false);
+  const popupRefPost = useRef<HTMLUListElement>(null);
+  const [showDeleteMenu, setShowDeleteMenu] = useState(false);
+  const popupRefDel = useRef<HTMLDivElement>(null);
 
   // Store current page in local storage
   useEffect(() => {
@@ -31,6 +35,33 @@ export const AdminDashboardScreen = ({ navigation }: AdmiDashboardProps) => {
   };
 
   const openReportsDashboard = () => { };
+
+  // options when clicked on a post marker
+  const postOptions = () => {
+    setShowPostMenu(!showPostMenu);
+  }
+
+  // pop-up to explain reason for deletion
+  const deletePost = () => {
+    setShowDeleteMenu(!showDeleteMenu);
+  };
+
+  // Dismiss the window when clicking outside
+  const handleClickOutside = (event: MouseEvent) => {
+    if (popupRefDel.current && !popupRefDel.current.contains(event.target as Node)) {
+      setShowDeleteMenu(false);
+    }
+    if (popupRefPost.current && !popupRefPost.current.contains(event.target as Node)) {
+      setShowPostMenu(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Keys
   // const API_KEY = process.env.W3W_API_KEY;
@@ -95,7 +126,7 @@ export const AdminDashboardScreen = ({ navigation }: AdmiDashboardProps) => {
           </button>
 
           {/* default post on map */}
-          <button>
+          <button onClick={() => { postOptions() }}>
             <img src="images/map-marker.png" className="rounded-full text-xs font-bold absolute left-48 top-64" alt="marker" />
           </button>
 
@@ -165,6 +196,74 @@ export const AdminDashboardScreen = ({ navigation }: AdmiDashboardProps) => {
             </svg>
             Settings
           </button>
+        </>
+      )}
+
+      {/* post menu - Display when a post marker is clicked*/}
+      {showPostMenu && (
+        <>
+          <ul
+            ref={popupRefPost}
+            className={`${showPostMenu ? "opacity-100" : "opacity-0"
+              } transition-opacity ease-in-out duration-300 text-xs font-bold absolute`}
+            id="menu"
+            style={{ color: "black", backgroundColor: "white", left: "14rem", top: "18rem", borderRadius: "10px", border: "1px solid grey" }}>
+            <li style={{ borderBottom: "1px solid grey", padding: "5px" }}><button onClick={() => { navigation.navigate('ImageAdmin') }}>View</button></li>
+            <li style={{ color: "red", padding: "5px" }}><button onClick={() => { deletePost() }}>Delete</button></li>
+          </ul>
+        </>
+      )}
+
+      {/* Pop up to explain reason for deletion */}
+      {showDeleteMenu && (
+        <>
+          <div
+            ref={popupRefDel}
+            className={`${showDeleteMenu ? "opacity-100" : "opacity-0"
+              } transition-opacity ease-in-out duration-300 left-48 top-64`}
+            style={{ color: "rgb(219,219,219)", backgroundColor: "rgb(66,66,66)", position: "fixed", borderRadius: "5px", border: "0.2rem solid rgb(153,0,0)", textAlign: "left", padding: "20px" }}>
+
+            <span>Reason for Deletion</span>
+
+            <br /><br />
+
+            <form action="" method="post" id="reasonForDelete">
+              {/* Reason for deleting */}
+              <div>
+                <select name="reason" id="reason" form="reasonForDelete" required style={{ color: "rgb(69,69,69)", width: "100%" }}>
+                  <option value="reason 1">Self injury</option>
+                  <option value="reason 2">Harassment or bullying</option>
+                  <option value="reason 3">Sale or promotion of drugs</option>
+                  <option value="reason 4">Sale or promotion of firearms</option>
+                  <option value="reason 5">Nudity or pornography</option>
+                  <option value="reason 6">Violence or harm</option>
+                  <option value="reason 7">Hate speech or symbols</option>
+                  <option value="reason 8">Intellectual property violation</option>
+                  <option value="other" selected>other</option>
+                </select>
+              </div>
+              <br />
+              {/* If other, explain by text */}
+              <div>
+                <input type="text" name="otherReason" id="otherReason" placeholder="If other, enter your reason here" style={{ color: "rgb(69,69,69)", width: "100%", borderRadius: "5px" }} />
+              </div>
+              <br />
+              {/* Unique ID of post being deleted */}
+              <div>
+                <input type="hidden" name="postUniqueID" id="postUniqueID" value={"UNIQUE ID OF POST HERE"} />
+              </div>
+
+              <div style={{ display: "flex", flexWrap: "wrap", alignContent: "space-between" }}>
+                <div style={{ flex: "1" }}>
+                  <input type="submit" value="Cancel" onClick={() => { deletePost() }} style={{ cursor: "pointer" }} />
+                </div>
+                <div style={{ flex: "0" }}>
+                  <input type="submit" value="Delete" style={{ cursor: "pointer", color: "rgb(230,0,0)" }} />
+                </div>
+              </div>
+
+            </form>
+          </div>
         </>
       )}
     </>
