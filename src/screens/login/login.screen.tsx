@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Button, View, Text } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { add_user } from "../../features/users.slice";
 
 interface LoginScreenProps {
@@ -8,37 +7,23 @@ interface LoginScreenProps {
 }
 
 export const LoginScreen = ({ navigation }: LoginScreenProps) => {
-  const [currentPage, setCurrentPage] = useState("Login");
+    const [currentPage, setCurrentPage] = useState("Login");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const dispatch = useDispatch();
 
-  // Store current page in local storage
-  useEffect(() => {
-    const storedPage = localStorage.getItem("currentPage");
-    if (storedPage) {
-      setCurrentPage(storedPage);
-    }
-  }, []);
+    // Store current page in local storage
+    useEffect(() => {
+        const storedPage = localStorage.getItem("currentPage");
+        if (storedPage) {
+            setCurrentPage(storedPage);
+        }
+    }, []);
 
-  useEffect(() => {
-    localStorage.setItem("currentPage", currentPage);
-  }, [currentPage]);
-
-  const validateForm = (e: any) => {
-    e.preventDefault();
-
-    // TODO: Form validation here
-    return true;
-  };
-
-  const submitForm = async () => {
-    // TODO: Form submit to server using REST API.
-    const payload = {
-      email: email,
-      password_unhashed: password,
-    };
+    useEffect(() => {
+        localStorage.setItem("currentPage", currentPage);
+    }, [currentPage]);
 
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
     const toggleTheme = () => {
@@ -54,29 +39,37 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
         document.body.className = theme;
     }, [theme]);
 
+    const validateForm = (e: any) => {
+        e.preventDefault();
+
+        // TODO: Form validation here
+        return true;
+    };
+
     const submitForm = async () => {
-        // // TODO: Form submit to server using REST API.
-        // const payload = {
-        //     "email": email,
-        //     "password_unhashed": password
-        // };
+        // TODO: Form submit to server using REST API.
+        const payload = {
+            email: email,
+            password_unhashed: password,
+        };
 
-        // const response = await fetch('http://176.58.114.213:4000/api/users/login', {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json"
-        //     },
-        //     // mode: "cors",
-        //     body: JSON.stringify(payload),
-        // });
 
-        // const data = await response.json();
+        const response = await fetch('http://176.58.114.213:4000/api/users/login', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            mode: "cors",
+            body: JSON.stringify(payload),
+        });
 
-        // console.log("Our Data:: ", await data.data);
+        const data = await response.json();
 
-        // dispatch(add_user(await data.data));
+        console.log("Our Data:: ", await data.data);
 
-        // console.log("Finished Login");
+        dispatch(add_user(await data.data));
+
+        console.log("Finished Login");
 
         navigation.navigate('Map');
     };
