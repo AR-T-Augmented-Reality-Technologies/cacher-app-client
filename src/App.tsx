@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 // import Screens
 import { LoginScreen } from './screens/login/login.screen';
 import { RegisterScreen } from './screens/register/register.screen';
@@ -10,7 +11,7 @@ import { AdminDashboardScreen } from './screens/admin-dashboard/admin-dashboard.
 import { ImageScreen } from './screens/image/image.screen';
 import { ProfileScreen } from './screens/profile/profile.screen';
 import { SettingsScreen }  from './screens/settings/settings.screen';
-import { useState, useEffect } from 'react';
+
 // assets
 import logo from './logo.svg';
 import './App.css';
@@ -21,7 +22,7 @@ const App = () => {
   const lastScreen = window.localStorage.getItem('currentPage');
   const [theme,setTheme] = useState("light");
 
-  /* Set the initial screen to the last screen the user was on, 
+  /* Set the initial screen to the last screen the user was on,
   or the login screen if they haven't been on the app before. */
   const [currentPage, setCurrentPage] = useState<string>(lastScreen || 'Login');
 
