@@ -30,7 +30,7 @@ export const AdminDashboardScreen = ({ navigation }: AdmiDashboardProps) => {
     setShowOptions(!showOptions);
   };
 
-  const openReportsDashboard = () => {};
+  const openReportsDashboard = () => { };
 
   // Keys
   // const API_KEY = process.env.W3W_API_KEY;
@@ -74,9 +74,8 @@ export const AdminDashboardScreen = ({ navigation }: AdmiDashboardProps) => {
 
           {/* Options button */}
           <button
-            className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
-              showOptions ? "border-custom-blue" : "border-black"
-            } text-center fixed bottom-2 left-2`}
+            className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${showOptions ? "border-custom-blue" : "border-black"
+              } text-center fixed bottom-2 left-2`}
             onClick={displayOptions}
           >
             <svg
@@ -93,6 +92,11 @@ export const AdminDashboardScreen = ({ navigation }: AdmiDashboardProps) => {
               />
             </svg>
             Options
+          </button>
+
+          {/* default post on map */}
+          <button>
+            <img src="images/map-marker.png" className="rounded-full text-xs font-bold absolute left-48 top-64" alt="marker" />
           </button>
 
           {/* Reports button */}
