@@ -38,13 +38,12 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
   // Use our user store
   const user = useSelector((state: any) => state.users);
-
+console.log("User state data: " + user);
   const getData = async () => {
-    try {
       console.log("User state data: " + user);
       const response = await fetch(
-        // `http://176.58.114.213:4000/api/users/${user.id}`,
-        `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}`, // TODO: Change this to the correct endpoint once server is up
+        `http://176.58.114.213:4000/api/users/${user.id}`,
+        // `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}`, // TODO: Change this to the correct endpoint once server is up
         {
           method: "GET",
           headers: {
@@ -55,18 +54,15 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         }
       );
 
-      const data = await response.json();
-
+      const data = response.json().then((data) => {
+        console.log(data);
       setUsername(data.user.user_username);
       setFirstname(data.user.user_firstname);
       setLastname(data.user.user_lastname);
       setEmail(data.user.user_email);
       setDob(data.user.user_dob);
-    } catch (e) {
-      console.log(e);
-    }
+    });
   };
-
   useEffect(() => {
     getData();
   }, []);
