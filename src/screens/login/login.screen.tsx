@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { add_user } from "../../features/users.slice";
 
 interface LoginScreenProps {
-  navigation: any;
+    navigation: any;
 }
 
 export const LoginScreen = ({ navigation }: LoginScreenProps) => {
@@ -95,6 +95,10 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
                         focus:outline-none focus:shadow-outline" type="button" onClick={(e) => { navigation.navigate('Image') }}>Sign In</button>
                         <button className="bg-custom-blue hover:bg-custom-blue-hover dark:bg-dblue hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded
                         focus:outline-none focus:shadow-outline" type="button" onClick={() => { navigation.navigate('Register') }}>Register</button>
+
+                        {/* for admin. When possible to log in using an admin account, delete this button */}
+                        <button className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
+                        focus:outline-none focus:shadow-outline" type="button" onClick={() => { navigation.navigate('AdminDashboard') }}>Admin</button>
                     </div>
                 </form>
             </div>
