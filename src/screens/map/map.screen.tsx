@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   What3wordsAutosuggest,
   What3wordsMap,
 } from "@what3words/react-components";
-import { Button, View, ImageBackground } from "react-native";
 
 interface MapScreenProps {
   navigation: any;
