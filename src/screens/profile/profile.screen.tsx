@@ -122,26 +122,27 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     setShowLabel("Friends List");
   };
 
+  
   const images = [];
   for (let i = 0; i < 15; i++) {
     images.push(
       <button
         key={i}
-        className="mx-1 my-1"
+        className="mx-1 my-1 "
         onClick={() => {
           navigation.navigate("Image");
         }}
       >
         <img
           src="images/image-placeholder.png"
-          className="border-solid border-2 rounded border-black"
+          className="border-solid border-2 rounded border-black "
         ></img>
       </button>
     );
   }
 
   return (
-    <>
+    <div className="dark:bg-dback">
       <div className="grid grid-cols-5 dark:bg-dback">
         {/* Home button */}
         <button
@@ -252,7 +253,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </div>
 
         {/* Profile picture*/}
-        <div className="col-start-4 col-span-2 row-start-1 row-span-1 pt-3 pr-5 pb-2">
+        <div className="col-start-4 col-span-2 row-start-1 row-span-1 pt-3 pr-5 pb-2 ">
           <button onClick={changeProfilePicture}>
             <img
               src="images/avatar-image.jpg"
@@ -296,8 +297,8 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         </div>
 
         {/* Scrapbooks and friends buttons */}
-        <div className="col-start-1 col-span-5 row-start-3 row-span-1 pb-3">
-          <div className="flex ml-5 mr-5">
+        <div className="col-start-1 col-span-5 row-start-3 row-span-1 pb-3 dark:bg-dback">
+          <div className="flex ml-5 mr-5  ">
             <button
               className="bg-gray-400 hover:bg-gray-500 text-white px-2 py-2 rounded-md focus:outline-none focus:shadow-outline text-sm mr-5 w-32"
               type="button"
@@ -325,7 +326,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
       {/* Gallery to display scrapbooks or friends list */}
       <div>
-        <div className="row-span-1 col-span-5 h-16 ">
+        <div className="row-span-1 col-span-5 h-16 dark:bg-dback ">
           <hr className="w-full border-2 border-custom-orange col-span-5 mt-2" />
           <label
             className="block text-gray-500 font-bold mb-2 ml-5 mt-2"
@@ -466,6 +467,6 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           </div>
         </>
       )}
-    </>
+    </div>
   );
 };
