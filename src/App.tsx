@@ -9,6 +9,7 @@ import { RegisterScreen } from './screens/register/register.screen';
 import { MapScreen } from './screens/map/map.screen';
 import { AdminDashboardScreen } from './screens/admin-dashboard/admin-dashboard.screen';
 import { ImageScreen } from './screens/image/image.screen';
+import { ImageAdminScreen } from './screens/image/imageAdmin.screen';
 import { ProfileScreen } from './screens/profile/profile.screen';
 import { SettingsScreen }  from './screens/settings/settings.screen';
 
@@ -45,6 +46,7 @@ const App = () => {
         <Stack.Screen name="Map" component={MapScreen} />
         <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
         <Stack.Screen name="Image" component={ImageScreen} />
+        <Stack.Screen name="ImageAdmin" component={ImageAdminScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       </Stack.Navigator>

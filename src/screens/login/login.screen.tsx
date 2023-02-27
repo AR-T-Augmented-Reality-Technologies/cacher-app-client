@@ -52,10 +52,11 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
       email: email,
       password_unhashed: password,
     };
-    const response = await fetch("http://176.58.114.213:4000/api/users/login", {
+    
+    const response = await fetch('http://176.58.114.213:4000/api/users/login', {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+          "Content-Type": "application/json"
       },
       mode: "cors",
       body: JSON.stringify(payload),
@@ -69,9 +70,9 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
     console.log("Finished Login");
 
-    navigation.navigate("Map");
+    navigation.navigate('Map');
   };
-
+  
   return (
     <>
       <div className="grid grid-cols-8 min-h-screen dark:bg-dback">
