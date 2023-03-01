@@ -43,7 +43,7 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             username: username,
         };
 
-        fetch("http://176.58.114.213:4000/api/users/create", {
+        fetch(`${process.env.REACT_APP_REST_API_HOST}/users/create`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
