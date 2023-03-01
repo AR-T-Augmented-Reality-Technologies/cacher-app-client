@@ -11,8 +11,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [currentPage, setCurrentPage] = useState("Profile");
   const [enabled, setEnabled] = useState(true);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
-  const [showChangeProfilePicture, setShowChangeProfilePicture] =
-    useState(false);
+  const [showChangeProfilePicture, setShowChangeProfilePicture] = useState(false);
   const [showLabel, setShowLabel] = useState("Public Scrapbooks");
 
   // Profile Fields
@@ -38,24 +37,23 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
   // Use our user store
   const user = useSelector((state: any) => state.users);
-console.log("User state data: " + user);
+  console.log("User state data: " + user);
   const getData = async () => {
-      console.log("User state data: " + user);
-      const response = await fetch(
-        `http://176.58.114.213:4000/api/users/${user.id}`,
-        // `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}`, // TODO: Change this to the correct endpoint once server is up
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            // "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InpheHF1aXRAcG0ubWUiLCJpYXQiOjE2NzUyMzc3MjQsImV4cCI6MTY3NTIzOTUyNH0.BkAeLITwhDD6vwZMjfg6IrwihayoZ1oRageAVwX1YP8"
-          },
-          mode: "cors",
-        }
-      );
+    console.log("User state data: " + user);
+    const response = await fetch(
+      `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          // "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InpheHF1aXRAcG0ubWUiLCJpYXQiOjE2NzUyMzc3MjQsImV4cCI6MTY3NTIzOTUyNH0.BkAeLITwhDD6vwZMjfg6IrwihayoZ1oRageAVwX1YP8"
+        },
+        mode: "cors",
+      }
+    );
 
-      const data = response.json().then((data) => {
-        console.log(data);
+    const data = response.json().then((data) => {
+      console.log(data);
       setUsername(data.user.user_username);
       setFirstname(data.user.user_firstname);
       setLastname(data.user.user_lastname);
@@ -153,7 +151,6 @@ console.log("User state data: " + user);
     setShowLabel("Friends List");
   };
 
-  
   const images = [];
   for (let i = 0; i < 15; i++) {
     images.push(
