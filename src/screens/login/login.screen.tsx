@@ -52,8 +52,8 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
       email: email,
       password_unhashed: password,
     };
-    
-    const response = await fetch('http://176.58.114.213:4000/api/users/login', {
+
+    const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/users/login`, {
       method: "POST",
       headers: {
           "Content-Type": "application/json"
@@ -72,7 +72,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
     navigation.navigate('Map');
   };
-  
+
   return (
     <>
       <div className="grid grid-cols-8 min-h-screen dark:bg-dback">
@@ -138,7 +138,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
               {/* for admin. When possible to log in using an admin account, delete this button */}
               <button
-                className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded 
+                className="bg-custom-blue hover:bg-custom-blue-hover text-white font-bold py-2 px-4 rounded
                         focus:outline-none focus:shadow-outline"
                 type="button"
                 onClick={() => {
