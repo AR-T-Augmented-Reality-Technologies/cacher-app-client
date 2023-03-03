@@ -10,6 +10,8 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const [currentPage, setCurrentPage] = useState("Login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const dispatch = useDispatch();
 
@@ -53,24 +55,37 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
       password_unhashed: password,
     };
 
-    const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/users/login`, {
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json"
-      },
-      mode: "cors",
-      body: JSON.stringify(payload),
-    });
-
+    const response = await fetch(
+      `${process.env.REACT_APP_REST_API_HOST}/users/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "cors",
+        body: JSON.stringify(payload),
+      }
+    );
     const data = await response.json();
 
-    console.log("Our Data:: ", await data.data);
+    if (data.data.message === "FAILED TO FIND USER") {
+      setError("user");
+      setMessage("No user found with that email address");
+      return;
+    }
+    if (data.data.message === "PASSWORD WAS INCORRECT") {
+      setError("password");
+      setMessage("Incorrect password");
+      return;
+    }
 
     dispatch(add_user(await data.data));
 
-    console.log("Finished Login");
+    navigation.reset({
+        index: 0,
+        routes: [{ name: 'Map' }],
+      });
 
-    navigation.navigate('Map');
   };
 
   return (
@@ -98,6 +113,11 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
                 type="email"
                 onChange={(e) => setEmail(e.target.value)}
               />
+              {error === "user" && (
+                <div className="text-custom-orange dark:text-custom-orange pt-2">
+                  {message}
+                </div>
+              )}
             </div>
             <div className="mb-6">
               <label
@@ -113,6 +133,11 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
               />
+              {error === "password" && (
+                <div className="text-custom-orange dark:text-custom-orange pt-2">
+                  {message}
+                </div>
+              )}
             </div>
             <div className="flex items-center justify-between">
               <button
