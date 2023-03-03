@@ -82,10 +82,9 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     dispatch(add_user(await data.data));
 
     navigation.reset({
-        index: 0,
-        routes: [{ name: 'Map' }],
-      });
-
+      index: 0,
+      routes: [{ name: "Map" }],
+    });
   };
 
   return (
