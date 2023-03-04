@@ -41,50 +41,58 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     document.body.className = theme;
   }, [theme]);
 
-  const validateForm = (e: any) => {
-    e.preventDefault();
-
-    // TODO: Form validation here
-    return true;
-  };
-
-  const submitForm = async () => {
-    // TODO: Form submit to server using REST API.
-    const payload = {
-      email: email,
-      password_unhashed: password,
-    };
-
-    const response = await fetch(
-      `${process.env.REACT_APP_REST_API_HOST}/users/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        mode: "cors",
-        body: JSON.stringify(payload),
+  const validateForm = async () => {  
+    // Validate form fields
+    if (!email) {
+      setError("no_email");
+      setMessage("Please enter an email address");
+    }
+    if (!password) {
+      setError("no_password");
+      setMessage("Please enter a password");
+    }
+  
+    // Submit the form
+    try {
+      const payload = {
+        email: email,
+        password_unhashed: password,
+      };
+      const response = await fetch(
+        `${process.env.REACT_APP_REST_API_HOST}/users/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          mode: "cors",
+          body: JSON.stringify(payload),
+        }
+      );
+      const data = await response.json();
+      console.log("our data: ", data);
+  
+      if (data.data.message === "FAILED TO FIND USER") {
+        setError("user");
+        setMessage("No user found with that email address");
       }
-    );
-    const data = await response.json();
-
-    if (data.data.message === "FAILED TO FIND USER") {
-      setError("user");
-      setMessage("No user found with that email address");
-      return;
+      if (data.data.message === "PASSWORD WAS INCORRECT") {
+        setError("password");
+        setMessage("Incorrect password");
+      }
+  
+      dispatch(add_user(await data.data));
+  
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Map" }],
+      });
+  
+      return true;
+    } catch (error) {
+      console.error("Error submitting form: ", error);
+      return false;
     }
-    if (data.data.message === "PASSWORD WAS INCORRECT") {
-      setError("password");
-      setMessage("Incorrect password");
-      return;
-    }
-
-    dispatch(add_user(await data.data));
-
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "Map" }],
-    });
   };
 
   return (
@@ -117,6 +125,11 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
                   {message}
                 </div>
               )}
+              {error === "no_email" && (
+                <div className="text-custom-orange dark:text-custom-orange pt-2">
+                  {message}
+                </div>
+              )}
             </div>
             <div className="mb-6">
               <label
@@ -137,6 +150,11 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
                   {message}
                 </div>
               )}
+              {error === "no_password" && (
+                <div className="text-custom-orange dark:text-custom-orange pt-2">
+                  {message}
+                </div>
+              )}
             </div>
             <div className="flex items-center justify-between">
               <button
@@ -144,7 +162,7 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
                         focus:outline-none focus:shadow-outline"
                 type="button"
                 onClick={(e) => {
-                  validateForm(e) && submitForm();
+                  validateForm();
                 }}
               >
                 Sign In
