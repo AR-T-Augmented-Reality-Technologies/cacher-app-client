@@ -3,7 +3,10 @@ import { Button, View, ImageBackground } from "react-native";
 import { Splide, SplideTrack } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 import { ImageSliderChild } from "../../components/ImageSliderChild.component";
-
+import { useSelector } from "react-redux";
+import userEvent from "@testing-library/user-event";
+import { method } from "cypress/types/bluebird";
+import { add_image } from "../../features/image.slice";
 interface ImageScreenProps {
     navigation: any;
 }
@@ -93,15 +96,51 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
         }
     };
 
+
+    //Attempting to get code for pulling likes from database
+    const image = useSelector((state: any) => state.likeinfo);
+    console.log("Like data " + image);
+    const getData = async () => {
+        console.log("User state data: " + image);
+        const response = await fetch(
+            `${process.env.REACT_APP_REST_API_HOST}/images/${image.id}`,
+            {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                mode: "cors",
+              }
+        );
+        const data = response.json().then((data) => {
+            console.log(data);
+            setLikeCount(data.image.likes);
+        })
+    };
+
     // Like post { Admin can see number of likes but cannot himself like a post }
     const likePost = () => {
-        // setIsLiked(!isLiked);
-        // if (!isLiked) {
-        //     setLikeCount(likeCount + 1);
-        // } else {
-        //     setLikeCount(likeCount - 1);
-        // }
+        setIsLiked(!isLiked);
+        if (!isLiked) {
+            setLikeCount(likeCount + 1);
+        } else {
+            setLikeCount(likeCount - 1);
+        }
         setShowLikeCount(!showLikeCount);
+
+        //sends new like count to database
+        const data = {
+            id: image.id,
+            likeCount : image.likes
+        };
+
+        fetch(`${process.env.REACT_APP_REST_API_HOST}/images/likeupdate`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          }).then((res) => res);
     };
 
     // Show like count for 2 seconds

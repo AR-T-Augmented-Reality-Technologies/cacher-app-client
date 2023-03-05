@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Button, View, ImageBackground } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { add_user } from "../../features/users.slice";
+
 
 interface SettingsScreenProps {
   navigation: any;
@@ -12,7 +15,7 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
   const [showApp, setApp] = useState(false);
   const [currentPage, setCurrentPage] = useState("Settings");
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-
+  const user = useSelector((state: any) => state.users);
   // Display options
   const displayPrivate = () => {
     setPrivate(!showPrivate);
@@ -46,6 +49,20 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
     localStorage.setItem("currentPage", currentPage);
   }, [currentPage]);
 
+    const privatiseUser = async () => {
+
+      const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/users/${user.id}/make_private`, {
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json",
+          },
+      });
+
+      console.log(await response);
+
+      const data = await response.json();
+      console.log(await data);
+  };
   return (
     <>
       <div className="grid grid-cols-8 min-h-screen dark:bg-dback">
@@ -149,7 +166,7 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
                     <button
                       className="bg-custom-blue hover:bg-custom-blue-hover dark:bg-dblue hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded 
                             focus:outline-none focus:shadow-outline"
-                      type="button"
+                      type="button" onClick={() =>privatiseUser()}
                     >
                       {" "}
                       Privatise Profile
