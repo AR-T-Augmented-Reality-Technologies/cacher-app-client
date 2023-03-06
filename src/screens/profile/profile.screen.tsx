@@ -124,7 +124,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     dispatch(logout_user());
 
     // Clear local storage
-    localStorage.clear();
+    localStorage.removeItem("currentPage");
 
     // Clear session storage
     sessionStorage.clear();
