@@ -31,6 +31,8 @@ jobs:
     - run: echo REACT_APP_W3W_API_KEY=${{secrets.REACT_APP_W3W_API_KEY}} >> .env
     - run: echo REACT_APP_REST_API_HOST=${{secrets.REACT_APP_REST_API_HOST}} >> .env
     - run: echo REACT_APP_GOOGLE_MAPS_API_KEY=${{secrets.REACT_APP_GOOGLE_MAPS_API_KEY}} >> .env
+    - run: rm -rf node_modules/
+    - run: rm -rf package-lock.json
     - run: npm i
     - run: npm run build
     - run: pm2 stop 0
