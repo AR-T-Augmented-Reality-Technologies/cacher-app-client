@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 interface RegisterScreenProps {
   navigation: any;
 }
-// nig
+
 export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   const [currentPage, setCurrentPage] = useState("Register");
   const [email, setEmail] = useState("");
@@ -113,8 +113,8 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
     return true;
   };
 
-  const submitForm = () => {
-    const data = {
+  const submitForm = async () => {
+    const payload = {
       firstname: firstname,
       lastname: lastname,
       email: email,
@@ -123,17 +123,29 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       username: username,
     };
 
-    fetch(`${process.env.REACT_APP_REST_API_HOST}/users/create`, {
+    const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/users/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     }).then((res) => res);
-    // .then((data) => {
-    //     // Set our user
-    //     return data;
-    //
+
+    const data = await response.json();
+
+    if (data.data.message === "EMAIL ALREADY EXISTS"){
+        setError("email");
+        setMessage("Email already exists");
+        console.log("Email already exists")
+        return false;
+    }
+
+    if (data.data.message === "USERNAME ALREADY EXISTS"){
+        setError("username");
+        setMessage("Username already exists");
+        console.log("Username already exists")
+        return false;
+    }
 
     navigation.navigate("Login");
   };

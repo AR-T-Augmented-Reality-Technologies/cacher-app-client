@@ -48,10 +48,12 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
     if (!email) {
       setError("no_email");
       setMessage("Please enter an email address");
+      return false;
     }
     if (!password) {
       setError("no_password");
       setMessage("Please enter a password");
+      return false;
     }
   
     // Submit the form
