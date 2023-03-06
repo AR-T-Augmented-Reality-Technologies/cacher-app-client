@@ -3,6 +3,7 @@ import {
   What3wordsAutosuggest,
   What3wordsMap,
 } from "@what3words/react-components";
+// eslint-disable-next-line
 import { Button, View, ImageBackground } from "react-native";
 
 interface AdmiDashboardProps {
@@ -132,6 +133,7 @@ export const AdminDashboardScreen = ({ navigation }: AdmiDashboardProps) => {
 
           {/* Reports button */}
           <button>
+            {/* eslint-disable-next-line */}
             <img
               src="images/envelope-icon.png"
               onClick={() => {

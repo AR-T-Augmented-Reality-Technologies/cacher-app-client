@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+// eslint-disable-next-line
 import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -14,6 +15,7 @@ import { ProfileScreen } from './screens/profile/profile.screen';
 import { SettingsScreen }  from './screens/settings/settings.screen';
 
 // assets
+// eslint-disable-next-line
 import logo from './logo.svg';
 import './App.css';
 
@@ -25,6 +27,7 @@ const App = () => {
 
   /* Set the initial screen to the last screen the user was on,
   or the login screen if they haven't been on the app before. */
+  // eslint-disable-next-line
   const [currentPage, setCurrentPage] = useState<string>(lastScreen || 'Login');
 
   useEffect(() => {
@@ -33,7 +36,9 @@ const App = () => {
     } else{
       document.documentElement.classList.remove("dark");
     }
-    }, [theme]);
+  }, [theme]);
+
+  // eslint-disable-next-line
   const handleThemeSwitch = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };

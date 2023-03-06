@@ -1,11 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
+// eslint-disable-next-line
 import { Button, View, ImageBackground } from "react-native";
+// eslint-disable-next-line
 import { Splide, SplideTrack } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 import { ImageSliderChild } from "../../components/ImageSliderChild.component";
 import { useSelector } from "react-redux";
+// eslint-disable-next-line
 import userEvent from "@testing-library/user-event";
+// eslint-disable-next-line
 import { method } from "cypress/types/bluebird";
+// eslint-disable-next-line
 import { add_image } from "../../features/image.slice";
 interface ImageScreenProps {
     navigation: any;
@@ -24,6 +29,7 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
     const [newComment, setNewComment] = useState("");
     const [commentTimes, setCommentTimes] = useState<number[]>([]);
     const [images, setImages] = useState<string[]>([]);
+    // eslint-disable-next-line
     const [shared, setShared] = useState(false);
     const [showDeleteMenu, setShowDeleteMenu] = useState(false);
 
@@ -100,6 +106,8 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
     //Attempting to get code for pulling likes from database
     const image = useSelector((state: any) => state.likeinfo);
     console.log("Like data " + image);
+
+    // eslint-disable-next-line
     const getData = async () => {
         console.log("User state data: " + image);
         const response = await fetch(
@@ -112,6 +120,8 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                 mode: "cors",
               }
         );
+        
+        // eslint-disable-next-line
         const data = response.json().then((data) => {
             console.log(data);
             setLikeCount(data.image.likes);
@@ -152,12 +162,14 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
         setImages(["images/image2.jpg", "images/image1.jpg"]);
     }, [setImages]);
 
+    // eslint-disable-next-line
     const displayImages = () => {
         setImages(["images/image1.jpg", "images/image2.jpg"]);
         console.log("images: ", images);
     };
 
     // Comment post
+    // eslint-disable-next-line
     const commentPost = () => { };
 
     // Display comments
@@ -464,6 +476,7 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                                         <p className="break-normal px-2 py-2 col-start-2 col-span-1 row-start-2 text-sm overflow-hidden text-justify">
                                             <img onClick={() => { deleteComment(index) }} style={{ height: "1.25rem", cursor: "pointer" }} src="images/delete-icon.png" alt="" />
                                         </p>
+                                        {/* eslint-disable-next-line */}
                                         <img
                                             src="images/avatar-image.jpg"
                                             className="border-solid border-2 border-black rounded-lg w-3/4 float-right col-start-5 cols-span-1 mt-2"

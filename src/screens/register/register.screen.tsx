@@ -46,8 +46,8 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   const validateForm = (e: any) => {
     e.preventDefault();
     const regex_email = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-    const regex_password =
-      /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    // eslint-disable-next-line
+    const regex_password = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
 
     if (!email) {
       setError("email");

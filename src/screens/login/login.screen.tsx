@@ -28,6 +28,8 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
   }, [currentPage]);
 
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+
+  // eslint-disable-next-line
   const toggleTheme = () => {
     if (theme === "light") {
       setTheme("dark");

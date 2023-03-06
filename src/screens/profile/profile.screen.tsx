@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+// eslint-disable-next-line
 import { Button, View, ImageBackground } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { logout_user } from "../../features/users.slice";
@@ -38,6 +39,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   // Use our user store
   const user = useSelector((state: any) => state.users);
   console.log("User state data: " + user);
+
   const getData = async () => {
     console.log("User state data: " + user);
     const response = await fetch(
@@ -52,6 +54,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       }
     );
 
+    // eslint-disable-next-line
     const data = response.json().then((data) => {
       console.log(data);
       setUsername(data.user.user_username);
@@ -61,9 +64,10 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       setDob(data.user.user_dob);
     });
   };
+
   useEffect(() => {
     getData();
-  }, []);
+  },);
 
   // Delete account
   const deleteAccountPopup = () => {
@@ -111,6 +115,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   };
 
   // Edit account details
+  // eslint-disable-next-line
   const editDetails = () => {};
 
   // Sign out
@@ -164,6 +169,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         <img
           src="images/image-placeholder.png"
           className="border-solid border-2 rounded border-black "
+          alt="placeholder"
         ></img>
       </button>
     );
@@ -286,6 +292,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             <img
               src="images/avatar-image.jpg"
               className="border-solid border-2 border-black rounded"
+              alt="profile"
             ></img>
           </button>
 

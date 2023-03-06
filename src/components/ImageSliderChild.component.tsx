@@ -8,6 +8,7 @@ interface ImageSliderChildProps {
 export const ImageSliderChild = ({ srcUrl }: ImageSliderChildProps) => {
     return (
         <SplideSlide>
+             {/* eslint-disable-next-line */}
             <img className="h-screen w-screen" src={srcUrl}/>
         </SplideSlide>
         

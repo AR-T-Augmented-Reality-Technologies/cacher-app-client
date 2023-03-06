@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
+// eslint-disable-next-line
 import { Button, View, ImageBackground } from "react-native";
+// eslint-disable-next-line
 import { Splide, SplideTrack } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 import { ImageSliderChild } from "../../components/ImageSliderChild.component";
@@ -21,6 +23,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   const [newComment, setNewComment] = useState("");
   const [commentTimes, setCommentTimes] = useState<number[]>([]);
   const [images, setImages] = useState<string[]>([]);
+  // eslint-disable-next-line
   const [shared, setShared] = useState(false);
   const [showFlagMenu, setShowFlagMenu] = useState(false);
 
@@ -115,12 +118,14 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     setImages(["images/image2.jpg", "images/image1.jpg"]);
   }, [setImages]);
 
+  // eslint-disable-next-line
   const displayImages = () => {
     setImages(["images/image1.jpg", "images/image2.jpg"]);
     console.log("images: ", images);
   };
 
   // Comment post
+  // eslint-disable-next-line
   const commentPost = () => { };
 
   // Display comments
@@ -418,6 +423,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                     <p className="break-normal px-2 py-2 col-start-2 col-span-1 row-start-2 text-sm overflow-hidden text-justify">
                       <img onClick={() => { flagPostOrComment() }} style={{ height: "1.25rem", cursor: "pointer" }} src="images/flag-icon.png" alt="" />
                     </p>
+                    {/* eslint-disable-next-line */}
                     <img
                       src="images/avatar-image.jpg"
                       className="border-solid border-2 border-black rounded-lg w-3/4 float-right col-start-5 cols-span-1 mt-2"

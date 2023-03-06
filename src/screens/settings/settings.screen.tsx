@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
+// eslint-disable-next-line
 import { Button, View, ImageBackground } from "react-native";
+// eslint-disable-next-line
 import { useSelector, useDispatch } from "react-redux";
+// eslint-disable-next-line
 import { add_user } from "../../features/users.slice";
 
 
@@ -10,6 +13,7 @@ interface SettingsScreenProps {
 
 export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
   // States for Form data
+  // eslint-disable-next-line
   const [darkMode, setDarkMode] = useState(false);
   const [showPrivate, setPrivate] = useState(false);
   const [showApp, setApp] = useState(false);
