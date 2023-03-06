@@ -9,7 +9,7 @@ on:
   pull_request:
     branches: [ "master" ]
 env:
-  GENERATE_SOURCEMAP: false
+  GENERATE_SOURCEMAP: true
 
 jobs:
   build:
