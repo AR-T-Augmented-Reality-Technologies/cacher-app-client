@@ -21,6 +21,14 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   const [hasNumber, setHasNumber] = useState(false);
   const [hasSpecialChar, setHasSpecialChar] = useState(false);
 
+  const minDate = new Date();
+  const maxDate = new Date();
+  minDate.setFullYear(minDate.getFullYear() - 100);
+  maxDate.setFullYear(maxDate.getFullYear() - 13);
+  // convert the date to format yyyy-mm-dd
+  const minDateStr = minDate.toISOString().split("T")[0];
+  const maxDateStr = maxDate.toISOString().split("T")[0];
+
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setPassword(value);
@@ -47,7 +55,8 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
     e.preventDefault();
     const regex_email = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
     // eslint-disable-next-line
-    const regex_password = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    const regex_password =
+      /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
 
     if (!email) {
       setError("email");
@@ -123,28 +132,38 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       username: username,
     };
 
-    const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/users/create`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    }).then((res) => res);
+    const response = await fetch(
+      `${process.env.REACT_APP_REST_API_HOST}/users/create`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    ).then((res) => res);
 
     const data = await response.json();
 
-    if (data.data.message === "EMAIL ALREADY EXISTS"){
-        setError("email");
-        setMessage("Email already exists");
-        console.log("Email already exists")
-        return false;
+    if (data.data.message === "EMAIL ALREADY EXISTS") {
+      setError("email");
+      setMessage("Email already exists");
+      console.log("Email already exists");
+      return false;
     }
 
-    if (data.data.message === "USERNAME ALREADY EXISTS"){
-        setError("username");
-        setMessage("Username already exists");
-        console.log("Username already exists")
-        return false;
+    if (data.data.message === "USERNAME ALREADY EXISTS") {
+      setError("username");
+      setMessage("Username already exists");
+      console.log("Username already exists");
+      return false;
+    }
+
+    if (data.data.message === "USER IS UNDER 13") {
+      setError("dob");
+      setMessage("You must be 13 or over to register");
+      console.log("User is under 13");
+      return false;
     }
 
     navigation.navigate("Login");
@@ -412,6 +431,9 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                          text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue"
                 id="dob-input"
                 type="date"
+                min={minDateStr}
+                max={maxDateStr}
+                pattern="^(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/[0-9]{4}$"
                 onChange={(e) => setDob(e.target.value)}
               />
               {error === "dob" && (
