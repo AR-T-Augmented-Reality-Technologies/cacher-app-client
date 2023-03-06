@@ -57,17 +57,17 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     // eslint-disable-next-line
     const data = response.json().then((data) => {
       console.log(data);
-      setUsername(data.user.user_username);
-      setFirstname(data.user.user_firstname);
-      setLastname(data.user.user_lastname);
-      setEmail(data.user.user_email);
-      setDob(data.user.user_dob);
+      setUsername(data.data.user.user_username);
+      setFirstname(data.data.user.user_firstname);
+      setLastname(data.data.user.user_lastname);
+      setEmail(data.data.user.user_email);
+      setDob(data.data.user.user_dob);
     });
   };
 
   useEffect(() => {
     getData();
-  },);
+  }, []);
 
   // Delete account
   const deleteAccountPopup = () => {
