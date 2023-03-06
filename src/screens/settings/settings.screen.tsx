@@ -51,8 +51,8 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
 
     const privatiseUser = async () => {
 
-      const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/users/${user.id}/make_private`, {
-          method: "GET",
+      const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/users/${user.id}/togglePrivateUser`, {
+          method: "PUT",
           headers: {
               "Content-Type": "application/json",
           },
