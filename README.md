@@ -1,3 +1,4 @@
+[![Node.js CI](https://github.com/AR-T-Augmented-Reality-Technologies/cacher-app-client/actions/workflows/node.js.yml/badge.svg?branch=master)](https://github.com/AR-T-Augmented-Reality-Technologies/cacher-app-client/actions/workflows/node.js.yml)
 # Launching the cacher app client
 
 In the project directory, run:
