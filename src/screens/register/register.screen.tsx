@@ -20,6 +20,7 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   const [hasUppercase, setHasUppercase] = useState(false);
   const [hasNumber, setHasNumber] = useState(false);
   const [hasSpecialChar, setHasSpecialChar] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   const minDate = new Date();
   const maxDate = new Date();
@@ -166,7 +167,15 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       return false;
     }
 
-    navigation.navigate("Login");
+    if (data.data.message === "INVALID YEAR OF BIRTH") {
+      setError("dob");
+      setMessage("Invalid year of birth");
+      console.log("Invalid year of birth");
+      return false;
+    }
+
+    setRegistrationSuccess(true);
+    console.log("Registration successful");
   };
 
   return (
@@ -208,272 +217,301 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             alt="Logo"
             className="w-1/2 md:w-1/6 mx-auto mt-4"
           ></img>
-          <form className="w-full max-w-sm sm:w-full mt-4 mx-auto">
-            <div className="mb-4">
-              <label
-                className="dark:text-white block text-gray-500 font-bold mb-2"
-                htmlFor="emailLabel"
-              >
-                Email
-              </label>
-              <input
-                className="dark:bg-dtext dark:border-dbord dark:text-white bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
-                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue"
-                id="email-input"
-                type="email"
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              {error === "email" && (
-                <div className="text-custom-orange dark:text-custom-orange pt-2">
-                  {message}
-                </div>
-              )}
-            </div>
-            <div className="mb-4">
-              <label
-                className="dark:text-white block text-gray-500 font-bold mb-2"
-                htmlFor="usernameLabel"
-              >
-                Username
-              </label>
-              <input
-                className="dark:bg-dtext dark:border-dbord dark:text-white  bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
-                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue"
-                id="username-input"
-                type="text"
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              {error === "username" && (
-                <div className="text-custom-orange dark:text-custom-orange pt-2">
-                  {message}
-                </div>
-              )}
-            </div>
-            <div className="mb-4">
-              <label
-                className="dark:text-white block text-gray-500 font-bold mb-2"
-                htmlFor="passwordLabel"
-              >
-                Password
-              </label>
-              <input
-                className="dark:bg-dtext dark:border-dbord dark:text-white bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue"
-                id="password-input"
-                type="password"
-                value={password}
-                onChange={handlePasswordChange}
-              />
-              {password.length > 0 && (
-                <div className="justify-start mt-2">
-                  <div
-                    className={`flex items-center ${
-                      isValidLength ? "text-custom-blue" : "text-gray-400"
-                    }`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Minimum 8 characters long
-                  </div>
-                  <div
-                    className={`flex items-center ${
-                      hasUppercase ? "text-custom-blue" : "text-gray-400"
-                    }`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    At least one uppercase character
-                  </div>
-                  <div
-                    className={`flex items-center ${
-                      hasNumber ? "text-custom-blue" : "text-gray-400"
-                    }`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    At least one number
-                  </div>
-                  <div
-                    className={`flex items-center ${
-                      hasSpecialChar ? "text-custom-blue" : "text-gray-400"
-                    }`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    At least one special character
-                  </div>
-                </div>
-              )}
-              {error === "password" && (
-                <div className="text-custom-orange dark:text-custom-orange pt-2">
-                  {message}
-                </div>
-              )}
-            </div>
-            <div className="mb-4">
-              <label
-                className="dark:text-white block text-gray-500 font-bold mb-2"
-                htmlFor="passwordLabel"
-              >
-                Confirm Password
-              </label>
-              <input
-                className="dark:bg-dtext dark:border-dbord dark:text-white  bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
-                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue"
-                id="confirmPassword-input"
-                type="password"
-                onChange={(e) => setPasswordConfirm(e.target.value)}
-              />
-              {error === "passwordConfirm" && (
-                <div className="text-custom-orange dark:text-custom-orange pt-2">
-                  {message}
-                </div>
-              )}
-            </div>
-            <div className="flex items-center justify-between">
+          {!registrationSuccess && (
+            <form className="w-full max-w-sm sm:w-full mt-4 mx-auto">
               <div className="mb-4">
                 <label
                   className="dark:text-white block text-gray-500 font-bold mb-2"
-                  htmlFor="fnameLabel"
+                  htmlFor="emailLabel"
                 >
-                  First Name
+                  Email
                 </label>
                 <input
-                  className="dark:bg-dtext dark:border-dbord dark:text-white  bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
+                  className="dark:bg-dtext dark:border-dbord dark:text-white bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
                          text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue"
-                  id="fname-input"
-                  type="text"
-                  onChange={(e) => setFirstname(e.target.value)}
+                  id="email-input"
+                  type="email"
+                  onChange={(e) => setEmail(e.target.value)}
                 />
-                {error === "firstname" && (
+                {error === "email" && (
                   <div className="text-custom-orange dark:text-custom-orange pt-2">
                     {message}
                   </div>
                 )}
               </div>
-              <div className="ml-6 mb-4">
+              <div className="mb-4">
                 <label
                   className="dark:text-white block text-gray-500 font-bold mb-2"
-                  htmlFor="lnameLabel"
+                  htmlFor="usernameLabel"
                 >
-                  Last Name
+                  Username
                 </label>
                 <input
                   className="dark:bg-dtext dark:border-dbord dark:text-white  bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
                          text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue"
-                  id="lname-input"
+                  id="username-input"
                   type="text"
-                  onChange={(e) => setLastname(e.target.value)}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
-                {error === "lastname" && (
+                {error === "username" && (
                   <div className="text-custom-orange dark:text-custom-orange pt-2">
                     {message}
                   </div>
                 )}
               </div>
-            </div>
-            <div className="mb-6">
-              <label
-                className="dark:text-white block text-gray-500 font-bold mb-2"
-                htmlFor="dobLabel"
-              >
-                Date of Birth
-              </label>
-              <input
-                className="dark:bg-dtext dark:border-dbord dark:text-white  bg-gray-200 appearance-none border-2 h-10 border-gray-200 rounded w-full py-2 px-4
+              <div className="mb-4">
+                <label
+                  className="dark:text-white block text-gray-500 font-bold mb-2"
+                  htmlFor="passwordLabel"
+                >
+                  Password
+                </label>
+                <input
+                  className="dark:bg-dtext dark:border-dbord dark:text-white bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue"
+                  id="password-input"
+                  type="password"
+                  value={password}
+                  onChange={handlePasswordChange}
+                />
+                {password.length > 0 && (
+                  <div className="justify-start mt-2">
+                    <div
+                      className={`flex items-center ${
+                        isValidLength ? "text-custom-blue" : "text-gray-400"
+                      }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      Minimum 8 characters long
+                    </div>
+                    <div
+                      className={`flex items-center ${
+                        hasUppercase ? "text-custom-blue" : "text-gray-400"
+                      }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      At least one uppercase character
+                    </div>
+                    <div
+                      className={`flex items-center ${
+                        hasNumber ? "text-custom-blue" : "text-gray-400"
+                      }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      At least one number
+                    </div>
+                    <div
+                      className={`flex items-center ${
+                        hasSpecialChar ? "text-custom-blue" : "text-gray-400"
+                      }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      At least one special character
+                    </div>
+                  </div>
+                )}
+                {error === "password" && (
+                  <div className="text-custom-orange dark:text-custom-orange pt-2">
+                    {message}
+                  </div>
+                )}
+              </div>
+              <div className="mb-4">
+                <label
+                  className="dark:text-white block text-gray-500 font-bold mb-2"
+                  htmlFor="passwordLabel"
+                >
+                  Confirm Password
+                </label>
+                <input
+                  className="dark:bg-dtext dark:border-dbord dark:text-white  bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
                          text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue"
-                id="dob-input"
-                type="date"
-                min={minDateStr}
-                max={maxDateStr}
-                pattern="^(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/[0-9]{4}$"
-                onChange={(e) => setDob(e.target.value)}
-              />
-              {error === "dob" && (
+                  id="confirmPassword-input"
+                  type="password"
+                  onChange={(e) => setPasswordConfirm(e.target.value)}
+                />
+                {error === "passwordConfirm" && (
+                  <div className="text-custom-orange dark:text-custom-orange pt-2">
+                    {message}
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="mb-4">
+                  <label
+                    className="dark:text-white block text-gray-500 font-bold mb-2"
+                    htmlFor="fnameLabel"
+                  >
+                    First Name
+                  </label>
+                  <input
+                    className="dark:bg-dtext dark:border-dbord dark:text-white  bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
+                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue"
+                    id="fname-input"
+                    type="text"
+                    onChange={(e) => setFirstname(e.target.value)}
+                  />
+                  {error === "firstname" && (
+                    <div className="text-custom-orange dark:text-custom-orange pt-2">
+                      {message}
+                    </div>
+                  )}
+                </div>
+                <div className="ml-6 mb-4">
+                  <label
+                    className="dark:text-white block text-gray-500 font-bold mb-2"
+                    htmlFor="lnameLabel"
+                  >
+                    Last Name
+                  </label>
+                  <input
+                    className="dark:bg-dtext dark:border-dbord dark:text-white  bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4
+                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue"
+                    id="lname-input"
+                    type="text"
+                    onChange={(e) => setLastname(e.target.value)}
+                  />
+                  {error === "lastname" && (
+                    <div className="text-custom-orange dark:text-custom-orange pt-2">
+                      {message}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="mb-6">
+                <label
+                  className="dark:text-white block text-gray-500 font-bold mb-2"
+                  htmlFor="dobLabel"
+                >
+                  Date of Birth
+                </label>
+                <input
+                  className="dark:bg-dtext dark:border-dbord dark:text-white  bg-gray-200 appearance-none border-2 h-10 border-gray-200 rounded w-full py-2 px-4
+                         text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-custom-blue"
+                  id="dob-input"
+                  type="date"
+                  min={minDateStr}
+                  max={maxDateStr}
+                  pattern="^(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/(1|2)[0-9]{3}$"
+                  onChange={(e) => setDob(e.target.value)}
+                />
+                {error === "dob" && (
+                  <div className="text-custom-orange dark:text-custom-orange pt-2">
+                    {message}
+                  </div>
+                )}
+              </div>
+              <div className="flex">
+                <input
+                  className="form-checkbox accent-custom-blue"
+                  type="checkbox"
+                  id="registerCheckbox"
+                  onChange={(e) => setRegisterCheckbox(e.target.checked)}
+                />
+                <label
+                  className="ml-2 dark:text-white"
+                  htmlFor="registerCheckbox"
+                >
+                  I agree to my details being registered
+                </label>
+              </div>
+              {error === "checkbox" && (
                 <div className="text-custom-orange dark:text-custom-orange pt-2">
                   {message}
                 </div>
               )}
-            </div>
-            <div className="flex">
-              <input
-                className="form-checkbox accent-custom-blue"
-                type="checkbox"
-                id="registerCheckbox"
-                onChange={(e) => setRegisterCheckbox(e.target.checked)}
-              />
-              <label
-                className="ml-2 dark:text-white"
-                htmlFor="registerCheckbox"
-              >
-                I agree to my details being registered
-              </label>
-            </div>
-            {error === "checkbox" && (
-              <div className="text-custom-orange dark:text-custom-orange pt-2">
-                {message}
-              </div>
-            )}
-            <div className="flex justify-center mb-8 mt-6">
-              <button
-                className="bg-custom-blue hover:bg-custom-blue-hover hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded
+              <div className="flex justify-center mb-8 mt-6">
+                <button
+                  className="bg-custom-blue hover:bg-custom-blue-hover hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded
                         focus:outline-none focus:shadow-outline dark:bg-dblue"
-                type="button"
-                onClick={(e) => {
-                  validateForm(e) && submitForm();
-                }}
-              >
-                Register
-              </button>
+                  type="button"
+                  onClick={(e) => {
+                    validateForm(e) && submitForm();
+                  }}
+                >
+                  Register
+                </button>
+              </div>
+            </form>
+          )}
+          {registrationSuccess && (
+            <div className="justify-center mb-8 mt-6">
+              {/* display success message */}
+              <div className="text-center">
+                <p className="text-xl font-bold pb-2 text-custom-blue">
+                  Registration Successful!
+                </p>
+                <p className="text-xl text-neutral-500 pb-6">
+                  You can now log into to your account
+                </p>
+
+                <button
+                  className="bg-custom-blue hover:bg-custom-blue-hover hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded
+                        focus:outline-none focus:shadow-outline dark:bg-dblue"
+                  type="button"
+                  onClick={(e) => {
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: "Login" }],
+                    });
+                  }}
+                >
+                  Log in
+                </button>
+              </div>
             </div>
-          </form>
+          )}
         </div>
 
         {/* A column on the right of the screen to display vertial lines. All 3 lines will be displayed on desktop. On mobile devices only 2 lines will be displayed to save space*/}
