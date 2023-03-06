@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import userEvent from "@testing-library/user-event";
 import { method } from "cypress/types/bluebird";
 import { add_image } from "../../features/image.slice";
+import { add_user } from "../../features/users.slice";
 interface ImageScreenProps {
     navigation: any;
 }
@@ -26,6 +27,9 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
     const [images, setImages] = useState<string[]>([]);
     const [shared, setShared] = useState(false);
     const [showDeleteMenu, setShowDeleteMenu] = useState(false);
+    const user = useSelector((state: any) => state.users);
+    const image = useSelector((state: any) => state.image);
+
 
     // Store current page in local storage
     useEffect(() => {
@@ -50,6 +54,27 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
         setCommentTimes([...commentTimes, currentTime]);
         setComments([...comments, newComment]);
         setNewComment("");
+
+        const data = {
+            imageid: '32', //placeholder because currently it is not saving images
+            userid: user.id,
+            comment: newComment,
+            timestamp: Date.now()
+        };
+
+        console.log('User Id' + user.id);
+        console.log('image Id' + 32);
+        console.log('Comment ' + newComment);
+        console.log('Date ' + Date.now())
+
+
+        fetch(`${process.env.REACT_APP_REST_API_HOST}/images/addcomment`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        }).then((res) => res);
     };
 
     // Calculate time since comment was posted
@@ -98,7 +123,6 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
 
 
     //Attempting to get code for pulling likes from database
-    const image = useSelector((state: any) => state.likeinfo);
     console.log("Like data " + image);
     const getData = async () => {
         console.log("User state data: " + image);
@@ -107,10 +131,10 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
             {
                 method: "GET",
                 headers: {
-                  "Content-Type": "application/json",
+                    "Content-Type": "application/json",
                 },
                 mode: "cors",
-              }
+            }
         );
         const data = response.json().then((data) => {
             console.log(data);
@@ -118,7 +142,7 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
         })
     };
 
-    // Like post { Admin can see number of likes but cannot himself like a post }
+    // Like post
     const likePost = () => {
         setIsLiked(!isLiked);
         if (!isLiked) {
@@ -130,17 +154,17 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
 
         //sends new like count to database
         const data = {
-            id: image.id,
-            likeCount : image.likes
+            id: '32',
+            likeCount: image.likes
         };
 
         fetch(`${process.env.REACT_APP_REST_API_HOST}/images/likeupdate`, {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
+                "Content-Type": "application/json",
             },
             body: JSON.stringify(data),
-          }).then((res) => res);
+        }).then((res) => res);
     };
 
     // Show like count for 2 seconds

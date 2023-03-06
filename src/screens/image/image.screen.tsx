@@ -3,7 +3,9 @@ import { Button, View, ImageBackground } from "react-native";
 import { Splide, SplideTrack } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 import { ImageSliderChild } from "../../components/ImageSliderChild.component";
-
+import { add_user } from "../../features/users.slice";
+import { add_image } from "../../features/image.slice";
+import { useSelector } from "react-redux";
 interface ImageScreenProps {
   navigation: any;
 }
@@ -23,6 +25,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   const [images, setImages] = useState<string[]>([]);
   const [shared, setShared] = useState(false);
   const [showFlagMenu, setShowFlagMenu] = useState(false);
+  const user = useSelector((state: any) => state.users);
+  const image = useSelector((state: any) => state.image);
 
   // Store current page in local storage
   useEffect(() => {
@@ -36,12 +40,36 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     localStorage.setItem("currentPage", currentPage);
   }, [currentPage]);
 
+
+  // Get past comment data
+
   // Adding comments
   const handleAddComment = () => {
     const currentTime = new Date().getTime();
     setCommentTimes([...commentTimes, currentTime]);
     setComments([...comments, newComment]);
     setNewComment("");
+
+    const data = {
+      imageid: '32', //placeholder because currently it is not saving images
+      userid: user.id,
+      comment: newComment,
+      timestamp: Date.now()
+    };
+
+    console.log('User Id' + user.id);
+    console.log('image Id' + 32);
+    console.log('Comment ' + newComment);
+    console.log('Date ' + Date.now())
+
+
+    fetch(`${process.env.REACT_APP_REST_API_HOST}/images/addcomment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => res);
   };
 
   // Calculate time since comment was posted
@@ -95,6 +123,26 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     }
   };
 
+  //Attempting to get code for pulling likes from database
+  console.log("Like data " + image);
+  const getData = async () => {
+    console.log("User state data: " + image);
+    const response = await fetch(
+      `${process.env.REACT_APP_REST_API_HOST}/images/${image.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "cors",
+      }
+    );
+    const data = response.json().then((data) => {
+      console.log(data);
+      setLikeCount(data.image.likes);
+    })
+  };
+
   // Like post
   const likePost = () => {
     setIsLiked(!isLiked);
@@ -104,6 +152,20 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
       setLikeCount(likeCount - 1);
     }
     setShowLikeCount(!showLikeCount);
+
+    //sends new like count to database
+    const data = {
+      id: '32',
+      likeCount: image.likes
+    };
+
+    fetch(`${process.env.REACT_APP_REST_API_HOST}/images/likeupdate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }).then((res) => res);
   };
 
   // Show like count for 2 seconds
