@@ -10,9 +10,10 @@ interface ProfileScreenProps {
 
 export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [currentPage, setCurrentPage] = useState("Profile");
-  const [enabled, setEnabled] = useState(true);
+  const [editing, setediting] = useState(true);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
-  const [showChangeProfilePicture, setShowChangeProfilePicture] = useState(false);
+  const [showChangeProfilePicture, setShowChangeProfilePicture] =
+    useState(false);
   const [showLabel, setShowLabel] = useState("Public Scrapbooks");
 
   // Profile Fields
@@ -20,7 +21,8 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [email, setEmail] = useState("");
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
-  const [dob, setDob] = useState();
+  const [dob, setDob] = useState("");
+  const [password, setPassword] = useState("");
 
   // Store current page in local storage
   useEffect(() => {
@@ -56,12 +58,14 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
     // eslint-disable-next-line
     const data = response.json().then((data) => {
+      const formatedDob = data.data.age.dob.split("T")[0];
       console.log(data);
       setUsername(data.data.user.user_username);
       setFirstname(data.data.user.user_firstname);
       setLastname(data.data.user.user_lastname);
       setEmail(data.data.user.user_email);
-      setDob(data.data.user.user_dob);
+      setPassword(data.data.user.user_password);
+      setDob(formatedDob);
     });
   };
 
@@ -78,8 +82,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const deleteAccount = async () => {
     //TODO delete account
     const response = await fetch(
-      // `http://176.58.114.213:4000/api/users/${user.id}`,
-      `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}`, // TODO: Change this to the correct endpoint once server is up
+      `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}`,
       {
         method: "DELETE",
         headers: {
@@ -90,9 +93,14 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       }
     );
 
-    const data = await response.json();
+    // Clear local storage
+    localStorage.removeItem("currentPage");
 
-    console.log(data);
+    // Clear session storage
+    sessionStorage.clear();
+
+    // Navigate to login page
+    navigation.navigate("Login");
 
     // Show delete account popup
     setShowDeletePopup(!showDeletePopup);
@@ -135,10 +143,10 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
   // Handle edit button action
   const editButtonHandler = () => {
-    if (enabled) {
+    if (editing) {
     } else {
     }
-    setEnabled(!enabled);
+    setediting(!editing);
   };
 
   // Display public scrabooks
@@ -207,6 +215,20 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         <div className="col-start-1 col-span-3 row-start-1 pt-20 pl-5 ">
           <label
             className="block text-gray-500 font-bold mb-2 dark:text-white"
+            htmlFor="nameLabel"
+          >
+            Name:{" "}
+          </label>
+          <input
+            className="text-black dark:text-white dark:bg-dtext dark:border-dbord"
+            type="text"
+            id="name-input"
+            name="nameInput"
+            disabled={editing}
+            value={firstname + " " + lastname}
+          />
+          <label
+            className="block text-gray-500 font-bold mb-2 dark:text-white pt-6"
             htmlFor="usernameLabel"
           >
             Username:{" "}
@@ -216,7 +238,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             type="text"
             id="username-input"
             name="usernameInput"
-            disabled={enabled}
+            disabled={editing}
             value={username}
           />
 
@@ -231,75 +253,40 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             type="email"
             id="email-input"
             name="emailLabel"
-            disabled={enabled}
+            disabled={editing}
             value={email}
           />
 
           <label
-            className="block text-gray-500 font-bold mb-2 pt-6 dark:text-white"
-            htmlFor="paswordLabel"
+            className="block text-gray-500 font-bold mb-2 mt-6 dark:text-white mx-auto"
+            htmlFor="dobLabel"
           >
-            Password:{" "}
+            Date of Birth:{" "}
           </label>
           <input
-            className="text-black dark:text-white dark:bg-dtext dark:border-dbord"
-            type="password"
-            id="password-input"
-            name="passwordInput"
-            disabled={enabled}
+            className="text-black bg-white dark:text-white dark:bg-dtext dark:border-dbord"
+            type="date"
+            id="dob-input"
+            name="dobInput"
+            disabled={editing}
+            value={dob}
           />
         </div>
-
-        {/* Name and DoB */}
-        <div className="col-start-1 col-span-5 row-start-2 pt-6 pl-5 flex h-32">
-          <div>
-            <label
-              className="block text-gray-500 font-bold mb-2 dark:text-white"
-              htmlFor="nameLabel"
-            >
-              Name:{" "}
-            </label>
-            <input
-              className="text-black dark:text-white dark:bg-dtext dark:border-dbord"
-              type="text"
-              id="name-input"
-              name="nameInput"
-              disabled={enabled}
-              value={firstname + " " + lastname}
-            />
+        <div className="col-start-4 col-span-2 row-start-1 row-span-1 pt-3 pr-5 ">
+          {/* Profile picture*/}
+          <div className="flex justify-center pb-2">
+            <button onClick={changeProfilePicture}>
+              <img
+                src="images/avatar-image.jpg"
+                className="border-solid border-2 border-black rounded"
+              ></img>
+            </button>
           </div>
-          <div className="ml-5">
-            <label
-              className="block text-gray-500 font-bold mb-2 dark:text-white"
-              htmlFor="dobLabel"
-            >
-              Date of Birth:{" "}
-            </label>
-            <input
-              className="text-black bg-white dark:text-white dark:bg-dtext dark:border-dbord"
-              type="date"
-              id="dob-input"
-              name="dobInput"
-              disabled={enabled}
-              value={dob}
-            />
-          </div>
-        </div>
-
-        {/* Profile picture*/}
-        <div className="col-start-4 col-span-2 row-start-1 row-span-1 pt-3 pr-5 pb-2 ">
-          <button onClick={changeProfilePicture}>
-            <img
-              src="images/avatar-image.jpg"
-              className="border-solid border-2 border-black rounded"
-              alt="profile"
-            ></img>
-          </button>
 
           {/* Edit my info button */}
           <button
             className={` ${
-              enabled
+              editing
                 ? "bg-gray-400 hover:bg-gray-500"
                 : "bg-green-400 hover:bg-green-500"
             }  text-white pr-2 pl-2 pb-2 mb-2 rounded-md
@@ -307,7 +294,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             type="button"
             onClick={editButtonHandler}
           >
-            {enabled ? "Edit details" : "Save "}
+            {editing ? "Edit details" : "Save "}
           </button>
 
           {/* Sing out button */}
@@ -331,9 +318,46 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           </button>
         </div>
 
+        {!editing && (
+          <>
+            <div className="col-start-1 col-span-3 row-start-2 row-span-1 pl-5 pt-6">
+              <label
+                className="block text-gray-500 font-bold mb-2 pt-6 dark:text-white"
+                htmlFor="passwordLabel"
+              >
+                New Password:{" "}
+              </label>
+              <input
+                className="text-black dark:text-white dark:bg-dtext dark:border-dbord"
+                type="password"
+                id="password-input"
+                name="passwordInput"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="col-start-4 col-span-2 row-start-2 row-span-1 pr-5 mr-5 pt-6">
+              <label
+                className="block text-gray-500 font-bold mb-2 pt-6 dark:text-white"
+                htmlFor="passwordConfirmLabel"
+              >
+                Confirm:{" "}
+              </label>
+              <input
+                className="text-black dark:text-white dark:bg-dtext dark:border-dbord"
+                type="password"
+                id="password-confirm-input"
+                name="passwordConfirmInput"
+                // value={passwordConfirm}
+                // onChange={(e) => setPasswordConfirm(e.target.value)}
+              />
+            </div>
+          </>
+        )}
+
         {/* Scrapbooks and friends buttons */}
-        <div className="col-start-1 col-span-5 row-start-3 row-span-1 pb-3 dark:bg-dback">
-          <div className="flex ml-5 mr-5  ">
+        <div className="col-start-1 col-span-5 row-start-3 row-span-1 pb-3 pt-6 dark:bg-dback">
+          <div className="flex ml-5 mr-5 justify-center">
             <button
               className="bg-gray-400 hover:bg-gray-500 text-white px-2 py-2 rounded-md focus:outline-none focus:shadow-outline text-sm mr-5 w-32"
               type="button"
