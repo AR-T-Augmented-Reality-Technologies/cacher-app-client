@@ -182,27 +182,21 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
   //Update Likes
   async function updateLikes() {
-    console.log('LIKE COUNT WHEN UPDATING ')
-    const payload = {
-      imageid: '32',
-      likes: likeCount
-    };
-    const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/images/addlikes`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-    const data = await response.json();
+   
   }
   // Like post
-  const likePost = () => {
+  const likePost = async () => {
     console.log('Before' + likeCount);
     setIsLiked(!isLiked);
     if (!isLiked) {
-      setLikeCount(likeCount + 1);
-    } else {
+      const image_id = '32';
+      const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/${image_id}/like`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      } else {
       setLikeCount(likeCount -1 );
     }
     console.log('Likes at ' + likeCount);
