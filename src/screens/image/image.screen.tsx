@@ -146,53 +146,6 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     }
   };
 
-<<<<<<< Updated upstream
-  //Attempting to get code for pulling likes from database
-  console.log("Like data " + image);
-  const getData = async () => {
-    console.log("User state data: " + image);
-    const response = await fetch(
-      `${process.env.REACT_APP_REST_API_HOST}/images/${image.id}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        mode: "cors",
-      }
-    );
-    const data = response.json().then((data) => {
-      console.log(data);
-      setLikeCount(data.image.likes);
-    })
-  };
-
-  // Like post
-  const likePost = () => {
-    setIsLiked(!isLiked);
-    if (!isLiked) {
-      setLikeCount(likeCount + 1);
-    } else {
-      setLikeCount(likeCount - 1);
-=======
-  // //Update Likes
-  // async function updateLikes() {
-  //   console.log('LIKE COUNT WHEN UPDATING ')
-  //   const payload = {
-  //     imageid: '32',
-  //     likes: likeCount
-  //   };
-  //   const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/images/addlikes`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(payload),
-  //   });
-  //   const data = await response.json();
-  // }
-
-
   // Like post
   const likePost = async () => {
     setIsLiked(!isLiked);
@@ -211,7 +164,6 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
           "Content-Type": "application/json",
         },
       });
->>>>>>> Stashed changes
     }
     setShowLikeCount(!showLikeCount);
 
@@ -259,12 +211,10 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     setShowOptions(!showOptions);
   };
 
-<<<<<<< Updated upstream
-=======
-  const getCurrTime = () => {
-    const currentDate = new Date().getTime();
-    return currentDate;
-  }
+  // const getCurrTime = () => {
+  //   const currentDate = new Date().getTime();
+  //   return currentDate;
+  // }
 
   if (gotCommFlag == 0) {
     handleGetComments();
@@ -272,7 +222,6 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     setGotCommFlag(1);
   }
 
->>>>>>> Stashed changes
   return (
     <div className="dark:text-white">
       <div>
