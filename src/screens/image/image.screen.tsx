@@ -46,6 +46,26 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
   // Get past comment data
 
+  //Attempting to get code for pulling likes from database
+  const getlikes = async () => {
+    const payload = {
+      imageid: '32'
+    }
+    const response = await fetch(
+      `${process.env.REACT_APP_REST_API_HOST}/images/getlikes`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "cors",
+      }
+    );
+    const data = await response.json();
+    setLikeCount(data.data.image.likes);
+    setCaption(data.data.image.caption);
+  };
+
   // Adding comments
   const handleAddComment = () => {
     const currentTime = new Date().getTime();
@@ -126,6 +146,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     }
   };
 
+<<<<<<< Updated upstream
   //Attempting to get code for pulling likes from database
   console.log("Like data " + image);
   const getData = async () => {
@@ -153,6 +174,44 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
       setLikeCount(likeCount + 1);
     } else {
       setLikeCount(likeCount - 1);
+=======
+  // //Update Likes
+  // async function updateLikes() {
+  //   console.log('LIKE COUNT WHEN UPDATING ')
+  //   const payload = {
+  //     imageid: '32',
+  //     likes: likeCount
+  //   };
+  //   const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/images/addlikes`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(payload),
+  //   });
+  //   const data = await response.json();
+  // }
+
+
+  // Like post
+  const likePost = async () => {
+    setIsLiked(!isLiked);
+    var image_id = '32';
+    if (!isLiked) {
+      const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/${image_id}/like`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } else {
+      const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/${image_id}/dislike`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+>>>>>>> Stashed changes
     }
     setShowLikeCount(!showLikeCount);
 
@@ -200,6 +259,20 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     setShowOptions(!showOptions);
   };
 
+<<<<<<< Updated upstream
+=======
+  const getCurrTime = () => {
+    const currentDate = new Date().getTime();
+    return currentDate;
+  }
+
+  if (gotCommFlag == 0) {
+    handleGetComments();
+    getlikes();
+    setGotCommFlag(1);
+  }
+
+>>>>>>> Stashed changes
   return (
     <div className="dark:text-white">
       <div>
