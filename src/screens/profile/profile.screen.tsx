@@ -40,33 +40,34 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
   // Use our user store
   const user = useSelector((state: any) => state.users);
-  console.log("User state data: " + user);
 
   const getData = async () => {
-    console.log("User state data: " + user);
     const response = await fetch(
       `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          // "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InpheHF1aXRAcG0ubWUiLCJpYXQiOjE2NzUyMzc3MjQsImV4cCI6MTY3NTIzOTUyNH0.BkAeLITwhDD6vwZMjfg6IrwihayoZ1oRageAVwX1YP8"
+          "Authorization": `Bearer ${user.token}`
         },
         mode: "cors",
       }
     );
 
+    const data = await response.json();
+
+    console.log(data);
+
     // eslint-disable-next-line
-    const data = response.json().then((data) => {
-      const formatedDob = data.data.age.dob.split("T")[0];
-      console.log(data);
-      setUsername(data.data.user.user_username);
-      setFirstname(data.data.user.user_firstname);
-      setLastname(data.data.user.user_lastname);
-      setEmail(data.data.user.user_email);
-      setPassword(data.data.user.user_password);
-      setDob(formatedDob);
-    });
+    const formatedDob = data.data.age.dob.split("T")[0];
+    setUsername(data.data.user.user_username);
+    setFirstname(data.data.user.user_firstname);
+    setLastname(data.data.user.user_lastname);
+    setEmail(data.data.user.user_email);
+    setPassword(data.data.user.user_password);
+    setDob(formatedDob);
+
+    console.log(data);
   };
 
   useEffect(() => {
@@ -87,7 +88,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          // "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InpheHF1aXRAcG0ubWUiLCJpYXQiOjE2NzUyMzc3MjQsImV4cCI6MTY3NTIzOTUyNH0.BkAeLITwhDD6vwZMjfg6IrwihayoZ1oRageAVwX1YP8"
+          "Authorization": `Bearer ${user.token}`
         },
         mode: "cors",
       }

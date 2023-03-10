@@ -53,19 +53,22 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
     localStorage.setItem("currentPage", currentPage);
   }, [currentPage]);
 
-    const privatiseUser = async () => {
+  const privatiseUser = async () => {
 
-      const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/users/${user.id}/togglePrivateUser`, {
-          method: "PUT",
-          headers: {
-              "Content-Type": "application/json",
-          },
-      });
+    console.log(user.token);
 
-      console.log(await response);
+    const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/users/${user.id}/togglePrivateUser`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user.token}`
+        },
+    });
 
-      const data = await response.json();
-      console.log(await data);
+    console.log(await response);
+
+    const data = await response.json();
+    console.log(await data);
   };
   return (
     <>
