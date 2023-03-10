@@ -49,7 +49,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${user.token}`
+          Authorization: `Bearer ${user.token}`,
         },
         mode: "cors",
       }
@@ -89,7 +89,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${user.token}`
+          Authorization: `Bearer ${user.token}`,
         },
         mode: "cors",
       }
@@ -124,18 +124,61 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     setShowChangeProfilePicture(!showChangeProfilePicture);
   };
 
-  // Edit account details
   // eslint-disable-next-line
-  const editDetails = () => {
-    console.log("updated firstname: " + firstname);
-    console.log("updated lastname: " + lastname);
-    console.log("updated username: " + username);
-    console.log("updated email: " + email);
-    console.log("updated dob: " + dob);
-    console.log("updated password: " + password);
-    console.log("updated passwordConfirm: " + passwordConfirm);
+  // Edit account details
+  const editDetails = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+          mode: "cors",
+        }
+      );
 
+      const data = await response.json();
 
+      const updatedData = {
+        user_firstname: firstname,
+        user_lastname: lastname,
+        user_username: username,
+        user_email: email,
+        ages: {
+          update: {
+            data: {
+              dob: new Date(dob),
+            },
+            where: {
+              id: data.data.age.id,
+            },
+          },
+        },
+      };
+
+      const updateResponse = await fetch(
+        `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}/updateProfileData`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+          body: JSON.stringify(updatedData),
+        }
+      );
+
+      if (!updateResponse.ok) {
+        throw new Error("Failed to update user data");
+      }
+
+      console.log("User data updated successfully");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   // Sign out
@@ -157,7 +200,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const editButtonHandler = () => {
     if (editing) {
     } else {
-        editDetails();
+      editDetails();
     }
     setediting(!editing);
   };
@@ -227,19 +270,35 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         {/* Username, Email and password */}
         <div className="col-start-1 col-span-3 row-start-1 pt-20 pl-5 ">
           <label
+            htmlFor="firstNameInput"
             className="block text-gray-500 font-bold mb-2 dark:text-white"
-            htmlFor="nameLabel"
           >
-            Name:{" "}
+            First Name:
           </label>
           <input
             className="text-black dark:text-white dark:bg-dtext dark:border-dbord"
             type="text"
-            id="name-input"
-            name="nameInput"
+            id="firstNameInput"
+            name="firstNameInput"
             disabled={editing}
-            value={firstname + " " + lastname}
-            onChange = {(e) => { setFirstname(e.target.value); setLastname(e.target.value); }}
+            value={firstname}
+            onChange={(e) => setFirstname(e.target.value)}
+          />
+
+          <label
+            htmlFor="lastNameInput"
+            className="block text-gray-500 font-bold mb-2 dark:text-white pt-6"
+          >
+            Last Name:
+          </label>
+          <input
+            className="text-black dark:text-white dark:bg-dtext dark:border-dbord"
+            type="text"
+            id="lastNameInput"
+            name="lastNameInput"
+            disabled={editing}
+            value={lastname}
+            onChange={(e) => setLastname(e.target.value)}
           />
           <label
             className="block text-gray-500 font-bold mb-2 dark:text-white pt-6"
@@ -271,22 +330,6 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             disabled={editing}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-          />
-
-          <label
-            className="block text-gray-500 font-bold mb-2 mt-6 dark:text-white mx-auto"
-            htmlFor="dobLabel"
-          >
-            Date of Birth:{" "}
-          </label>
-          <input
-            className="text-black bg-white dark:text-white dark:bg-dtext dark:border-dbord"
-            type="date"
-            id="dob-input"
-            name="dobInput"
-            disabled={editing}
-            value={dob}
-            onChange={(e) => setDob(e.target.value)}
           />
         </div>
         <div className="col-start-4 col-span-2 row-start-1 row-span-1 pt-3 pr-5 ">
@@ -333,6 +376,22 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           >
             Delete account{" "}
           </button>
+
+          <label
+            className="block text-gray-500 font-bold mb-2 mt-6 dark:text-white mx-auto"
+            htmlFor="dobLabel"
+          >
+            Date of Birth:{" "}
+          </label>
+          <input
+            className="text-black bg-white dark:text-white dark:bg-dtext dark:border-dbord"
+            type="date"
+            id="dob-input"
+            name="dobInput"
+            disabled={editing}
+            value={dob}
+            onChange={(e) => setDob(e.target.value)}
+          />
         </div>
 
         {!editing && (
