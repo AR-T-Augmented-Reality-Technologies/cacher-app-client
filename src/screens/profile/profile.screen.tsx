@@ -23,6 +23,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [lastname, setLastname] = useState("");
   const [dob, setDob] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
 
   // Store current page in local storage
   useEffect(() => {
@@ -125,7 +126,17 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
   // Edit account details
   // eslint-disable-next-line
-  const editDetails = () => {};
+  const editDetails = () => {
+    console.log("updated firstname: " + firstname);
+    console.log("updated lastname: " + lastname);
+    console.log("updated username: " + username);
+    console.log("updated email: " + email);
+    console.log("updated dob: " + dob);
+    console.log("updated password: " + password);
+    console.log("updated passwordConfirm: " + passwordConfirm);
+
+
+  };
 
   // Sign out
   const signOut = async () => {
@@ -146,6 +157,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const editButtonHandler = () => {
     if (editing) {
     } else {
+        editDetails();
     }
     setediting(!editing);
   };
@@ -227,6 +239,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             name="nameInput"
             disabled={editing}
             value={firstname + " " + lastname}
+            onChange = {(e) => { setFirstname(e.target.value); setLastname(e.target.value); }}
           />
           <label
             className="block text-gray-500 font-bold mb-2 dark:text-white pt-6"
@@ -241,6 +254,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             name="usernameInput"
             disabled={editing}
             value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
 
           <label
@@ -256,6 +270,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             name="emailLabel"
             disabled={editing}
             value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <label
@@ -271,6 +286,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             name="dobInput"
             disabled={editing}
             value={dob}
+            onChange={(e) => setDob(e.target.value)}
           />
         </div>
         <div className="col-start-4 col-span-2 row-start-1 row-span-1 pt-3 pr-5 ">
@@ -349,8 +365,8 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
                 type="password"
                 id="password-confirm-input"
                 name="passwordConfirmInput"
-                // value={passwordConfirm}
-                // onChange={(e) => setPasswordConfirm(e.target.value)}
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
               />
             </div>
           </>
