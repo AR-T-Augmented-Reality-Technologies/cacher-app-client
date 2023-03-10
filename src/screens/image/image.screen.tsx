@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-// eslint-disable-next-line
 import { Button, View, ImageBackground } from "react-native";
-// eslint-disable-next-line
 import { Splide, SplideTrack } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 import { ImageSliderChild } from "../../components/ImageSliderChild.component";
 import { add_user } from "../../features/users.slice";
 import { add_image } from "../../features/image.slice";
 import { useSelector } from "react-redux";
+import { current } from "@reduxjs/toolkit";
 interface ImageScreenProps {
   navigation: any;
 }
@@ -16,22 +15,27 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   const [currentPage, setCurrentPage] = useState("Image");
   const [showOptions, setShowOptions] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(45);
+  const [likeCount, setLikeCount] = useState(0);
   const [showLikeCount, setShowLikeCount] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
   const popupRefFlag = useRef<HTMLDivElement>(null);
-  const [comments, setComments] = useState<string[]>([]);
+  const [commentsarr, setCommentsarr] = useState<string[]>([]);
+  const [userarr, setUserarr] = useState<string[]>([]);
   const [newComment, setNewComment] = useState("");
   const [commentTimes, setCommentTimes] = useState<number[]>([]);
   const [images, setImages] = useState<string[]>([]);
-  // eslint-disable-next-line
   const [shared, setShared] = useState(false);
   const [showFlagMenu, setShowFlagMenu] = useState(false);
   const user = useSelector((state: any) => state.users);
   const image = useSelector((state: any) => state.image);
-
+  let [gotCommFlag, setGotCommFlag] = useState(0);
+  let commentArray = [""];
+  let timeArray = [0];
+  let userTArray = [""];
+  const [caption, setCaption] = useState("");
   // Store current page in local storage
+
   useEffect(() => {
     const storedPage = localStorage.getItem("currentPage");
     if (storedPage) {
@@ -44,60 +48,68 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   }, [currentPage]);
 
 
-  // Get past comment data
-
-  //Attempting to get code for pulling likes from database
-  const getlikes = async () => {
+  // getPastComment comments
+  const handleGetComments = async () => {
     const payload = {
-      imageid: '32'
-    }
-    const response = await fetch(
-      `${process.env.REACT_APP_REST_API_HOST}/images/getlikes`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        mode: "cors",
-      }
-    );
-    const data = await response.json();
-    setLikeCount(data.data.image.likes);
-    setCaption(data.data.image.caption);
-  };
-
-  // Adding comments
-  const handleAddComment = () => {
-    const currentTime = new Date().getTime();
-    setCommentTimes([...commentTimes, currentTime]);
-    setComments([...comments, newComment]);
-    setNewComment("");
-
-    const data = {
       imageid: '32', //placeholder because currently it is not saving images
-      userid: user.id,
-      comment: newComment,
-      timestamp: Date.now()
     };
-
-    console.log('User Id' + user.id);
-    console.log('image Id' + 32);
-    console.log('Comment ' + newComment);
-    console.log('Date ' + Date.now())
-
-
-    fetch(`${process.env.REACT_APP_REST_API_HOST}/images/addcomment`, {
+    const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/images/getcomment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
-    }).then((res) => res);
+      mode: "cors",
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+
+    commentArray = [data.data.comments[0].comment];
+    timeArray = [data.data.comments[0].timestamp];
+    userTArray = [data.data.comments[0].user_id];
+    for (var i = 1; i < data.data.comments.length; i++) {
+      commentArray[i] = data.data.comments[i].comment;
+      timeArray[i] = data.data.comments[i].timestamp;
+      userTArray[i] = data.data.comments[i].user_id;
+    }
+
+    for (var j = 0; j < commentArray.length; j++) {
+      commentsarr.push(commentArray[j]);
+      commentTimes.push(timeArray[j]);
+      userarr.push(userTArray[j]);
+    }
   };
+
+  // Adding comments
+  async function handleAddComment() {
+    const currentTime = new Date().getTime();
+    setCommentTimes([currentTime, ...commentTimes]);
+    setCommentsarr([newComment, ...commentsarr]);
+    commentArray[commentArray.length] = newComment;
+    setNewComment("");
+
+    const payload = {
+      imageid: '32',
+      userid: 8,
+      comment: newComment,
+      timestamp: Date.now()
+    };
+    //Future albaraa remember wait statements
+    const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/images/addcomment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+  }
 
   // Calculate time since comment was posted
   const formatTime = (time: number) => {
-    const difference = Math.floor((Date.now() - time) / 1000);
+    // const secs = time.getUTCSeconds
+
+    var timetwo = new Date(time);
+    const difference = Math.floor((Date.now() - timetwo.getTime()) / 1000);
     if (difference < 60) {
       return `${difference} seconds ago`;
     } else if (difference < 3600) {
@@ -146,40 +158,56 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     }
   };
 
-  // Like post
-  const likePost = async () => {
-    setIsLiked(!isLiked);
-    var image_id = '32';
-    if (!isLiked) {
-      const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/${image_id}/like`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    } else {
-      const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/${image_id}/dislike`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+  //Attempting to get code for pulling likes from database
+  const getlikes = async () => {
+    const payload = {
+      imageid: '32'
     }
-    setShowLikeCount(!showLikeCount);
+    const response = await fetch(
+      `${process.env.REACT_APP_REST_API_HOST}/images/getlikes`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "cors",
+      }
+    );
+    const data = await response.json();
+    setLikeCount(data.data.image.likes);
+    setCaption(data.data.image.caption);
+    console.log('Caption ' + caption);
+    console.log('This has been called');
+  };
 
-    //sends new like count to database
-    const data = {
-      id: '32',
-      likeCount: image.likes
+  //Update Likes
+  async function updateLikes() {
+    console.log('LIKE COUNT WHEN UPDATING ')
+    const payload = {
+      imageid: '32',
+      likes: likeCount
     };
-
-    fetch(`${process.env.REACT_APP_REST_API_HOST}/images/likeupdate`, {
+    const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/images/addlikes`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
-    }).then((res) => res);
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+  }
+  // Like post
+  const likePost = () => {
+    console.log('Before' + likeCount);
+    setIsLiked(!isLiked);
+    if (!isLiked) {
+      setLikeCount(likeCount + 1);
+    } else {
+      setLikeCount(likeCount -1 );
+    }
+    console.log('Likes at ' + likeCount);
+    updateLikes();
+    setShowLikeCount(!showLikeCount);
   };
 
   // Show like count for 2 seconds
@@ -191,14 +219,11 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     setImages(["images/image2.jpg", "images/image1.jpg"]);
   }, [setImages]);
 
-  // eslint-disable-next-line
   const displayImages = () => {
     setImages(["images/image1.jpg", "images/image2.jpg"]);
-    console.log("images: ", images);
   };
 
   // Comment post
-  // eslint-disable-next-line
   const commentPost = () => { };
 
   // Display comments
@@ -211,17 +236,17 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     setShowOptions(!showOptions);
   };
 
-  // const getCurrTime = () => {
-  //   const currentDate = new Date().getTime();
-  //   return currentDate;
-  // }
+  const getCurrTime = () => {
+    const currentDate = new Date().getTime();
+    return currentDate;
+  }
 
   if (gotCommFlag == 0) {
     handleGetComments();
     getlikes();
     setGotCommFlag(1);
   }
-
+  
   return (
     <div className="dark:text-white">
       <div>
@@ -371,7 +396,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         >
           <div className="grid grid-rows-2">
             <div className="row-start-1">
-              <div className="pt-2 px-2 text-s">These pets are so cute!</div>
+              <div className="pt-2 px-2 text-s"> {caption}</div>
             </div>
             <div className="row-start-2">
               <div className="pb-2 px-2 text-s text-right">- User123</div>
@@ -486,7 +511,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
               {/* Comments */}
               <div className="grid grid-cols-1 pl-5 pr-5 overflow-auto max-h-80 dark:bg-dback">
-                {comments.map((comment, index) => (
+                {commentsarr.map((comment, index) => (
                   <div
                     key={index}
                     className="dark:bg-dback bg-white border-solid border border-black break-normal h-auto rounded-lg mb-5 grid grid-cols-5 grid-rows-2"
@@ -501,19 +526,18 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                       className="break-normal px-2 py-2 col-start-1 col-span-3 row-start-2 text-sm overflow-hidden text-justify"
                       style={{ wordWrap: "break-word" }}
                     >
-                      ({formatTime(commentTimes[index])})
+                      {formatTime(commentTimes[index])}
                     </p>
                     {/* To flag a comment (add flag functionality) */}
                     <p className="break-normal px-2 py-2 col-start-2 col-span-1 row-start-2 text-sm overflow-hidden text-justify">
                       <img onClick={() => { flagPostOrComment() }} style={{ height: "1.25rem", cursor: "pointer" }} src="images/flag-icon.png" alt="" />
                     </p>
-                    {/* eslint-disable-next-line */}
                     <img
                       src="images/avatar-image.jpg"
                       className="border-solid border-2 border-black rounded-lg w-3/4 float-right col-start-5 cols-span-1 mt-2"
                     ></img>
                     <p className="col-start-4 col-span-2 pt-5 pr-3 text-right text-sm">
-                      User123456
+                      User - {userarr[index]}
                     </p>
                   </div>
                 ))}
