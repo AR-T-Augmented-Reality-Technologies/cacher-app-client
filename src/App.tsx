@@ -13,6 +13,7 @@ import { ImageScreen } from './screens/image/image.screen';
 import { ImageAdminScreen } from './screens/image/imageAdmin.screen';
 import { ProfileScreen } from './screens/profile/profile.screen';
 import { SettingsScreen }  from './screens/settings/settings.screen';
+import {TicketScreen} from './screens/admin-dashboard/ticket-report.screen'
 
 // assets
 // eslint-disable-next-line
@@ -54,6 +55,7 @@ const App = () => {
         <Stack.Screen name="ImageAdmin" component={ImageAdminScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="TicketScreen" component={TicketScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
