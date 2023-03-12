@@ -128,35 +128,15 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   // Edit account details
   const editDetails = async () => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-          mode: "cors",
-        }
-      );
-
-      const data = await response.json();
 
       const updatedData = {
         user_firstname: firstname,
         user_lastname: lastname,
         user_username: username,
         user_email: email,
-        ages: {
-          update: {
-            data: {
-              dob: new Date(dob),
-            },
-            where: {
-              id: data.data.age.id,
-            },
-          },
-        },
+        user_password: password,
+        user_password_confirm: passwordConfirm,
+        user_dob : new Date(dob)
       };
 
       const updateResponse = await fetch(
@@ -169,13 +149,16 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           },
           body: JSON.stringify(updatedData),
         }
-      );
+      ).then((res) => res);
+    
+      const updateData = await updateResponse.json();
+
+      console.log(updateData.data.message)
 
       if (!updateResponse.ok) {
         throw new Error("Failed to update user data");
       }
 
-      console.log("User data updated successfully");
     } catch (err) {
       console.log(err);
     }
