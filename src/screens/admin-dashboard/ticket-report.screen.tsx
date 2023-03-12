@@ -43,6 +43,7 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
 
 
     const getReports = async () => {
+        console.log('back her')
         const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/admin/getReports`, {
             method: "POST",
             headers: {
@@ -77,6 +78,21 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
         }
 
 
+    }
+
+    const handleResolver = async (id : any) => {
+        const payload = {
+            repid: id,
+        }
+        const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/admin/resolve`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            mode: "cors",
+            body: JSON.stringify(payload),
+        });
+        getReports();
     }
     if (gotCommFlag == 0) {
         getReports();
@@ -131,6 +147,8 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
                                 >
                                     {"Report ID - " + report}{" "}
                                 </p>
+                                <button className="pb-2 px-5 text-s row-start-3 bg-custom-blue dark:bg-dblue hover:bg-custom-blue-hover hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded 
+                focus:outline-none focus:shadow-outline " onClick={() => handleResolver(report)}> Resolved</button>
                                 <p
                                     className="break-normal px-2 py-2 col-start-1 col-span-3 row-start-2 text-sm overflow-hidden text-justify"
                                     style={{ wordWrap: "break-word" }}
