@@ -65,8 +65,6 @@ export const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
         },
     });
 
-    console.log(await response);
-
     const data = await response.json();
     console.log(await data);
   };
