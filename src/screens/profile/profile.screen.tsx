@@ -10,11 +10,21 @@ interface ProfileScreenProps {
 
 export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [currentPage, setCurrentPage] = useState("Profile");
-  const [editing, setediting] = useState(true);
+  const [editing, setEditing] = useState(true);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showChangeProfilePicture, setShowChangeProfilePicture] =
     useState(false);
   const [showLabel, setShowLabel] = useState("Public Scrapbooks");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const minDate = new Date();
+  const maxDate = new Date();
+  minDate.setFullYear(minDate.getFullYear() - 100);
+  maxDate.setFullYear(maxDate.getFullYear() - 13);
+
+  // convert the date to format yyyy-mm-dd
+  const minDateStr = minDate.toISOString().split("T")[0];
+  const maxDateStr = maxDate.toISOString().split("T")[0];
 
   // Profile Fields
   const [username, setUsername] = useState("");
@@ -128,7 +138,6 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   // Edit account details
   const editDetails = async () => {
     try {
-
       const updatedData = {
         user_firstname: firstname,
         user_lastname: lastname,
@@ -136,7 +145,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         user_email: email,
         user_password: password,
         user_password_confirm: passwordConfirm,
-        user_dob : new Date(dob)
+        user_dob: new Date(dob),
       };
 
       const updateResponse = await fetch(
@@ -150,17 +159,43 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           body: JSON.stringify(updatedData),
         }
       ).then((res) => res);
-    
+
       const updateData = await updateResponse.json();
 
-      console.log(updateData.data.message)
+      if (updateData.data.message) {
+        console.log(updateData.data.message);
+        setErrorMessage(updateData.data.message);
+      }
 
       if (!updateResponse.ok) {
         throw new Error("Failed to update user data");
       }
-
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const checkDetails = () => {
+    if (
+      username === "" ||
+      email === "" ||
+      firstname === "" ||
+      lastname === "" ||
+      dob === ""
+    ) {
+      console.log("Please fill in all fields");
+      return false;
+    } else {
+      console.log("All fields filled in");
+      return true;
+    }
+  };
+
+  // Handle edit button action
+  const editButtonHandler = () => {
+    if (checkDetails()) {
+      setEditing(!editing);
+      editDetails();
     }
   };
 
@@ -177,15 +212,6 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
     // Navigate to login page
     navigation.navigate("Login");
-  };
-
-  // Handle edit button action
-  const editButtonHandler = () => {
-    if (editing) {
-    } else {
-      editDetails();
-    }
-    setediting(!editing);
   };
 
   // Display public scrabooks
@@ -371,6 +397,9 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             type="date"
             id="dob-input"
             name="dobInput"
+            min={minDateStr}
+            max={maxDateStr}
+            pattern="^(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/(1|2)[0-9]{3}$"
             disabled={editing}
             value={dob}
             onChange={(e) => setDob(e.target.value)}
@@ -379,9 +408,9 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
         {!editing && (
           <>
-            <div className="col-start-1 col-span-3 row-start-2 row-span-1 pl-5 pt-6">
+            <div className="col-start-1 col-span-3 row-start-2 row-span-1 pl-5 pt-3">
               <label
-                className="block text-gray-500 font-bold mb-2 pt-6 dark:text-white"
+                className="block text-gray-500 font-bold mb-2 pt-3 dark:text-white"
                 htmlFor="passwordLabel"
               >
                 New Password:{" "}
@@ -391,13 +420,13 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
                 type="password"
                 id="password-input"
                 name="passwordInput"
-                value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
               />
             </div>
-            <div className="col-start-4 col-span-2 row-start-2 row-span-1 pr-5 mr-5 pt-6">
+            <div className="col-start-4 col-span-2 row-start-2 row-span-1 pr-5 mr-5 pt-3">
               <label
-                className="block text-gray-500 font-bold mb-2 pt-6 dark:text-white"
+                className="block text-gray-500 font-bold mb-2 pt-3 dark:text-white"
                 htmlFor="passwordConfirmLabel"
               >
                 Confirm:{" "}
@@ -407,8 +436,8 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
                 type="password"
                 id="password-confirm-input"
                 name="passwordConfirmInput"
-                value={passwordConfirm}
                 onChange={(e) => setPasswordConfirm(e.target.value)}
+                autoComplete="new-password"
               />
             </div>
           </>
