@@ -457,7 +457,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       )}
           <button
             className={`bg-gray-400 hover:bg-gray-500 text-white pr-2 pl-2 pb-2 mb-2 rounded-md focus:outline-none focus:shadow-outline pt-2 text-sm w-full ${
-              editing ? "bg-custom-blue" : ""
+              editing ? "bg-custom-blue hover:bg-custom-blue" : ""
             }`}
             type="button"
             onClick={editDetails}
