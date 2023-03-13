@@ -10,12 +10,15 @@ interface ProfileScreenProps {
 
 export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [currentPage, setCurrentPage] = useState("Profile");
-  const [editing, setEditing] = useState(true);
+  const [editing, setEditing] = useState(false);
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showChangeProfilePicture, setShowChangeProfilePicture] =
     useState(false);
   const [showLabel, setShowLabel] = useState("Public Scrapbooks");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [Message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [editingSuccess, setEditingSuccess] = useState(false);
+  const [showEditSuccess, setShowEditSuccess] = useState(false);
 
   const minDate = new Date();
   const maxDate = new Date();
@@ -137,66 +140,138 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   // eslint-disable-next-line
   // Edit account details
   const editDetails = async () => {
-    try {
-      const updatedData = {
-        user_firstname: firstname,
-        user_lastname: lastname,
-        user_username: username,
-        user_email: email,
-        user_password: password,
-        user_password_confirm: passwordConfirm,
-        user_dob: new Date(dob),
-      };
+    setEditing(true);
 
-      const updateResponse = await fetch(
-        `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}/updateProfileData`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-          body: JSON.stringify(updatedData),
-        }
-      ).then((res) => res);
+    const updatedData = {
+      user_firstname: firstname,
+      user_lastname: lastname,
+      user_username: username,
+      user_email: email,
+      user_password: password,
+      user_password_confirm: passwordConfirm,
+      user_dob: new Date(dob),
+    };
 
-      const updateData = await updateResponse.json();
-
-      if (updateData.data.message) {
-        console.log(updateData.data.message);
-        setErrorMessage(updateData.data.message);
-      }
-
-      if (!updateResponse.ok) {
-        throw new Error("Failed to update user data");
-      }
-    } catch (err) {
-      console.log(err);
+    const regex_password =
+          /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    
+    if (!regex_password.test(password)) {
+        setError("password");
+        setMessage("Password must be at least 8 characters long and contain at least one uppercase letter, one number and one special character");
+        console.log("Password must be at least 8 characters long and contain at least one uppercase letter, one number and one special character");
+        return false;
     }
-  };
 
-  const checkDetails = () => {
-    if (
-      username === "" ||
-      email === "" ||
-      firstname === "" ||
-      lastname === "" ||
-      dob === ""
-    ) {
-      console.log("Please fill in all fields");
+
+    const updateResponse = await fetch(
+      `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}/updateProfileData`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify(updatedData),
+      }
+    ).then((res) => res);
+
+    const updateData = await updateResponse.json();
+
+    if (updateData && updateData.data && updateData.data.message === "FIRST NAME CANNOT BE EMPTY") {
+        setError("firstname");
+        setMessage("First name cannot be empty");
+        console.log("First name cannot be empty");
+        return false;
+    }
+
+    if (updateData && updateData.data && updateData.data.message === "LAST NAME CANNOT BE EMPTY") {
+        setError("lastname");
+        setMessage("Last name cannot be empty");
+        console.log("Last name cannot be empty");
+        return false;
+    }
+
+    if (updateData && updateData.data && updateData.data.message === "USERNAME CANNOT BE EMPTY") {
+        setError("username");
+        setMessage("Username cannot be empty");
+        console.log("Username cannot be empty");
+        return false;
+    }
+
+    if (updateData && updateData.data && updateData.data.message === "USERNAME ALREADY EXISTS") {
+      setError("username");
+      setMessage("Username already exists");
+      console.log("Username already exists");
       return false;
-    } else {
-      console.log("All fields filled in");
-      return true;
+    }
+
+    if (updateData && updateData.data && updateData.data.message === "INVALID PASSWORD FORMAT") {
+        setError("password");
+        setMessage("Password must be at least 8 characters long");
+    }
+
+    if (updateData && updateData.data && updateData.data.message === "EMAIL ALREADY EXISTS") {
+      setError("email");
+      setMessage("Email already exists");
+      console.log("Email already exists");
+      return false;
+    }
+
+    if (updateData && updateData.data && updateData.data.message === "INVALID EMAIL FORMAT") {
+        setError("email");
+        setMessage("Invalid email format");
+        console.log("Invalid email format");
+        return false;
+    }
+
+    if (updateData && updateData.data && updateData.data.message === "EMAIL CANNOT BE EMPTY") {
+        setError("email");
+        setMessage("Email cannot be empty");
+        console.log("Email cannot be empty");
+        return false;
+    }
+
+    if (updateData && updateData.data && updateData.data.message === "DATE OF BIRTH CANNOT BE EMPTY") {
+        setError("age");
+        setMessage("Date of birth cannot be empty");
+        console.log("Date of birth cannot be empty");
+        return false;
+    }
+
+    if (updateData && updateData.data && updateData.data.message === "USER IS UNDER 13") {
+      setError("age");
+      setMessage("You must be 13 or over");
+      console.log("You must be 13 or over");
+      return false;
+    }
+
+    if (updateData && updateData.data && updateData.data.message === "INVALID YEAR OF BIRTH") {
+      setError("age");
+        setMessage("Invalid year of birth");
+        console.log("Invalid year of birth");
+      return false;
+    }
+
+    if (updateData && updateData.data && updateData.data.message === "PASSWORDS DONT MATCH") {
+        setError("password");
+        setMessage("Passwords don't match");
+        console.log("Passwords don't match");
+        return false;
+      }
+
+    setEditingSuccess(true);
+
+    if (editingSuccess) {
+      saveDetails();
     }
   };
 
-  // Handle edit button action
-  const editButtonHandler = () => {
-    if (checkDetails()) {
-      setEditing(!editing);
-      editDetails();
-    }
+  const saveDetails = async () => {
+    setError("");
+    setEditing(false);
+    setEditingSuccess(false);
+    setShowEditSuccess(true);
+    setTimeout(() => setShowEditSuccess(false), 2000);
   };
 
   // Sign out
@@ -256,7 +331,10 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           className="dark:bg-dblue text-black bg-white text-sm font-bold py-1 px-2 rounded-full border-solid border-2 border-black top-3 absolute left-5 "
           type="button"
           onClick={() => {
-            navigation.navigate("Map");
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Map" }],
+            });
           }}
         >
           <svg
@@ -289,10 +367,15 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             type="text"
             id="firstNameInput"
             name="firstNameInput"
-            disabled={editing}
+            disabled={!editing}
             value={firstname}
             onChange={(e) => setFirstname(e.target.value)}
           />
+          {error === "firstname" && (
+            <div className="text-custom-orange dark:text-custom-orange pt-2">
+              {Message}
+            </div>
+          )}
 
           <label
             htmlFor="lastNameInput"
@@ -305,10 +388,15 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             type="text"
             id="lastNameInput"
             name="lastNameInput"
-            disabled={editing}
+            disabled={!editing}
             value={lastname}
             onChange={(e) => setLastname(e.target.value)}
           />
+          {error === "lastname" && (
+            <div className="text-custom-orange dark:text-custom-orange pt-2">
+              {Message}
+            </div>
+          )}
           <label
             className="block text-gray-500 font-bold mb-2 dark:text-white pt-6"
             htmlFor="usernameLabel"
@@ -320,10 +408,15 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             type="text"
             id="username-input"
             name="usernameInput"
-            disabled={editing}
+            disabled={!editing}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
+          {error === "username" && (
+            <div className="text-custom-orange dark:text-custom-orange pt-2">
+              {Message}
+            </div>
+          )}
 
           <label
             className="block text-gray-500 font-bold mb-2 pt-6 dark:text-white"
@@ -336,10 +429,15 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             type="email"
             id="email-input"
             name="emailLabel"
-            disabled={editing}
+            disabled={!editing}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          {error === "email" && (
+            <div className="text-custom-orange dark:text-custom-orange pt-2">
+              {Message}
+            </div>
+          )}
         </div>
         <div className="col-start-4 col-span-2 row-start-1 row-span-1 pt-3 pr-5 ">
           {/* Profile picture*/}
@@ -352,18 +450,19 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             </button>
           </div>
 
-          {/* Edit my info button */}
+          {showEditSuccess && (
+        <div className="bg-custom-blue text-white p-2 mb-2 rounded-md text-sm text-center">
+          Changes saved 
+        </div>
+      )}
           <button
-            className={` ${
-              editing
-                ? "bg-gray-400 hover:bg-gray-500"
-                : "bg-green-400 hover:bg-green-500"
-            }  text-white pr-2 pl-2 pb-2 mb-2 rounded-md
-        focus:outline-none focus:shadow-outline pt-2 text-sm w-full`}
+            className={`bg-gray-400 hover:bg-gray-500 text-white pr-2 pl-2 pb-2 mb-2 rounded-md focus:outline-none focus:shadow-outline pt-2 text-sm w-full ${
+              editing ? "bg-custom-blue" : ""
+            }`}
             type="button"
-            onClick={editButtonHandler}
+            onClick={editDetails}
           >
-            {editing ? "Edit details" : "Save "}
+            {editing ? "Save changes" : "Edit details"}
           </button>
 
           {/* Sing out button */}
@@ -378,7 +477,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
           {/* Delete account button */}
           <button
-            className="bg-red-500 hover:bg-red-700 text-white pr-2 pl-2 pb-2 mt-6 rounded-md
+            className="bg-custom-orange text-white pr-2 pl-2 pb-2 mt-6 rounded-md
         focus:outline-none focus:shadow-outline pt-2 text-sm w-full"
             type="button"
             onClick={deleteAccountPopup}
@@ -400,13 +499,18 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
             min={minDateStr}
             max={maxDateStr}
             pattern="^(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/(1|2)[0-9]{3}$"
-            disabled={editing}
+            disabled={!editing}
             value={dob}
             onChange={(e) => setDob(e.target.value)}
           />
+          {error === "age" && (
+            <div className="text-custom-orange dark:text-custom-orange pt-2">
+              {Message}
+            </div>
+          )}
         </div>
 
-        {!editing && (
+        {editing && (
           <>
             <div className="col-start-1 col-span-3 row-start-2 row-span-1 pl-5 pt-3">
               <label
@@ -423,6 +527,11 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="new-password"
               />
+              {error === "password" && (
+                <div className="text-custom-orange dark:text-custom-orange pt-2">
+                  {Message}
+                </div>
+              )}
             </div>
             <div className="col-start-4 col-span-2 row-start-2 row-span-1 pr-5 mr-5 pt-3">
               <label
