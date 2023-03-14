@@ -7,6 +7,7 @@ import { add_user } from "../../features/users.slice";
 import { add_image } from "../../features/image.slice";
 import { useSelector } from "react-redux";
 import { current } from "@reduxjs/toolkit";
+import { cleanWord , badcheck } from "../../Hooks/filter";
 interface ImageScreenProps {
   navigation: any;
 }
@@ -34,6 +35,12 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   let timeArray = [0];
   let userTArray = [""];
   const [caption, setCaption] = useState("");
+
+  var Filter = require('bad-words'),
+    filter = new Filter();
+
+  // console.log('got comm flag  ' + gotCommFlag);
+  
   // Store current page in local storage
 
   useEffect(() => {
@@ -50,6 +57,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
   // getPastComment comments
   const handleGetComments = async () => {
+    console.log('Getting comments')
     const payload = {
       imageid: '32', //placeholder because currently it is not saving images
     };
@@ -83,7 +91,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   async function handleAddComment() {
     const currentTime = new Date().getTime();
     setCommentTimes([currentTime, ...commentTimes]);
-    setCommentsarr([newComment, ...commentsarr]);
+    setCommentsarr([cleanWord(newComment), ...commentsarr]);
     commentArray[commentArray.length] = newComment;
     setNewComment("");
 
@@ -240,6 +248,10 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     getlikes();
     setGotCommFlag(1);
   }
+
+  // const cleanWord = (word : string) => {
+  //   return filter.clean(word);
+  // }
   
   return (
     <div className="dark:text-white">

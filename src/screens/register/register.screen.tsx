@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { cleanWord , badcheck } from "../../Hooks/filter";
+
 
 interface RegisterScreenProps {
   navigation: any;
@@ -67,6 +69,10 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       setError("email");
       setMessage("Invalid email format");
       return false;
+    } else if (badcheck(email)){
+      setError("email");
+      setMessage("Profanity detected in email")
+      return false;
     }
 
     if (!password) {
@@ -95,17 +101,29 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       setError("username");
       setMessage("Please enter a username");
       return false;
+    } else if (badcheck(username)){
+      setError("username")
+      setMessage("Profanity detected in Username")
+      return false;
     }
 
     if (!firstname) {
       setError("firstname");
       setMessage("Please enter your first name");
       return false;
+    }else if (badcheck(firstname) && firstname != "Dick"){
+      setError("firstname")
+      setMessage("Profanity detected in Firstname")
+      return false;
     }
 
     if (!lastname) {
       setError("lastname");
       setMessage("Please enter your last name");
+      return false;
+    }else if (badcheck(lastname) && lastname != "Dick"){
+      setError("lastname")
+      setMessage("Profanity detected in Lastname")
       return false;
     }
 
