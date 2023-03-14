@@ -35,7 +35,9 @@ export const AdminDashboardScreen = ({ navigation }: AdmiDashboardProps) => {
     setShowOptions(!showOptions);
   };
 
-  const openReportsDashboard = () => { };
+  const openReportsDashboard = () => { 
+    navigation.navigate('TicketScreen');
+  };
 
   // options when clicked on a post marker
   const postOptions = () => {
