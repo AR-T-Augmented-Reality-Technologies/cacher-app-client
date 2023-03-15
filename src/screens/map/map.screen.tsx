@@ -20,11 +20,45 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
   const [lngsarr, setLngsArr] = useState<number[]>([]);
   const [marksarr, setMarksArr] = useState<string[]>([]);
 
-  var lats = [0]
-  var lngs = [0]
-  var marks = [""]
-  const onGoogleApiLoaded = ({ map, maps }: { map: any; maps: any }) => {
+  let lats = [0]
+  let lngs = [0]
+  let marks = [""]
+
+  const getMarkers = async () => {
+    const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/getBooks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+
+    var scrapNum = data.data.books.length;
+    var currSize = latsarr.length;
+
+
+    const cords = await fetch('https://api.what3words.com/v3/convert-to-coordinates?key=ANH86LNJ&words=gears.broad.cope&format=json', {
+      method: "GET",
+    });
+    const datacord = await cords.json();
+
+    for (var i = 0; i < scrapNum; i++) {
+      lats[i] = datacord.coordinates.lat;
+      lngs[i] = datacord.coordinates.lng;
+      marks[i] = data.data.books[i].location;
+    }
+
+    for (var j = 0; j < lats.length; j++) {
+      latsarr.push(lats[j]);
+      lngsarr.push(lngs[j]);
+      marksarr.push(marks[j]);
+    }
+
+
+  };
+  const onGoogleApiLoaded = async ({ map, maps }: { map: any; maps: any }) => {
     mapRef.current = map
+    await getMarkers()
     setMapReady(true)
   }
 
@@ -54,43 +88,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
   const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
 
-  const getMarkers = async () => {
-    const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/getBooks`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-
-    var scrapNum = data.data.books.length;
-    var currSize = latsarr.length;
-
-
-    const cords = await fetch('https://api.what3words.com/v3/convert-to-coordinates?key=08GV0ZDL&words=gears.broad.cope&format=json', {
-      method: "GET",
-    });
-    const datacord = await cords.json();
-
-    for (var i = 0; i < scrapNum; i++) {
-      lats[i] = datacord.coordinates.lat;
-      lngs[i] = datacord.coordinates.lng;
-      marks[i] = data.data.books[i].location
-    }
-
-    for (var j = 0; j < lats.length; j++) {
-      latsarr.push(lats[j]);
-      lngsarr.push(lngs[j]);
-      marksarr.push(marks[j]);
-    }
 
 
 
-    // console.log("hERE")
-    // console.log(data.data.books[0].location);
-  }
-
-  getMarkers();
   //Takes in coordinates
   const addMarker = async (location: string) => {
     //Splits the string of lat and lon into an array of 2 elements
@@ -98,7 +98,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
 
     //Gets the w3w value as a string
-    const response = await fetch('https://api.what3words.com/v3/convert-to-3wa?key=08GV0ZDL&coordinates=55.911155%2C-3.321666&language=en&format=json', {
+    const response = await fetch('https://api.what3words.com/v3/convert-to-3wa?key=ANH86LNJ&coordinates=55.911155%2C-3.321666&language=en&format=json', {
       method: "GET",
     });
     const data = await response.json();
@@ -112,7 +112,11 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
   }
 
-  addMarker("sasgsga")
+  // addMarker("sasgga")
+  console.log('lat ' + latsarr[0]);
+  console.log('lng ' + lngsarr[0]);
+  console.log('mark ' + marksarr[0]);
+
   return (
     <>
       {mapReady && <div>Map is ready. See for logs in developer console.</div>}
@@ -125,7 +129,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         onChange={(map: any) => console.log('Map moved', map)}
         Marker
       >
-        <Marker key={2} lat={latsarr[0]} lng={lngsarr[0]} markerId={"dog"} onClick={onMarkerClick} className="marker" />
+        {latsarr.map((lat, index) => (
+          <Marker key={index} lat={lat} lng={lngsarr[index]} markerId={marksarr[index]} onClick={onMarkerClick} className="marker" />
+        ))}
         <Marker key={0} lat={55.911155} lng={-3.321666} markerId={"dog"} onClick={onMarkerClick} className="marker" />
         <Marker key={1} lat={55.955005} lng={-3.162741} markerId={"my home"} onClick={onMarkerClick} className="marker" />
 
