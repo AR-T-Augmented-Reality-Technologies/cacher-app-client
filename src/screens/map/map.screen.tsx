@@ -4,10 +4,8 @@ import {
   What3wordsMap,
 } from "@what3words/react-components";
 import GoogleMap from "google-maps-react-markers";
-import Marker from "google-maps-react-markers";
-
-// import { Marker } from "@react-google-maps/api";
-
+// import { Marker }§ from "@react-google-maps/api";
+import Marker from "../../components/marker";
 interface MapScreenProps {
   navigation: any;
 }
@@ -59,8 +57,11 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         mapMinHeight="100vh"
         onGoogleApiLoaded={onGoogleApiLoaded}
         onChange={(map: any) => console.log('Map moved', map)}
+        Marker
       >
-        <Marker key={0} lat={55.911155} lng={-3.321666} markerId={"dog"} onClick={onMarkerClick} />
+        <Marker key={0} lat={55.911155} lng={-3.321666} markerId={"dog"} onClick={onMarkerClick} className="marker"/>
+        <Marker key={1} lat={55.955005} lng={-3.162741} markerId={"my home"} onClick={onMarkerClick} className="marker"/>
+
       </GoogleMap>
       <div slot="map" style={{ width: "100%", height: "100vh" }} />
       <div slot="search-control" style={{ margin: "10px 0 0 10px" }}>
