@@ -16,13 +16,20 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
   const [mapReady, setMapReady] = useState(false)
   const mapRef = useRef(null)
 
+  const [latsarr, setLatsArr] = useState<number[]>([]);
+  const [lngsarr, setLngsArr] = useState<number[]>([]);
+  const [marksarr, setMarksArr] = useState<string[]>([]);
+
+  var lats = [0]
+  var lngs = [0]
+  var marks = [""]
   const onGoogleApiLoaded = ({ map, maps }: { map: any; maps: any }) => {
     mapRef.current = map
     setMapReady(true)
   }
 
   const onMarkerClick = (markerId: any) => {
-    console.log('This is ->', markerId)
+    navigation.navigate("Image");
   }
 
   // Store current page in local storage
@@ -47,6 +54,65 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
   const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
 
+  const getMarkers = async () => {
+    const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/getBooks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+
+    var scrapNum = data.data.books.length;
+    var currSize = latsarr.length;
+
+
+    const cords = await fetch('https://api.what3words.com/v3/convert-to-coordinates?key=08GV0ZDL&words=gears.broad.cope&format=json', {
+      method: "GET",
+    });
+    const datacord = await cords.json();
+
+    for (var i = 0; i < scrapNum; i++) {
+      lats[i] = datacord.coordinates.lat;
+      lngs[i] = datacord.coordinates.lng;
+      marks[i] = data.data.books[i].location
+    }
+
+    for (var j = 0; j < lats.length; j++) {
+      latsarr.push(lats[j]);
+      lngsarr.push(lngs[j]);
+      marksarr.push(marks[j]);
+    }
+
+
+
+    // console.log("hERE")
+    // console.log(data.data.books[0].location);
+  }
+
+  getMarkers();
+  //Takes in coordinates
+  const addMarker = async (location: string) => {
+    //Splits the string of lat and lon into an array of 2 elements
+    var locations = location.split(',');
+
+
+    //Gets the w3w value as a string
+    const response = await fetch('https://api.what3words.com/v3/convert-to-3wa?key=08GV0ZDL&coordinates=55.911155%2C-3.321666&language=en&format=json', {
+      method: "GET",
+    });
+    const data = await response.json();
+    console.log(data.words);
+    //Create marker
+
+    //Add Marker to the array
+    //Add scrapbook to DB
+    //Add blocked areas to database
+
+
+  }
+
+  addMarker("sasgsga")
   return (
     <>
       {mapReady && <div>Map is ready. See for logs in developer console.</div>}
@@ -59,8 +125,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         onChange={(map: any) => console.log('Map moved', map)}
         Marker
       >
-        <Marker key={0} lat={55.911155} lng={-3.321666} markerId={"dog"} onClick={onMarkerClick} className="marker"/>
-        <Marker key={1} lat={55.955005} lng={-3.162741} markerId={"my home"} onClick={onMarkerClick} className="marker"/>
+        <Marker key={2} lat={latsarr[0]} lng={lngsarr[0]} markerId={"dog"} onClick={onMarkerClick} className="marker" />
+        <Marker key={0} lat={55.911155} lng={-3.321666} markerId={"dog"} onClick={onMarkerClick} className="marker" />
+        <Marker key={1} lat={55.955005} lng={-3.162741} markerId={"my home"} onClick={onMarkerClick} className="marker" />
 
       </GoogleMap>
       <div slot="map" style={{ width: "100%", height: "100vh" }} />
