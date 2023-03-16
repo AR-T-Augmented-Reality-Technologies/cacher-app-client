@@ -95,17 +95,66 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
   const API_KEY = process.env.REACT_APP_W3W_API_KEY;
   const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
+  //location is the string of lat and long , curr is the current blocked square
+  const locBlocker = async (location: string, curr: string) => {
+    console.log("Blocked");
+    var locations = location.split(",");
+    var sqsize = 0.000027;
+    var farLeftlat = Number(locations[1]) - (sqsize * 2);
+    var leftlat = Number(locations[1]) - (sqsize);
+    var rightlat = Number(locations[1]) + (sqsize);
+    var farRightlat = Number(locations[1]) + (sqsize * 2);
+    var hocloc = [farLeftlat, leftlat, rightlat, farRightlat]
 
+    var blockedlat = [Number(locations[1])];
+    var blockedlng = [Number(locations[0])];
+    for (var i = 0; i < hocloc.length; i++) {
+      blockedlat.push(hocloc[i]);
+      blockedlng.push(Number(locations[0]) + sqsize)
+      blockedlat.push(hocloc[i]);
+      blockedlng.push(Number(locations[0]) + (2 * sqsize))
+      blockedlat.push(hocloc[i]);
+      blockedlng.push(Number(locations[0]) - (sqsize))
+      blockedlat.push(hocloc[i]);
+      blockedlng.push(Number(locations[0]) - (2 * sqsize))
+    }
+
+    var wordes = [curr]
+
+    for (var j = 0; j < blockedlat.length; j++) {
+      const response = await fetch(
+        //Fix this future Albaraa
+        `https://api.what3words.com/v3/convert-to-3wa?key=${API_KEY}&coordinates=${blockedlat[j]}%2C${blockedlng[j]}&language=en&format=json`,
+        {
+          method: "GET",
+        }
+      );
+      const data = await response.json();
+      wordes.push(data.words);
+    }
+
+    for (var k = 0; k < wordes.length; k++) {
+      const payload = {
+        loc: wordes[k], //placeholder because currently it is not saving images
+        bestloc: wordes[0],
+      };
+      const responseget = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/setBlocked`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "cors",
+        body: JSON.stringify(payload),
+      });
+    }
+  }
   //Takes in coordinates
   const addMarker = async (location: string) => {
     //Splits the string of lat and lon into an array of 2 elements
     var locations = location.split(",");
-    console.log("We're here")
-
-
+    console.log("We're here");
     //Gets the w3w value as a string
     const response = await fetch(
-      //Fix this future Albaraa
       `https://api.what3words.com/v3/convert-to-3wa?key=${API_KEY}&coordinates=${locations[0]}%2C${locations[1]}&language=en&format=json`,
       {
         method: "GET",
@@ -114,6 +163,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const data = await response.json();
 
     var temp = latsarr.length;
+    console.log('Reaching here');
 
     const payload = {
       loc: data.words, //placeholder because currently it is not saving images
@@ -127,11 +177,14 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
       body: JSON.stringify(payload),
     });
 
-    latsarr.push(Number(locations[0]))
-    lngsarr.push(Number(locations[1]))
+    console.log('Reachin down here');
+
+    locBlocker(location, data.words);
+    latsarr.push(Number(locations[0]));
+    lngsarr.push(Number(locations[1]));
     marksarr.push(data.words);
-    
-  };
+
+  }
 
   // print all markers
   return (
