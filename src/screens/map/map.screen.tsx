@@ -16,10 +16,17 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
   const [currentPage, setCurrentPage] = useState("Map");
   const [mapReady, setMapReady] = useState(false);
   const mapRef = useRef(null);
+  const [userLocation, setUserLocation] = useState({ lat: 55.911155, lng: -3.321666 });
+
+
 
   const [latsarr, setLatsArr] = useState<number[]>([]);
   const [lngsarr, setLngsArr] = useState<number[]>([]);
   const [marksarr, setMarksArr] = useState<string[]>([]);
+
+    // Keys
+    const API_KEY = process.env.REACT_APP_W3W_API_KEY;
+    const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
   let lats = [0];
   let lngs = [0];
@@ -47,7 +54,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
       const bookLocation = data.data.books[i].location;
       console.log('lOCAITON ' + bookLocation);
       const cords = await fetch(
-        `https://api.what3words.com/v3/convert-to-coordinates?key=276EJMT4&words=${bookLocation}&format=json`,
+        `https://api.what3words.com/v3/convert-to-coordinates?key=${API_KEY}&words=${bookLocation}&format=json`,
         {
           method: "GET",
         }
@@ -65,10 +72,24 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
   };
 
   const onGoogleApiLoaded = async ({ map, maps }: { map: any; maps: any }) => {
-    mapRef.current = map;
-    await getMarkers();
-    setMapReady(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+        
+        mapRef.current = map;
+        getMarkers();
+        setMapReady(true);
+      },
+      (error) => {
+        console.log(error);
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    );
   };
+  
 
   const onMarkerClick = (markerId: any) => {
     navigation.navigate("Image");
@@ -90,10 +111,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
   const displayOptions = () => {
     setShowOptions(!showOptions);
   };
-
-  // Keys
-  const API_KEY = process.env.REACT_APP_W3W_API_KEY;
-  const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
   //location is the string of lat and long , curr is the current blocked square
   const locBlocker = async (location: string, curr: string) => {
@@ -179,7 +196,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
     console.log('Reachin down here');
 
-    locBlocker(location, data.words);
+    // locBlocker(location, data.words);
     latsarr.push(Number(locations[0]));
     lngsarr.push(Number(locations[1]));
     marksarr.push(data.words);
@@ -190,14 +207,33 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
   return (
     <>
       {mapReady}
-      <button onClick={() => addMarker("55.945734,-3.191305")}> Test</button>
+      <button
+        onClick={() => {
+          navigator.geolocation.getCurrentPosition((position) => {
+            setUserLocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+            console.log(userLocation)
+            addMarker(userLocation.lat + "," + userLocation.lng);
+          });
+        }}
+      >
+        {" "}
+        Test
+      </button>
       <GoogleMap
         apiKey={MAP_API_KEY}
-        defaultCenter={{ lat: 55.911155, lng: -3.321666 }}
+        defaultCenter={userLocation}
         defaultZoom={50}
         mapMinHeight="100vh"
         onGoogleApiLoaded={onGoogleApiLoaded}
         Marker
+        // get user location
+        onMapClick={(e: any) => {
+            console.log(e.latLng.lat(), e.latLng.lng());
+            addMarker(e.latLng.lat() + "," + e.latLng.lng());
+        }}
       >
         {latsarr.map((lat, index) => (
           <Marker
