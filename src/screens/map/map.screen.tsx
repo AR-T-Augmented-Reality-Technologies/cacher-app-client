@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-
 import GoogleMap from "google-maps-react-markers";
-// import { Marker }§ from "@react-google-maps/api";
 import Marker from "../../components/marker";
 
 interface MapScreenProps {
@@ -9,19 +7,20 @@ interface MapScreenProps {
 }
 
 export const MapScreen = ({ navigation }: MapScreenProps) => {
+  const API_KEY = process.env.REACT_APP_W3W_API_KEY;
+  const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
   const [showOptions, setShowOptions] = useState(false);
   const [currentPage, setCurrentPage] = useState("Map");
   const [mapReady, setMapReady] = useState(false);
-  const mapRef = useRef(null);
-  const [userLocation, setUserLocation] = useState({
-    lat: 55.911155,
-    lng: -3.321666,
-  });
   const [markers, setMarkers] = useState<any[]>([]);
-
   const [latsarr, setLatsArr] = useState<number[]>([]);
   const [lngsarr, setLngsArr] = useState<number[]>([]);
   const [marksarr, setMarksArr] = useState<string[]>([]);
+  const mapRef = useRef(null);
+  const [userLocation, setUserLocation] = useState({
+    lat: 0,
+    lng: 0,
+  });
 
   // Store current page in local storage
   useEffect(() => {
@@ -39,14 +38,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
   const displayOptions = () => {
     setShowOptions(!showOptions);
   };
-
-  // Keys
-  const API_KEY = process.env.REACT_APP_W3W_API_KEY;
-  const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
-
-  let lats = [0];
-  let lngs = [0];
-  let marks = [""];
 
   // On map load
   const onGoogleApiLoaded = async ({ map, maps }: { map: any; maps: any }) => {
@@ -128,9 +119,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     );
     const data = await response.json();
 
-    var temp = latsarr.length;
-    
-
     const payload = {
       loc: data.words, //placeholder because currently it is not saving images
     };
@@ -146,17 +134,17 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
       }
     );
 
-
     // locBlocker(location, data.words);
     latsarr.push(Number(locations[0]));
     lngsarr.push(Number(locations[1]));
     marksarr.push(data.words);
+
+    getMarkers();
   };
 
   // Google map component
   return (
     <>
-      
       <button
         onClick={() => {
           navigator.geolocation.getCurrentPosition((position) => {
