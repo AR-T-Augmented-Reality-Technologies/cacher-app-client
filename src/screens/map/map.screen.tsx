@@ -45,6 +45,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     //Fetches locations for each scrapbook
     for (let i = 0; i < scrapNum; i++) {
       const bookLocation = data.data.books[i].location;
+      console.log('lOCAITON ' + bookLocation);
       const cords = await fetch(
         `https://api.what3words.com/v3/convert-to-coordinates?key=276EJMT4&words=${bookLocation}&format=json`,
         {
@@ -94,6 +95,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
   const API_KEY = process.env.REACT_APP_W3W_API_KEY;
   const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
 
+
   //Takes in coordinates
   const addMarker = async (location: string) => {
     //Splits the string of lat and lon into an array of 2 elements
@@ -104,7 +106,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     //Gets the w3w value as a string
     const response = await fetch(
       //Fix this future Albaraa
-      `https://api.what3words.com/v3/convert-to-3wa?key=${API_KEY}&coordinates=55.911155%2C-3.321666&language=en&format=json`,
+      `https://api.what3words.com/v3/convert-to-3wa?key=${API_KEY}&coordinates=${locations[0]}%2C${locations[1]}&language=en&format=json`,
       {
         method: "GET",
       }
@@ -113,20 +115,29 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
     var temp = latsarr.length;
 
+    const payload = {
+      loc: data.words, //placeholder because currently it is not saving images
+    };
+    const responseget = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/setBooks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      mode: "cors",
+      body: JSON.stringify(payload),
+    });
+
     latsarr.push(Number(locations[0]))
     lngsarr.push(Number(locations[1]))
     marksarr.push(data.words);
+    
   };
 
   // print all markers
-
-  const addmark = () => {
-    { addMarker("55.955005,-3.162741") }
-  }
   return (
     <>
       {mapReady}
-      <button onClick={() => addMarker("55.955005,-3.162741")}> Test</button>
+      <button onClick={() => addMarker("55.945734,-3.191305")}> Test</button>
       <GoogleMap
         apiKey={MAP_API_KEY}
         defaultCenter={{ lat: 55.911155, lng: -3.321666 }}
@@ -146,9 +157,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
           />
 
         ))}
-        
+
       </GoogleMap>
-      
       {/* options button */}
 
       <button
