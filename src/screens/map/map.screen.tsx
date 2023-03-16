@@ -24,10 +24,11 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
   let lats = [0];
   let lngs = [0];
   let marks = [""];
-  
+
   type GoogleMarker = google.maps.Marker;
 
   const getMarkers = async () => {
+    //Gets all scrapbooks
     const response = await fetch(
       `${process.env.REACT_APP_REST_API_HOST}/scrap/getBooks`,
       {
@@ -41,22 +42,23 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
     const scrapNum = data.data.books.length;
 
+    //Fetches locations for each scrapbook
     for (let i = 0; i < scrapNum; i++) {
       const bookLocation = data.data.books[i].location;
       const cords = await fetch(
-        `https://api.what3words.com/v3/convert-to-coordinates?key=${API_KEY}&words=${bookLocation}&format=json`,
+        `https://api.what3words.com/v3/convert-to-coordinates?key=276EJMT4&words=${bookLocation}&format=json`,
         {
           method: "GET",
         }
       );
-      const datacord = await cords.json();
+      const datacord = await cords.json(); //gets coordinates
 
       lats[i] = datacord.coordinates.lat;
       lngs[i] = datacord.coordinates.lng;
       marks[i] = bookLocation;
     }
 
-    setLatsArr(lats);
+    setLatsArr(lats); //thanks kacper
     setLngsArr(lngs);
     setMarksArr(marks);
   };
@@ -96,34 +98,35 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
   const addMarker = async (location: string) => {
     //Splits the string of lat and lon into an array of 2 elements
     var locations = location.split(",");
+    console.log("We're here")
+
 
     //Gets the w3w value as a string
     const response = await fetch(
+      //Fix this future Albaraa
       `https://api.what3words.com/v3/convert-to-3wa?key=${API_KEY}&coordinates=55.911155%2C-3.321666&language=en&format=json`,
       {
         method: "GET",
       }
     );
     const data = await response.json();
-    console.log(data.words);
-    //Create marker
 
-    //Add Marker to the array
-    //Add scrapbook to DB
-    //Add blocked areas to database
+    var temp = latsarr.length;
+
+    latsarr.push(Number(locations[0]))
+    lngsarr.push(Number(locations[1]))
+    marksarr.push(data.words);
   };
 
   // print all markers
-  for (let i = 0; i < latsarr.length; i++) {
-    console.log("Marker " + (i + 1));
-    console.log("Lat: " + latsarr[i]);
-    console.log("Lng: " + lngsarr[i]);
-    console.log("Mark: " + marksarr[i]);
-  }
 
+  const addmark = () => {
+    { addMarker("55.955005,-3.162741") }
+  }
   return (
     <>
       {mapReady}
+      <button onClick={() => addMarker("55.955005,-3.162741")}> Test</button>
       <GoogleMap
         apiKey={MAP_API_KEY}
         defaultCenter={{ lat: 55.911155, lng: -3.321666 }}
@@ -141,67 +144,56 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             onClick={onMarkerClick}
             className="marker"
           />
-          
-        ))}
-      </GoogleMap>
-      <div slot="map" style={{ width: "100%", height: "100vh" }} />
-      <div slot="search-control" style={{ margin: "10px 0 0 10px" }}>
-        <What3wordsAutosuggest>
-          <input
-            type="text"
-            placeholder="Search for location"
-            className="rounded-lg w-54 h-9"
-            autoComplete="off"
-          />
-        </What3wordsAutosuggest>
-        {/* options button */}
 
-        <button
-          className={`dark:bg-dback w-16 h-16 rounded-full text-xs text-black dark:text-white bg-white font-bold border-solid border-2 ${
-            showOptions
-              ? "border-custom-blue dark:border-dorange"
-              : "border-black"
+        ))}
+        
+      </GoogleMap>
+      
+      {/* options button */}
+
+      <button
+        className={`dark:bg-dback w-16 h-16 rounded-full text-xs text-black dark:text-white bg-white font-bold border-solid border-2 ${showOptions
+          ? "border-custom-blue dark:border-dorange"
+          : "border-black"
           } text-center fixed bottom-2 left-2`}
-          onClick={displayOptions}
+        onClick={displayOptions}
+      >
+        <svg
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          className="w-6 h-6 mx-auto my-auto"
         >
-          <svg
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            className="w-6 h-6 mx-auto my-auto"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-            />
-          </svg>
-          Options
-        </button>
-        {/* options button */}
-        <button
-          className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
-            showOptions ? "border-custom-blue" : "border-black"
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+          />
+        </svg>
+        Options
+      </button>
+      {/* options button */}
+      <button
+        className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${showOptions ? "border-custom-blue" : "border-black"
           } text-center fixed bottom-2 left-2`}
-          onClick={displayOptions}
+        onClick={displayOptions}
+      >
+        <svg
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          className="w-6 h-6 mx-auto my-auto"
         >
-          <svg
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            className="w-6 h-6 mx-auto my-auto"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-            />
-          </svg>
-          Options
-        </button>
-      </div>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+          />
+        </svg>
+        Options
+      </button>
       {/* options menu - Display when the Options button is clicked*/}
       {showOptions && (
         <>
