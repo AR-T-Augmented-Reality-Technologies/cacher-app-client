@@ -194,7 +194,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             }}
           />
         ))}
-        {mapReady}
       </GoogleMap>
       {/* options button */}
 
