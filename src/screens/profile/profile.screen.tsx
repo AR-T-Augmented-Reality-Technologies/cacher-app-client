@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Button, View, ImageBackground } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { logout_user } from "../../features/users.slice";
+import { badcheck } from "../../Hooks/filter";
 
 interface ProfileScreenProps {
   navigation: any;
@@ -258,6 +259,27 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
         console.log("Passwords don't match");
         return false;
       }
+      if(badcheck(updateData.data.user_firstname)){
+        setError("firstname")
+        setMessage("Profanity detected in first-name")
+        return false;
+      }
+      if(badcheck(updateData.data.user_lastname)){
+        setError("lastname")
+        setMessage("Profanity detected in last-name")
+        return false;
+      }
+      if(badcheck(updateData.data.user_username)){
+        setError("username")
+        setMessage("Profanity detected in username")
+        return false;
+      }
+      if(badcheck(updateData.data.user_email)){
+        setError("email")
+        setMessage("Profanity detected in email")
+        return false;
+      }
+    
 
     setEditingSuccess(true);
 
