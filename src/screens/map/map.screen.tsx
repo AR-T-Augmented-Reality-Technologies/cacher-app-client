@@ -14,10 +14,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [currentPage, setCurrentPage] = useState("Map");
     const [mapReady, setMapReady] = useState(false);
     const [markers, setMarkers] = useState<any[]>([]);
-    const [latsarr, setLatsArr] = useState<number[]>([]);
-    const [lngsarr, setLngsArr] = useState<number[]>([]);
-    const [marksarr, setMarksArr] = useState<string[]>([]);
-    const [blockedSquares, setBlockedSquares] = useState<any[]>([]);
     const mapRef = useRef<any>(null);
     const [userLocation, setUserLocation] = useState({
         lat: 0,
@@ -220,73 +216,61 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const addMarker = async (location: string) => {
         //Splits the string of lat and lon into an array of 2 elements
         var locations = location.split(",");
-      
+
         //Gets the w3w value as a string
         const response = await fetch(
-          `https://api.what3words.com/v3/convert-to-3wa?key=${API_KEY}&coordinates=${locations[0]}%2C${locations[1]}&language=en&format=json`,
-          {
-            method: "GET",
-          }
+            `https://api.what3words.com/v3/convert-to-3wa?key=${API_KEY}&coordinates=${locations[0]}%2C${locations[1]}&language=en&format=json`,
+            {
+                method: "GET",
+            }
         );
         const data = await response.json();
-        
-      
+
         const blocked = await getBlockedSquares();
 
         // Check if the location is already occupied
         if (blocked.some((item: any) => item.location === data.words)) {
-          console.log("This location is already occupied!");
-          return;
+            console.log("This location is already occupied!");
+            return;
         }
-      
+
         const payload = {
-          loc: data.words, //placeholder because currently it is not saving images
+            loc: data.words, //placeholder because currently it is not saving images
         };
         const responseget = await fetch(
-          `${process.env.REACT_APP_REST_API_HOST}/scrap/setBooks`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            mode: "cors",
-            body: JSON.stringify(payload),
-          }
+            `${process.env.REACT_APP_REST_API_HOST}/scrap/setBooks`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                mode: "cors",
+                body: JSON.stringify(payload),
+            }
         );
-      
+
         // Block surrounding squares
         locBlocker(location, "");
 
         console.log("Marker added at: ", data.words);
-      
+
         // Add new marker to the map
         getMarkers();
-      };
-      
+    };
 
     // Google map component
     return (
         <>
-            <button
-                onClick={() => {
-                    navigator.geolocation.getCurrentPosition((position) => {
-                        setUserLocation({
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude,
-                        });
-                        addMarker(userLocation.lat + "," + userLocation.lng);
-                    });
-                }}
-            >
-                {" "}
-                Test
-            </button>
             <GoogleMap
                 apiKey={MAP_API_KEY}
                 defaultZoom={14}
+                defaultCenter={{ lat: 55.911293, lng: -3.321045 }}
                 mapMinHeight="100vh"
                 onGoogleApiLoaded={onGoogleApiLoaded}
-                options={{ styles: mapStyle }} // apply the custom style to the map
+                options={{
+                    styles: mapStyle,
+                    disableDefaultUI: true, // disable all default controls and buttons
+                }}
             >
                 {markers.map((marker) => (
                     <Marker
@@ -303,8 +287,38 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                     />
                 ))}
             </GoogleMap>
-            {/* options button */}
 
+            {/* Add new scrapbook button */}
+            <button
+                className="dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-2 right-2 transition duration-500 ease-in-out"
+                onClick={() => {
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        setUserLocation({
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        });
+                        addMarker(userLocation.lat + "," + userLocation.lng);
+                    });
+                }}
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    className="w-6 h-6 mx-auto my-auto"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                </svg>
+                New
+            </button>
+
+            {/* options button */}
             <button
                 className={`dark:bg-dback w-16 h-16 rounded-full text-xs text-black dark:text-white bg-white font-bold border-solid border-2 ${
                     showOptions
@@ -350,6 +364,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 </svg>
                 Options
             </button>
+
             {/* options menu - Display when the Options button is clicked*/}
             {showOptions && (
                 <>
