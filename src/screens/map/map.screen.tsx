@@ -114,6 +114,79 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     navigation.navigate("Image");
   };
 
+  const locBlocker = async (location: string, curr: string) => {
+    console.log("Blocked");
+    var locations = location.split(",");
+
+    var haversineOffset = require('haversine-offset')
+    var a = { latitude: parseFloat(locations[0]), longitude: parseFloat(locations[1]) }
+    var offsetx0 = {x:0, y:0};
+    var offsetx1 = {x:3, y:0};
+    var offsetx2 = {x:6, y:0};
+    var offsetx3 = {x:-3, y:0};
+    var offsetx4 = {x:-6, y:0};
+
+    var offsety0 = {x:0, y:0};
+    var offsety1 = {x:0, y:3};
+    var offsety2 = {x:0, y:6};
+    var offsety3 = {x:0, y:-3};
+    var offsety4 = {x:0, y:-6};
+
+    var h1 = haversineOffset(a, offsetx1);
+    var h2 = haversineOffset(a, offsetx2);
+    var h0 = haversineOffset(a, offsetx0);
+    var h3 = haversineOffset(a, offsetx3);
+    var h4 = haversineOffset(a, offsetx4);
+
+    var hocloc = [h1,h2,h0,h3,h4];
+
+    var blockedcoord=[];
+    for (var i = 0; i < hocloc.length; i++) {
+      var temp = {latitude: hocloc[i].lat, longitude: hocloc[i].lng};
+      var tempBlock = haversineOffset(temp,offsety0);
+      blockedcoord.push(tempBlock);
+      var tempBlock2 = haversineOffset(temp,offsety1);
+      blockedcoord.push(tempBlock2);
+      var tempBlock3 = haversineOffset(temp,offsety2);
+      blockedcoord.push(tempBlock3);
+      var tempBlock4 = haversineOffset(temp,offsety3);
+      blockedcoord.push(tempBlock4);
+      var tempBlock5 = haversineOffset(temp,offsety4);
+      blockedcoord.push(tempBlock5);
+    }
+
+    var wordes = []
+
+    for (var j = 0; j < blockedcoord.length; j++) {
+      // console.log("Lat " + blockedcoord[j].lat + "Long" + blockedcoord[j].lng);
+      const response = await fetch(
+        //Fix this future Albaraa1
+        `https://api.what3words.com/v3/convert-to-3wa?key=${API_KEY}&coordinates=${blockedcoord[j].lat}%2C${blockedcoord[j].lng}&language=en&format=json`,
+        {
+          method: "GET",
+        }
+      );
+      const data = await response.json();
+      wordes.push(data.words);
+    }
+
+    for (var k = 0; k < wordes.length; k++) {
+      // console.log('Blocked ' + wordes[k] + " " +  wordes[0] );
+      const payload = {
+        loc: wordes[k], //placeholder because currently it is not saving images
+        bestloc: wordes[0],
+      };
+      const responseget = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/setBlocked`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "cors",
+        body: JSON.stringify(payload),
+      });
+    }
+  }
+
   // Adds a marker to the map
   const addMarker = async (location: string) => {
     //Splits the string of lat and lon into an array of 2 elements
@@ -162,6 +235,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             });
             console.log("Adding marker at: ", userLocation);
             addMarker(userLocation.lat + "," + userLocation.lng);
+            locBlocker("19.38636,-155.544739","beards.retail.shrivel");
           });
         }}
       >
@@ -173,12 +247,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         defaultZoom={14}
         mapMinHeight="100vh"
         onGoogleApiLoaded={onGoogleApiLoaded}
-        Marker
         options={{ styles: mapStyle }} // apply the custom style to the map
-        onMapClick={(e: any) => {
-          console.log(e.latLng.lat(), e.latLng.lng());
-          addMarker(e.latLng.lat() + "," + e.latLng.lng());
-        }}
       >
         {markers.map((marker) => (
           <Marker
