@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import GoogleMap from "google-maps-react-markers";
 import Marker from "../../components/marker";
+import mapStyle from "../../mapStyle.json";
+
 
 interface MapScreenProps {
   navigation: any;
@@ -44,9 +46,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     maps.event.addListener(map, 'zoom_changed', () => {
       const zoomLevel = map.getZoom();
       const scaleFactor = Math.pow(2, zoomLevel) / 2;
-
-      console.log(markers);
-      
     });
     
     navigator.geolocation.getCurrentPosition(
@@ -175,6 +174,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         mapMinHeight="100vh"
         onGoogleApiLoaded={onGoogleApiLoaded}
         Marker
+        options={{ styles: mapStyle }} // apply the custom style to the map
         onMapClick={(e: any) => {
           console.log(e.latLng.lat(), e.latLng.lng());
           addMarker(e.latLng.lat() + "," + e.latLng.lng());
