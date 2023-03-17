@@ -1,78 +1,28 @@
 import { useState, useEffect, useRef } from "react";
-import {
-  What3wordsAutosuggest,
-  What3wordsMap,
-} from "@what3words/react-components";
 import GoogleMap from "google-maps-react-markers";
-// import { Marker }§ from "@react-google-maps/api";
 import Marker from "../../components/marker";
+import mapStyle from "../../mapStyle.json";
+
 
 interface MapScreenProps {
   navigation: any;
 }
 
 export const MapScreen = ({ navigation }: MapScreenProps) => {
+  const API_KEY = process.env.REACT_APP_W3W_API_KEY;
+  const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
   const [showOptions, setShowOptions] = useState(false);
   const [currentPage, setCurrentPage] = useState("Map");
   const [mapReady, setMapReady] = useState(false);
-  const mapRef = useRef(null);
-
+  const [markers, setMarkers] = useState<any[]>([]);
   const [latsarr, setLatsArr] = useState<number[]>([]);
   const [lngsarr, setLngsArr] = useState<number[]>([]);
   const [marksarr, setMarksArr] = useState<string[]>([]);
-
-  let lats = [0];
-  let lngs = [0];
-  let marks = [""];
-
-  type GoogleMarker = google.maps.Marker;
-
-  const getMarkers = async () => {
-    //Gets all scrapbooks
-    const response = await fetch(
-      `${process.env.REACT_APP_REST_API_HOST}/scrap/getBooks`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const data = await response.json();
-
-    const scrapNum = data.data.books.length;
-
-    //Fetches locations for each scrapbook
-    for (let i = 0; i < scrapNum; i++) {
-      const bookLocation = data.data.books[i].location;
-      console.log('lOCAITON ' + bookLocation);
-      const cords = await fetch(
-        `https://api.what3words.com/v3/convert-to-coordinates?key=276EJMT4&words=${bookLocation}&format=json`,
-        {
-          method: "GET",
-        }
-      );
-      const datacord = await cords.json(); //gets coordinates
-
-      lats[i] = datacord.coordinates.lat;
-      lngs[i] = datacord.coordinates.lng;
-      marks[i] = bookLocation;
-    }
-
-    setLatsArr(lats); //thanks kacper
-    setLngsArr(lngs);
-    setMarksArr(marks);
-  };
-
-  const onGoogleApiLoaded = async ({ map, maps }: { map: any; maps: any }) => {
-    mapRef.current = map;
-    await getMarkers();
-    setMapReady(true);
-  };
-
-  const onMarkerClick = (markerId: any) => {
-    navigation.navigate("Image");
-  };
+  const mapRef = useRef<any>(null);
+  const [userLocation, setUserLocation] = useState({
+    lat: 0,
+    lng: 0,
+  });
 
   // Store current page in local storage
   useEffect(() => {
@@ -91,40 +41,127 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     setShowOptions(!showOptions);
   };
 
-  // Keys
-  const API_KEY = process.env.REACT_APP_W3W_API_KEY;
-  const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+  // On map load
+  const onGoogleApiLoaded = async ({ map, maps }: { map: any; maps: any }) => {
+    maps.event.addListener(map, 'zoom_changed', () => {
+      const zoomLevel = map.getZoom();
+      const scaleFactor = Math.pow(2, zoomLevel) / 2;
+    });
 
-  //location is the string of lat and long , curr is the current blocked square
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const userLat = position.coords.latitude;
+        const userLng = position.coords.longitude;
+        setUserLocation({ lat: userLat, lng: userLng });
+        map.setCenter({ lat: userLat, lng: userLng });
+        mapRef.current = map;
+        getMarkers();
+        setMapReady(true);
+      },
+      (error) => {
+        console.log(error);
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    );
+  };
+
+  // Get Markers
+  const getMarkers = async () => {
+    console.log("Getting markers");
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_REST_API_HOST}/scrap/getBooks`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      const markers = data.data.books.map(async (book: any) => {
+        const bookLocation = book.location;
+        const cords = await fetch(
+          `https://api.what3words.com/v3/convert-to-coordinates?key=${API_KEY}&words=${bookLocation}&format=json`,
+          {
+            method: "GET",
+          }
+        );
+        const datacord = await cords.json();
+        const lat = datacord.coordinates.lat;
+        const lng = datacord.coordinates.lng;
+        const marker = {
+          lat,
+          lng,
+          id: bookLocation,
+        };
+        return marker;
+      });
+
+      Promise.all(markers).then((marksarr) => {
+        setMarkers(marksarr);
+      });
+
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // On marker click
+  const onMarkerClick = (markerId: any) => {
+    navigation.navigate("Image");
+  };
+
   const locBlocker = async (location: string, curr: string) => {
     console.log("Blocked");
     var locations = location.split(",");
-    var sqsize = 0.000027;
-    var farLeftlat = Number(locations[1]) - (sqsize * 2);
-    var leftlat = Number(locations[1]) - (sqsize);
-    var rightlat = Number(locations[1]) + (sqsize);
-    var farRightlat = Number(locations[1]) + (sqsize * 2);
-    var hocloc = [farLeftlat, leftlat, rightlat, farRightlat]
 
-    var blockedlat = [Number(locations[1])];
-    var blockedlng = [Number(locations[0])];
+    var haversineOffset = require('haversine-offset')
+    var a = { latitude: parseFloat(locations[0]), longitude: parseFloat(locations[1]) }
+    var offsetx0 = {x:0, y:0};
+    var offsetx1 = {x:3, y:0};
+    var offsetx2 = {x:6, y:0};
+    var offsetx3 = {x:-3, y:0};
+    var offsetx4 = {x:-6, y:0};
+
+    var offsety0 = {x:0, y:0};
+    var offsety1 = {x:0, y:3};
+    var offsety2 = {x:0, y:6};
+    var offsety3 = {x:0, y:-3};
+    var offsety4 = {x:0, y:-6};
+
+    var h1 = haversineOffset(a, offsetx1);
+    var h2 = haversineOffset(a, offsetx2);
+    var h0 = haversineOffset(a, offsetx0);
+    var h3 = haversineOffset(a, offsetx3);
+    var h4 = haversineOffset(a, offsetx4);
+
+    var hocloc = [h1,h2,h0,h3,h4];
+
+    var blockedcoord=[];
     for (var i = 0; i < hocloc.length; i++) {
-      blockedlat.push(hocloc[i]);
-      blockedlng.push(Number(locations[0]) + sqsize)
-      blockedlat.push(hocloc[i]);
-      blockedlng.push(Number(locations[0]) + (2 * sqsize))
-      blockedlat.push(hocloc[i]);
-      blockedlng.push(Number(locations[0]) - (sqsize))
-      blockedlat.push(hocloc[i]);
-      blockedlng.push(Number(locations[0]) - (2 * sqsize))
+      var temp = {latitude: hocloc[i].lat, longitude: hocloc[i].lng};
+      var tempBlock = haversineOffset(temp,offsety0);
+      blockedcoord.push(tempBlock);
+      var tempBlock2 = haversineOffset(temp,offsety1);
+      blockedcoord.push(tempBlock2);
+      var tempBlock3 = haversineOffset(temp,offsety2);
+      blockedcoord.push(tempBlock3);
+      var tempBlock4 = haversineOffset(temp,offsety3);
+      blockedcoord.push(tempBlock4);
+      var tempBlock5 = haversineOffset(temp,offsety4);
+      blockedcoord.push(tempBlock5);
     }
 
-    var wordes = [curr]
+    var wordes = []
 
-    for (var j = 0; j < blockedlat.length; j++) {
+    for (var j = 0; j < blockedcoord.length; j++) {
+      // console.log("Lat " + blockedcoord[j].lat + "Long" + blockedcoord[j].lng);
       const response = await fetch(
-        //Fix this future Albaraa
-        `https://api.what3words.com/v3/convert-to-3wa?key=${API_KEY}&coordinates=${blockedlat[j]}%2C${blockedlng[j]}&language=en&format=json`,
+        //Fix this future Albaraa1
+        `https://api.what3words.com/v3/convert-to-3wa?key=${API_KEY}&coordinates=${blockedcoord[j].lat}%2C${blockedcoord[j].lng}&language=en&format=json`,
         {
           method: "GET",
         }
@@ -134,6 +171,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     }
 
     for (var k = 0; k < wordes.length; k++) {
+      // console.log('Blocked ' + wordes[k] + " " +  wordes[0] );
       const payload = {
         loc: wordes[k], //placeholder because currently it is not saving images
         bestloc: wordes[0],
@@ -148,11 +186,12 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
       });
     }
   }
-  //Takes in coordinates
+
+
+  // Adds a marker to the map
   const addMarker = async (location: string) => {
     //Splits the string of lat and lon into an array of 2 elements
     var locations = location.split(",");
-    console.log("We're here");
     //Gets the w3w value as a string
     const response = await fetch(
       `https://api.what3words.com/v3/convert-to-3wa?key=${API_KEY}&coordinates=${locations[0]}%2C${locations[1]}&language=en&format=json`,
@@ -162,55 +201,74 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     );
     const data = await response.json();
 
-    var temp = latsarr.length;
-    console.log('Reaching here');
-
     const payload = {
       loc: data.words, //placeholder because currently it is not saving images
     };
-    const responseget = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/setBooks`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      mode: "cors",
-      body: JSON.stringify(payload),
-    });
+    const responseget = await fetch(
+      `${process.env.REACT_APP_REST_API_HOST}/scrap/setBooks`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "cors",
+        body: JSON.stringify(payload),
+      }
+    );
 
-    console.log('Reachin down here');
-
-    locBlocker(location, data.words);
+    // locBlocker(location, data.words);
     latsarr.push(Number(locations[0]));
     lngsarr.push(Number(locations[1]));
     marksarr.push(data.words);
 
-  }
+    getMarkers();
+  };
 
-  // print all markers
+  // Google map component
   return (
     <>
-      {mapReady}
-      <button onClick={() => addMarker("55.945734,-3.191305")}> Test</button>
+      <button
+        onClick={() => {
+          navigator.geolocation.getCurrentPosition((position) => {
+            setUserLocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+            console.log("Adding marker at: ", userLocation);
+            addMarker(userLocation.lat + "," + userLocation.lng);
+            locBlocker("19.38636,-155.544739","beards.retail.shrivel");
+          });
+        }}
+      >
+        {" "}
+        Test
+      </button>
       <GoogleMap
         apiKey={MAP_API_KEY}
-        defaultCenter={{ lat: 55.911155, lng: -3.321666 }}
-        defaultZoom={50}
+        defaultZoom={14}
         mapMinHeight="100vh"
         onGoogleApiLoaded={onGoogleApiLoaded}
         Marker
+        options={{ styles: mapStyle }} // apply the custom style to the map
+        onMapClick={(e: any) => {
+          console.log(e.latLng.lat(), e.latLng.lng());
+          addMarker(e.latLng.lat() + "," + e.latLng.lng());
+        }}
       >
-        {latsarr.map((lat, index) => (
+        {markers.map((marker) => (
           <Marker
-            key={index}
-            lat={lat}
-            lng={lngsarr[index]}
-            markerId={marksarr[index]}
-            onClick={onMarkerClick}
+            lat={marker.lat}
+            lng={marker.lng}
+            markerId={marker.id}
             className="marker"
+            key={marker.id}
+            onClick={() => onMarkerClick(marker.id)}
+            icon={{
+              url: "map-marker.png",
+              scaledSize: new google.maps.Size(32, 32),
+            }}
           />
-
         ))}
-
       </GoogleMap>
       {/* options button */}
 

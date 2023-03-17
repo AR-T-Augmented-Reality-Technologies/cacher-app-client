@@ -1,18 +1,18 @@
 import { func, number, oneOfType, string } from 'prop-types'
 
-const Marker = ({ className, lat, lng, markerId, onClick, ...props }) => {
+const Marker = ({ className, lat, lng, markerId, onClick, icon }) => {
     return (
         <img
             className={className}
-            src={"images/marker-pin.png"}
+            src={icon.url}
             // eslint-disable-next-line react/no-unknown-property
             lat={lat}
             // eslint-disable-next-line react/no-unknown-property
             lng={lng}
+            key={markerId}
             onClick={(e) => (onClick ? onClick(e, { markerId, lat, lng }) : null)}
             style={{ cursor: 'pointer', fontSize: 40 }}
             alt={markerId}
-            {...props}
         />
     )
 }
@@ -36,6 +36,9 @@ Marker.propTypes = {
     /**
      * The function to call when the marker is clicked.
      */
+
+    icon: { url: string, scaledSize: { width: number, height: number }},
+
     onClick: func,
 }
 

@@ -24,6 +24,7 @@
     "fs": "^0.0.1-security",
     "google-map-react": "^2.2.0",
     "google-maps-react-markers": "^1.1.7",
+    "haversine-offset": "^1.0.0",
     "http-proxy-middleware": "^2.0.6",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
