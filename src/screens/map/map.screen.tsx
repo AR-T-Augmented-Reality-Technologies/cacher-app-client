@@ -15,10 +15,32 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [mapReady, setMapReady] = useState(false);
     const [markers, setMarkers] = useState<any[]>([]);
     const mapRef = useRef<any>(null);
+    const [locationEnabled, setLocationEnabled] = useState(true);
+    const [showPopup, setShowPopup] = useState(false);
     const [userLocation, setUserLocation] = useState({
         lat: 0,
         lng: 0,
     });
+
+    useEffect(() => {
+        if (!navigator.geolocation) {
+            setLocationEnabled(false);
+            setShowPopup(true);
+        } else {
+            navigator.permissions
+                .query({ name: "geolocation" })
+                .then((result) => {
+                    if (result.state === "denied") {
+                        setLocationEnabled(false);
+                        setShowPopup(true);
+                    }
+                });
+        }
+    }, []);
+
+    const handleClosePopup = () => {
+        setShowPopup(false); // set showPopup state to false to close the popup
+    };
 
     // Store current page in local storage
     useEffect(() => {
@@ -56,15 +78,15 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 const userLng = position.coords.longitude;
                 setUserLocation({ lat: userLat, lng: userLng });
                 map.setCenter({ lat: userLat, lng: userLng });
-                mapRef.current = map;
-                getMarkers();
-                setMapReady(true);
             },
             (error) => {
                 console.log(error);
             },
             { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
         );
+        mapRef.current = map;
+        getMarkers();
+        setMapReady(true);
     };
 
     // Get Markers
@@ -287,18 +309,84 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                     />
                 ))}
             </GoogleMap>
+            <div>
+                {showPopup && (
+                    <div
+                        className="fixed inset-0 overflow-y-auto"
+                        aria-labelledby="modal-title"
+                        role="dialog"
+                        aria-modal="true"
+                    >
+                        <div className="flex items-end justify-center min-h-screen pt-4 px-4 py-64 text-center sm:block sm:p-0">
+                            <div
+                                className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                                aria-hidden="true"
+                            ></div>
+                            <span
+                                className="hidden sm:inline-block sm:align-middle sm:h-screen"
+                                aria-hidden="true"
+                            >
+                                &#8203;
+                            </span>
+                            <div
+                                className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+                                role="dialog"
+                                aria-modal="true"
+                                aria-labelledby="modal-headline"
+                            >
+                                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                    <div className="sm:flex sm:items-start">
+                                        <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                            <h3
+                                                className="text-lg leading-6 font-medium text-gray-900"
+                                                id="modal-headline"
+                                            >
+                                                Geolocation disabled
+                                            </h3>
+                                            <div className="mt-2">
+                                                <p className="text-sm text-gray-500">
+                                                    You can only view existing
+                                                    scrapbooks. To create a new
+                                                    scrapbook, please enable
+                                                    geolocation.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                    <button
+                                        type="button"
+                                        className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-custom-blue text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                        onClick={handleClosePopup}
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {/* Render your map component here */}
+            </div>
 
             {/* Add new scrapbook button */}
             <button
                 className="dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-2 right-2 transition duration-500 ease-in-out"
                 onClick={() => {
-                    navigator.geolocation.getCurrentPosition((position) => {
-                        setUserLocation({
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude,
+                    if (!locationEnabled) {
+                        setShowPopup(true);
+                    } else {
+                        navigator.geolocation.getCurrentPosition((position) => {
+                            setUserLocation({
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude,
+                            });
+                            addMarker(
+                                userLocation.lat + "," + userLocation.lng
+                            );
                         });
-                        addMarker(userLocation.lat + "," + userLocation.lng);
-                    });
+                    }
                 }}
             >
                 <svg
@@ -317,7 +405,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 </svg>
                 New
             </button>
-
             {/* options button */}
             <button
                 className={`dark:bg-dback w-16 h-16 rounded-full text-xs text-black dark:text-white bg-white font-bold border-solid border-2 ${
@@ -364,7 +451,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 </svg>
                 Options
             </button>
-
             {/* options menu - Display when the Options button is clicked*/}
             {showOptions && (
                 <>
