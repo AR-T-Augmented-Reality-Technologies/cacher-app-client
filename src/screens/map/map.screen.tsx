@@ -16,7 +16,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
   const [latsarr, setLatsArr] = useState<number[]>([]);
   const [lngsarr, setLngsArr] = useState<number[]>([]);
   const [marksarr, setMarksArr] = useState<string[]>([]);
-  const mapRef = useRef(null);
+  const mapRef = useRef<any>(null);
   const [userLocation, setUserLocation] = useState({
     lat: 0,
     lng: 0,
@@ -41,6 +41,14 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
   // On map load
   const onGoogleApiLoaded = async ({ map, maps }: { map: any; maps: any }) => {
+    maps.event.addListener(map, 'zoom_changed', () => {
+      const zoomLevel = map.getZoom();
+      const scaleFactor = Math.pow(2, zoomLevel) / 2;
+
+      console.log(markers);
+      
+    });
+    
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const userLat = position.coords.latitude;
@@ -93,9 +101,10 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         return marker;
       });
 
-      Promise.all(markers).then((markerArray) => {
-        setMarkers(markerArray);
-      });
+      Promise.all(markers).then((marksarr) => {
+        setMarkers(marksarr);
+      });        
+
     } catch (err) {
       console.error(err);
     }
@@ -173,12 +182,16 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
       >
         {markers.map((marker) => (
           <Marker
-            key={marker.id}
             lat={marker.lat}
             lng={marker.lng}
             markerId={marker.id}
-            onClick={onMarkerClick}
             className="marker"
+            key={marker.id}
+            onClick={() => onMarkerClick(marker.id)}
+            icon={{
+              url: "map-marker.png",
+              scaledSize: new google.maps.Size(32, 32),
+            }}
           />
         ))}
         {mapReady}
