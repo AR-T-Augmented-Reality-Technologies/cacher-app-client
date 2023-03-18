@@ -19,6 +19,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [showPopup, setShowPopup] = useState(false);
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState("");
+    const [showMarkerPopup, setShowMarkerPopup] = useState(false);
+    const popupRefFlag = useRef<HTMLDivElement>(null);
+    const popupRef = useRef<HTMLDivElement>(null);
     const [userLocation, setUserLocation] = useState({
         lat: 0,
         lng: 0,
@@ -43,6 +46,30 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const handleClosePopup = () => {
         setShowPopup(false); // set showPopup state to false to close the popup
     };
+
+    // Dismiss the window when clicking outside
+    const handleClickOutside = (event: MouseEvent) => {
+        if (
+            popupRef.current &&
+            popupRefFlag.current &&
+            !popupRef.current.contains(event.target as Node) &&
+            !popupRefFlag.current.contains(event.target as Node)
+        ) {
+            setShowMarkerPopup(false);
+        } else if (
+            popupRef.current &&
+            !popupRefFlag.current &&
+            !popupRef.current.contains(event.target as Node)
+        ) {
+            setShowMarkerPopup(false);
+        }
+    };
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     // Store current page in local storage
     useEffect(() => {
@@ -156,7 +183,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     // On marker click
     const onMarkerClick = (markerId: any, lat: any, lng: any) => {
         mapRef.current.panTo({ lat, lng });
-        mapRef.current.setZoom(18);
+        mapRef.current.setZoom(16);
+        setShowMarkerPopup(true);
+        // navigation.navigate(Image);
     };
 
     const locBlocker = async (location: string, curr: string) => {
@@ -290,10 +319,10 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
     const interval = setInterval(() => {
         if (new Date().getTime() > hideTime) {
-          setShowMessage(false);
-          clearInterval(interval);
+            setShowMessage(false);
+            clearInterval(interval);
         }
-      }, 10);
+    }, 10);
 
     // Google map component
     return (
@@ -316,7 +345,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                         markerId={marker.id}
                         className="marker"
                         key={marker.id}
-                        onClick={() => onMarkerClick(marker.id, marker.lat, marker.lng)}
+                        onClick={() =>
+                            onMarkerClick(marker.id, marker.lat, marker.lng)
+                        }
                         icon={{
                             url: "map-marker.png",
                             scaledSize: new google.maps.Size(32, 32),
@@ -324,6 +355,75 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                     />
                 ))}
             </GoogleMap>
+            <div>
+                {showMarkerPopup && (
+                    <>
+                        <div
+                            ref={popupRef}
+                            className={`${
+                                showMarkerPopup ? "opacity-100" : "opacity-0"
+                            } transition-opacity ease-in-out duration-300`}
+                        >
+                            <div className="fixed top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border-solid border-2 p-6 rounded-lg shadow-lg">
+                                <div className="grid grid-cols-2">
+                                    <div className="col-start-1 justify-self-center">
+                                        <button
+                                            className="bg-custom-blue text-white py-2 px-4 rounded-lg mr-4"
+                                            onClick={() => {
+                                                navigation.navigate("Image");
+                                            }}
+                                        >
+                                            View
+                                        </button>
+                                    </div>
+                                    <div className="col-start-2 justify-self-center">
+                                        <button className="bg-custom-blue text-white py-2 px-4 rounded-lg mx-auto">
+                                            Add
+                                        </button>
+                                    </div>
+                                    <hr className="my-4 col-start-1 col-span-2" />
+                                    <div className="col-start-1 col-span-1">
+                                        <label
+                                            className="font-bold"
+                                            htmlFor="description"
+                                        >
+                                            Author:
+                                        </label>
+                                    </div>
+                                    <div className="col-start-2 col-span-1">
+                                        <input
+                                            className="border-none rounded-lg"
+                                            type="text"
+                                            id="description"
+                                            value="John Doe"
+                                            disabled={true}
+                                        />
+                                    </div>
+
+                                    <div className="col-start-1 col-span-1">
+                                        <label
+                                            className="font-bold"
+                                            htmlFor="description"
+                                        >
+                                            Pages:
+                                        </label>
+                                    </div>
+                                    <div className="col-start-2 col-span-1">
+                                        <input
+                                            className="border-none rounded-lg"
+                                            type="text"
+                                            id="description"
+                                            value="10"
+                                            disabled={true}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                )}
+            </div>
+
             <div>
                 {showPopup && (
                     <div
@@ -385,18 +485,19 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             </div>
 
             {showMessage && (
-        <>
-          {/* Message popup */}
-          <div
-            className={`${showMessage ? "opacity-100" : "opacity-0"
-              } transition-opacity ease-in-out duration-500`}
-          >
-            <div className="dark:bg-dback bg-white p-3 rounded-lg shadow-lg fixed bottom-24 right-5 left-5 border-solid border-2 border-black">
-                <p className="text-center">{message}</p>
-            </div>
-          </div>
-        </>
-      )}
+                <>
+                    {/* Message popup */}
+                    <div
+                        className={`${
+                            showMessage ? "opacity-100" : "opacity-0"
+                        } transition-opacity ease-in-out duration-500`}
+                    >
+                        <div className="dark:bg-dback bg-white p-3 rounded-lg shadow-lg fixed bottom-24 right-5 left-5 border-solid border-2 border-black">
+                            <p className="text-center">{message}</p>
+                        </div>
+                    </div>
+                </>
+            )}
 
             {/* Add new scrapbook button */}
             <button
