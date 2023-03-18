@@ -17,6 +17,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const mapRef = useRef<any>(null);
     const [locationEnabled, setLocationEnabled] = useState(true);
     const [showPopup, setShowPopup] = useState(false);
+    const [showMessage, setShowMessage] = useState(false);
+    const [message, setMessage] = useState("");
     const [userLocation, setUserLocation] = useState({
         lat: 0,
         lng: 0,
@@ -152,8 +154,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     };
 
     // On marker click
-    const onMarkerClick = (markerId: any) => {
-        navigation.navigate("Image");
+    const onMarkerClick = (markerId: any, lat: any, lng: any) => {
+        mapRef.current.panTo({ lat, lng });
+        mapRef.current.setZoom(18);
     };
 
     const locBlocker = async (location: string, curr: string) => {
@@ -215,9 +218,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         }
 
         for (var k = 0; k < words.length; k++) {
-            // console.log('Blocked ' + wordes[k] + " " +  wordes[0] );
             const payload = {
-                loc: words[k], //placeholder because currently it is not saving images
+                loc: words[k],
                 bestloc: words[0],
             };
             const responseget = await fetch(
@@ -252,7 +254,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
         // Check if the location is already occupied
         if (blocked.some((item: any) => item.location === data.words)) {
-            console.log("This location is already occupied!");
+            console.log("This location is already occupied");
+            setMessage("This location is already occupied");
+            setShowMessage(true);
             return;
         }
 
@@ -275,10 +279,21 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         locBlocker(location, "");
 
         console.log("Marker added at: ", data.words);
+        setMessage("Scrapbook created");
+        setShowMessage(true);
 
         // Add new marker to the map
         getMarkers();
     };
+
+    const hideTime = new Date().getTime() + 2000;
+
+    const interval = setInterval(() => {
+        if (new Date().getTime() > hideTime) {
+          setShowMessage(false);
+          clearInterval(interval);
+        }
+      }, 10);
 
     // Google map component
     return (
@@ -301,7 +316,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                         markerId={marker.id}
                         className="marker"
                         key={marker.id}
-                        onClick={() => onMarkerClick(marker.id)}
+                        onClick={() => onMarkerClick(marker.id, marker.lat, marker.lng)}
                         icon={{
                             url: "map-marker.png",
                             scaledSize: new google.maps.Size(32, 32),
@@ -367,8 +382,21 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                         </div>
                     </div>
                 )}
-                {/* Render your map component here */}
             </div>
+
+            {showMessage && (
+        <>
+          {/* Message popup */}
+          <div
+            className={`${showMessage ? "opacity-100" : "opacity-0"
+              } transition-opacity ease-in-out duration-500`}
+          >
+            <div className="dark:bg-dback bg-white p-3 rounded-lg shadow-lg fixed bottom-24 right-5 left-5 border-solid border-2 border-black">
+                <p className="text-center">{message}</p>
+            </div>
+          </div>
+        </>
+      )}
 
             {/* Add new scrapbook button */}
             <button
