@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, ChangeEvent } from "react";
+import { What3wordsAutosuggest } from "@what3words/react-components";
 import GoogleMap from "google-maps-react-markers";
 import Marker from "../../components/marker";
 import mapStyle from "../../mapStyle.json";
@@ -10,6 +11,9 @@ interface MapScreenProps {
 export const MapScreen = ({ navigation }: MapScreenProps) => {
     const API_KEY = process.env.REACT_APP_W3W_API_KEY;
     const MAP_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY;
+    const [value, setValue] = useState<string>("");
+    const onChange = (e: ChangeEvent<HTMLInputElement>): void =>
+        setValue(e.target.value);
     const [showOptions, setShowOptions] = useState(false);
     const [currentPage, setCurrentPage] = useState("Map");
     const [mapReady, setMapReady] = useState(false);
@@ -26,6 +30,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         lat: 0,
         lng: 0,
     });
+    const [w3wUserLocation, setW3wUserLocation] = useState("");
 
     useEffect(() => {
         if (!navigator.geolocation) {
@@ -44,7 +49,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     }, []);
 
     const handleClosePopup = () => {
-        setShowPopup(false); // set showPopup state to false to close the popup
+        setShowPopup(false);
     };
 
     // Dismiss the window when clicking outside
@@ -107,6 +112,19 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 const userLng = position.coords.longitude;
                 setUserLocation({ lat: userLat, lng: userLng });
                 map.setCenter({ lat: userLat, lng: userLng });
+
+                const getPlaceholder = async () => {
+                    const response = await fetch(
+                        `https://api.what3words.com/v3/convert-to-3wa?key=${API_KEY}&coordinates=${userLat}%2C${userLng}&language=en&format=json`,
+                        {
+                            method: "GET",
+                        }
+                    );
+                    const data = await response.json();
+                    setW3wUserLocation(data.words);
+                };
+
+                getPlaceholder();
             },
             (error) => {
                 console.log(error);
@@ -355,6 +373,41 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                     />
                 ))}
             </GoogleMap>
+
+            <div className="fixed top-2 left-2">
+                <>
+                    <What3wordsAutosuggest
+                        api_key={API_KEY}
+                        onSelected_suggestion={async ({ detail }) => {
+                            const cords = await fetch(
+                                `https://api.what3words.com/v3/convert-to-coordinates?key=${API_KEY}&words=${detail.suggestion.words}&format=json`,
+                                {
+                                    method: "GET",
+                                }
+                            );
+                            const datacord = await cords.json();
+                            const lat = datacord.coordinates.lat;
+                            const lng = datacord.coordinates.lng;
+                            console.log(
+                                "navigating to: ",
+                                lat,
+                                lng,
+                                detail.suggestion.words
+                            );
+                            mapRef.current.panTo({ lat, lng });
+                        }}
+                    >
+                        <input
+                            className="bg-white focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-4 block w-full appearance-none leading-normal"
+                            id="w3w"
+                            type="text"
+                            value={value}
+                            onChange={onChange}
+                            placeholder={`/// ${w3wUserLocation}`}
+                        />
+                    </What3wordsAutosuggest>
+                </>
+            </div>
             <div>
                 {showMarkerPopup && (
                     <>
