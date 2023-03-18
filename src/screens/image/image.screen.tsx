@@ -7,10 +7,34 @@ import { add_user } from "../../features/users.slice";
 import { add_image } from "../../features/image.slice";
 import { useSelector } from "react-redux";
 import { current } from "@reduxjs/toolkit";
-import { cleanWord , badcheck } from "../../Hooks/filter";
+import { cleanWord, badcheck } from "../../Hooks/filter";
+import {
+  EmailShareButton,
+  FacebookShareButton,
+  LineShareButton,
+  LinkedinShareButton,
+  PinterestShareButton,
+  RedditShareButton,
+  TwitterShareButton,
+  WhatsappShareButton,
+} from "react-share";
+
+import {
+  EmailIcon,
+  FacebookIcon,
+  LineIcon,
+  LinkedinIcon,
+  PinterestIcon,
+  RedditIcon,
+  TwitterIcon,
+  WhatsappIcon,
+} from "react-share";
+
+
 interface ImageScreenProps {
   navigation: any;
 }
+
 
 export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   const [currentPage, setCurrentPage] = useState("Image");
@@ -18,9 +42,12 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [showLikeCount, setShowLikeCount] = useState(false);
+  const [showShareButton, setShowShareButton] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
   const popupRefFlag = useRef<HTMLDivElement>(null);
+  const popupRefShare = useRef<HTMLDivElement>(null);
+
   const [commentsarr, setCommentsarr] = useState<string[]>([]);
   const [userarr, setUserarr] = useState<string[]>([]);
   const [newComment, setNewComment] = useState("");
@@ -40,7 +67,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     filter = new Filter();
 
   // console.log('got comm flag  ' + gotCommFlag);
-  
+
   // Store current page in local storage
 
   useEffect(() => {
@@ -136,13 +163,22 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
   // Dismiss the window when clicking outside
   const handleClickOutside = (event: MouseEvent) => {
-    if (popupRef.current && popupRefFlag.current && !popupRef.current.contains(event.target as Node) && !popupRefFlag.current.contains(event.target as Node)) {
+    if (popupRef.current && popupRefShare.current && popupRefFlag.current && !popupRef.current.contains(event.target as Node) && !popupRefFlag.current.contains(event.target as Node) && !popupRefShare.current.contains(event.target as Node)) {
       setShowComments(false);
-    } else if (popupRef.current && !popupRefFlag.current && !popupRef.current.contains(event.target as Node)) {
+    } else if (popupRef.current && !popupRefFlag.current && !popupRefShare.current && !popupRef.current.contains(event.target as Node)) {
       setShowComments(false);
     }
     if (popupRefFlag.current && !popupRefFlag.current.contains(event.target as Node)) {
       setShowFlagMenu(false);
+    }
+    if (popupRefFlag.current && !popupRefFlag.current.contains(event.target as Node)) {
+      setShowFlagMenu(false);
+    }
+    if (popupRefShare.current && !popupRefShare.current.contains(event.target as Node)) {
+      setShowShareButton(false);
+    }
+    if (popupRefShare.current && !popupRefShare.current.contains(event.target as Node)) {
+      setShowShareButton(false);
     }
   };
 
@@ -154,16 +190,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   }, []);
 
   const sharePost = async () => {
-    try {
-      await navigator.share({
-        title: "Share Title",
-        text: "Share Text",
-        url: window.location.href,
-      });
-      setShared(true);
-    } catch (err) {
-      console.error("Could not share:");
-    }
+    setShowShareButton(true);
   };
 
   //Attempting to get code for pulling likes from database
@@ -190,7 +217,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
   //Update Likes
   async function updateLikes() {
-   
+
   }
   // Like post
   const likePost = async () => {
@@ -204,8 +231,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
           "Content-Type": "application/json",
         },
       });
-      } else {
-      setLikeCount(likeCount -1 );
+    } else {
+      setLikeCount(likeCount - 1);
     }
     console.log('Likes at ' + likeCount);
     updateLikes();
@@ -252,7 +279,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   // const cleanWord = (word : string) => {
   //   return filter.clean(word);
   // }
-  
+
   return (
     <div className="dark:text-white">
       <div>
@@ -309,27 +336,82 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
           Flag
         </button>
 
-        {/* share button */}
-        <button
-          className="dark:text-white  dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-40 right-2"
-          onClick={sharePost}
-        >
-          <svg
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            className="w-6 h-6 mx-auto my-auto"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-            />
-          </svg>{" "}
-          Share
-        </button>
+        {showShareButton && (
+          <>
+            <div ref={popupRefShare}
+              className={`${showShareButton ? "opacity-100" : "opacity-0"}
+            transition-opacity ease-in-out duration-300`}>
+              {/* Like count popup */}
+              <div className="dark:bg-dback bg-white p-3 rounded-lg shadow-lg fixed bottom-24 right-20 border border-black">
+                <FacebookShareButton
+                  url={window.location.href}
+                  quote={caption}
+                  className="Demo__some-network__share-button"
+                >
+                  <FacebookIcon size={32} round />
+                </FacebookShareButton>
+                <TwitterShareButton
+                  url={window.location.href}
+                  title={caption}
+                  className="Demo__some-network__share-button"
+                >
+                  <TwitterIcon size={32} round />
+                </TwitterShareButton>
 
+                <PinterestShareButton
+                  url={window.location.href}
+                  media={"images/cacher-logo.png"} //needs URL to current image
+                  className="Demo__some-network__share-button"
+                >
+                  <PinterestIcon size={32} round />
+                </PinterestShareButton>
+
+                <RedditShareButton
+                  url={window.location.href}
+                  title={caption}
+                  windowWidth={660}
+                  windowHeight={460}
+                  className="Demo__some-network__share-button"
+                >
+                  <RedditIcon size={32} round />
+                </RedditShareButton>
+
+                <WhatsappShareButton
+                  url={window.location.href}
+                  title={caption}
+                  separator=":: "
+                  className="Demo__some-network__share-button"
+                >
+                  <WhatsappIcon size={32} round />
+                </WhatsappShareButton>
+
+              </div>
+            </div>
+          </>
+        )}
+        {/* share button */}
+        <>
+
+          <button
+            className="dark:text-white  dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-40 right-2"
+            onClick={sharePost}
+          >
+            <svg
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              className="w-6 h-6 mx-auto my-auto"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+              />
+            </svg>{" "}
+            Share
+          </button>
+        </>
         {/* like button */}
         <button
           className={`dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${isLiked ? "border-custom-blue dark:bg-dorange" : "border-black"
