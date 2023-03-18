@@ -417,25 +417,66 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                 showMarkerPopup ? "opacity-100" : "opacity-0"
                             } transition-opacity ease-in-out duration-300`}
                         >
-                            <div className="fixed top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border-solid border-2 p-6 rounded-lg shadow-lg">
+                            <div className="fixed top-1/3 left-1/3 transform -translate-x-1/4 -translate-y-1/3 bg-white border-solid border-2 p-4 rounded-lg shadow-lg">
                                 <div className="grid grid-cols-2">
                                     <div className="col-start-1 justify-self-center">
                                         <button
-                                            className="bg-custom-blue text-white py-2 px-4 rounded-lg mr-4"
+                                            className="bg-custom-blue text-white rounded-lg p-2"
                                             onClick={() => {
                                                 navigation.navigate("Image");
                                             }}
                                         >
-                                            View
+                                            <div className="flex items-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-5 h-5 mr-2"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                                                    />
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                                    />
+                                                </svg>
+                                                <span className="mr-1">
+                                                    View
+                                                </span>
+                                            </div>
                                         </button>
                                     </div>
                                     <div className="col-start-2 justify-self-center">
-                                        <button className="bg-custom-blue text-white py-2 px-4 rounded-lg mx-auto">
-                                            Add
+                                        <button className="bg-custom-blue text-white rounded-lg p-2">
+                                            <div className="bg-custom-blue text-white rounded-lg mx-auto">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-5 h-5 inline-block mr-2"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M12 4.5v15m7.5-7.5h-15"
+                                                    />
+                                                </svg>
+                                                <span className="mr-1">
+                                                    Add
+                                                </span>
+                                            </div>
                                         </button>
                                     </div>
                                     <hr className="my-4 col-start-1 col-span-2" />
-                                    <div className="col-start-1 col-span-1">
+                                    <div className="col-start-1 col-span-1 text-right pr-4">
                                         <label
                                             className="font-bold"
                                             htmlFor="description"
@@ -443,7 +484,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                             Author:
                                         </label>
                                     </div>
-                                    <div className="col-start-2 col-span-1">
+                                    <div className="col-start-2 col-span-1 pl-2">
                                         <input
                                             className="border-none rounded-lg"
                                             type="text"
@@ -453,7 +494,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                         />
                                     </div>
 
-                                    <div className="col-start-1 col-span-1">
+                                    <div className="col-start-1 col-span-1 text-right pr-4">
                                         <label
                                             className="font-bold"
                                             htmlFor="description"
@@ -461,7 +502,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                             Pages:
                                         </label>
                                     </div>
-                                    <div className="col-start-2 col-span-1">
+                                    <div className="col-start-2 col-span-1 pl-2">
                                         <input
                                             className="border-none rounded-lg"
                                             type="text"
