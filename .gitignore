@@ -30,3 +30,4 @@ cypress/e2e/Examples
 cypress/videos
 .env.details
 
+ios/Pods/*

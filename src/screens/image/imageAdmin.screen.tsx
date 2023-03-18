@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button, View, ImageBackground } from "react-native";
 // eslint-disable-next-line
 import { Splide, SplideTrack } from "@splidejs/react-splide";
-import "@splidejs/react-splide/css";
+// import "@splidejs/react-splide/css";
 import { ImageSliderChild } from "../../components/ImageSliderChild.component";
 import { useSelector } from "react-redux";
 // eslint-disable-next-line

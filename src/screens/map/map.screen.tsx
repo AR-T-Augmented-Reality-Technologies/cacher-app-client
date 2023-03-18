@@ -6,6 +6,7 @@ import {
 import GoogleMap from "google-maps-react-markers";
 // import { Marker }§ from "@react-google-maps/api";
 import Marker from "../../components/marker";
+import { ImageTestUpload } from "../../components/ImageTestUpload.component";
 
 interface MapScreenProps {
   navigation: any;
@@ -312,6 +313,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
           </button>
         </>
       )}
+      <ImageTestUpload/>
     </>
   );
 };

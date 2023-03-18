@@ -1,12 +1,20 @@
+import { Platform } from "react-native";
 import { configureStore } from "@reduxjs/toolkit";
 import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
+import storage from 'redux-persist/lib/storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import usersReducer from "./features/users.slice";
+
+// const persistConfig = {
+//   key: 'root',
+//   storage: Platform.OS === "ios" ? AsyncStorage : storage
+// }
+
 
 const persistConfig = {
   key: 'root',
-  storage
-}
+  storage: AsyncStorage
+};
 
 const persistedReducer = persistReducer(persistConfig, usersReducer)
 

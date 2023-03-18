@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Button, View, ImageBackground } from "react-native";
 import { Splide, SplideTrack } from "@splidejs/react-splide";
-import "@splidejs/react-splide/css";
+// import "@splidejs/react-splide/css";
 import { ImageSliderChild } from "../../components/ImageSliderChild.component";
 import { add_user } from "../../features/users.slice";
 import { add_image } from "../../features/image.slice";

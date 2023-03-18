@@ -1,29 +1,31 @@
 import React, { useEffect, useState } from 'react';
 // eslint-disable-next-line
-import { View, Text } from 'react-native';
+import { View, Text, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // import Screens
-import { LoginScreen } from './screens/login/login.screen';
-import { RegisterScreen } from './screens/register/register.screen';
-import { MapScreen } from './screens/map/map.screen';
-import { AdminDashboardScreen } from './screens/admin-dashboard/admin-dashboard.screen';
-import { ImageScreen } from './screens/image/image.screen';
-import { ImageAdminScreen } from './screens/image/imageAdmin.screen';
-import { ProfileScreen } from './screens/profile/profile.screen';
-import { SettingsScreen }  from './screens/settings/settings.screen';
-import {TicketScreen} from './screens/admin-dashboard/ticket-report.screen'
+import { LoginScreen } from './src/screens/login/login.screen';
+import { RegisterScreen } from './src/screens/register/register.screen';
+import { MapScreen } from './src/screens/map/map.screen';
+import { AdminDashboardScreen } from './src/screens/admin-dashboard/admin-dashboard.screen';
+import { ImageScreen } from './src/screens/image/image.screen';
+import { ImageAdminScreen } from './src/screens/image/imageAdmin.screen';
+import { ProfileScreen } from './src/screens/profile/profile.screen';
+import { SettingsScreen }  from './src/screens/settings/settings.screen';
+import {TicketScreen} from './src/screens/admin-dashboard/ticket-report.screen'
+
 
 // assets
 // eslint-disable-next-line
-import logo from './logo.svg';
+// import logo from './src/logo.svg';
 import './App.css';
 
 const Stack = createNativeStackNavigator();
 
-const App = () => {
-  const lastScreen = window.localStorage.getItem('currentPage');
+const App = async () => {
+  const lastScreen = Platform.OS === "ios" ? await AsyncStorage.getItem('currentPage') : window.localStorage.getItem('currentPage');
   const [theme,setTheme] = useState("light");
 
   /* Set the initial screen to the last screen the user was on,
