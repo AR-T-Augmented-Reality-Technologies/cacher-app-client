@@ -569,6 +569,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                     </div>
                                     <div className="col-start-2 justify-self-center inline-block pl-3 mr-1">
                                         <button className="bg-custom-blue text-white rounded-lg p-2 inline-flex">
+                                        <div className="flex items-center">
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -591,6 +592,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                             <span className="text-sm">
                                                 Take a Picture
                                             </span>
+                                        </div>
                                         </button>
                                     </div>
                                     <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2 w-full">
