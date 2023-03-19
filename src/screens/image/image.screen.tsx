@@ -29,6 +29,8 @@ import {
   TwitterIcon,
   WhatsappIcon,
 } from "react-share";
+import dayjs, { Dayjs } from "dayjs";
+import moment, { Moment } from "moment";
 
 
 interface ImageScreenProps {
@@ -51,7 +53,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   const [commentsarr, setCommentsarr] = useState<string[]>([]);
   const [userarr, setUserarr] = useState<string[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [commentTimes, setCommentTimes] = useState<number[]>([]);
+  const [commentTimes, setCommentTimes] = useState<string[]>([]);
   const [images, setImages] = useState<string[]>([]);
   const [shared, setShared] = useState(false);
   const [showFlagMenu, setShowFlagMenu] = useState(false);
@@ -59,7 +61,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   const image = useSelector((state: any) => state.image);
   let [gotCommFlag, setGotCommFlag] = useState(0);
   let commentArray = [""];
-  let timeArray = [0];
+  let timeArray = [];
   let userTArray = [""];
   const [caption, setCaption] = useState("");
 
@@ -116,7 +118,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
   // Adding comments
   async function handleAddComment() {
-    const currentTime = new Date().getTime();
+    const currentTime = moment().toISOString();
+    console.log(currentTime);
     setCommentTimes([currentTime, ...commentTimes]);
     setCommentsarr([cleanWord(newComment), ...commentsarr]);
     commentArray[commentArray.length] = newComment;
@@ -124,10 +127,12 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
     const payload = {
       imageid: '32',
-      userid: 8,
+      userid: 3,
       comment: newComment,
-      timestamp: Date.now()
+      timestamp: currentTime
     };
+
+    console.log(payload.timestamp + "Test");
     //Future albaraa remember wait statements
     const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/images/addcomment`, {
       method: "POST",
@@ -140,13 +145,19 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
   }
 
   // Calculate time since comment was posted
-  const formatTime = (time: number) => {
+  const formatTime = (time: string) => {
     // const secs = time.getUTCSeconds
+    var currdate = moment(moment().format());
+    var timetwo = moment(time);
+    // console.log(currdate + "curr");
+    // console.log(time + "timetaken")
 
-    var timetwo = new Date(time);
-    const difference = Math.floor((Date.now() - timetwo.getTime()) / 1000);
-    if (difference < 60) {
-      return `${difference} seconds ago`;
+    const difference = moment.duration(currdate.diff(timetwo)).asSeconds();
+    if(difference<0){
+      return `now`;
+    }
+    else if (difference < 60) {
+      return `${Math.floor(difference)} seconds ago`;
     } else if (difference < 3600) {
       return `${Math.floor(difference / 60)} minutes ago`;
     } else if (difference < 86400) {
@@ -385,6 +396,13 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                   <WhatsappIcon size={32} round />
                 </WhatsappShareButton>
 
+                <LinkedinShareButton
+                  url={window.location.href}
+                  className="Demo__some-network__share-button"
+                >
+                  <LinkedinIcon size={32} round />
+                </LinkedinShareButton>
+
               </div>
             </div>
           </>
@@ -588,7 +606,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
               <div className="grid grid-rows-2">
                 <div className="row-start-1">
                   <div className="pt-5 px-5 text-s break-normal">
-                    These pets are so cute!
+                    {caption}
                   </div>
                 </div>
                 <div className="row-start-2">
