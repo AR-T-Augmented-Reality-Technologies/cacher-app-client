@@ -24,6 +24,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [showMessage, setShowMessage] = useState(false);
     const [message, setMessage] = useState("");
     const [showMarkerPopup, setShowMarkerPopup] = useState(false);
+    const [showAddToScrapbook, setShowAddToScrapbook] = useState(false);
     const popupRefFlag = useRef<HTMLDivElement>(null);
     const popupRef = useRef<HTMLDivElement>(null);
     const [userLocation, setUserLocation] = useState({
@@ -61,12 +62,14 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             !popupRefFlag.current.contains(event.target as Node)
         ) {
             setShowMarkerPopup(false);
+            setShowAddToScrapbook(false);
         } else if (
             popupRef.current &&
             !popupRefFlag.current &&
             !popupRef.current.contains(event.target as Node)
         ) {
             setShowMarkerPopup(false);
+            setShowAddToScrapbook(false);
         }
     };
     useEffect(() => {
@@ -301,8 +304,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
         // Check if the location is already occupied
         if (blocked.some((item: any) => item.location === data.words)) {
-            console.log("This location is already occupied");
-            setMessage("This location is already occupied");
+            console.log("A scrapbook already exists here");
+            setMessage("A scrapbook already exists here");
             setShowMessage(true);
             return;
         }
@@ -331,6 +334,11 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
         // Add new marker to the map
         getMarkers();
+
+        // Move map to the new marker
+        const map = mapRef.current;
+            map.panTo({ lat: parseFloat(locations[0]), lng: parseFloat(locations[1]) });
+        setShowAddToScrapbook(true);
     };
 
     const hideTime = new Date().getTime() + 2000;
@@ -417,7 +425,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                 showMarkerPopup ? "opacity-100" : "opacity-0"
                             } transition-opacity ease-in-out duration-300`}
                         >
-                            <div className="fixed top-1/3 left-1/3 transform -translate-x-1/4 -translate-y-1/3 bg-white border-solid border-2 p-4 rounded-lg shadow-lg">
+                            <div className="fixed top-1/3 left-1/3 transform -translate-x-1/4 -translate-y-1/2 bg-white border-solid border-2 p-4 rounded-lg shadow-lg">
                                 <div className="grid grid-cols-2">
                                     <div className="col-start-1 justify-self-center">
                                         <button
@@ -433,7 +441,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                     viewBox="0 0 24 24"
                                                     stroke-width="1.5"
                                                     stroke="currentColor"
-                                                    className="w-5 h-5 mr-2"
+                                                    className="w-6 h-6 mr-2"
                                                 >
                                                     <path
                                                         stroke-linecap="round"
@@ -453,7 +461,13 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                         </button>
                                     </div>
                                     <div className="col-start-2 justify-self-center">
-                                        <button className="bg-custom-blue text-white rounded-lg p-2">
+                                        <button
+                                            className="bg-custom-blue text-white rounded-lg p-2"
+                                            onClick={() => {
+                                                setShowMarkerPopup(false);
+                                                setShowAddToScrapbook(true);
+                                            }}
+                                        >
                                             <div className="bg-custom-blue text-white rounded-lg mx-auto">
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -461,7 +475,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                     viewBox="0 0 24 24"
                                                     stroke-width="1.5"
                                                     stroke="currentColor"
-                                                    className="w-5 h-5 inline-block mr-2"
+                                                    className="w-6 h-6 inline-block mr-2"
                                                 >
                                                     <path
                                                         stroke-linecap="round"
@@ -479,7 +493,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                     <div className="col-start-1 col-span-1 text-right pr-4">
                                         <label
                                             className="font-bold"
-                                            htmlFor="description"
+                                            htmlFor="authorLabel"
                                         >
                                             Author:
                                         </label>
@@ -488,7 +502,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                         <input
                                             className="border-none rounded-lg"
                                             type="text"
-                                            id="description"
+                                            id="authorField"
                                             value="John Doe"
                                             disabled={true}
                                         />
@@ -497,7 +511,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                     <div className="col-start-1 col-span-1 text-right pr-4">
                                         <label
                                             className="font-bold"
-                                            htmlFor="description"
+                                            htmlFor="pagesLabel"
                                         >
                                             Pages:
                                         </label>
@@ -506,10 +520,106 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                         <input
                                             className="border-none rounded-lg"
                                             type="text"
-                                            id="description"
+                                            id="pagesField"
                                             value="10"
                                             disabled={true}
                                         />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                )}
+            </div>
+
+            <div>
+                {showAddToScrapbook && (
+                    <>
+                        <div
+                            ref={popupRef}
+                            className={`${
+                                showAddToScrapbook ? "opacity-100" : "opacity-0"
+                            } transition-opacity ease-in-out duration-300`}
+                        >
+                            <div className="fixed top-1/3 left-1/3 transform -translate-x-1/4 -translate-y-1/2 bg-white border-solid border-2 p-4 rounded-lg shadow-lg">
+                                <div className="grid grid-cols-2">
+                                    <div className="col-start-1 justify-self-center inline-flex pr-3 ml-1">
+                                        <button className="bg-custom-blue text-white rounded-lg p-2">
+                                            <div className="flex items-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-10 h-10"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M15 11.25l-3-3m0 0l-3 3m3-3v7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                    />
+                                                </svg>
+
+                                                <span className="text-sm">
+                                                    Upload Photo
+                                                </span>
+                                            </div>
+                                        </button>
+                                    </div>
+                                    <div className="col-start-2 justify-self-center inline-block pl-3 mr-1">
+                                        <button className="bg-custom-blue text-white rounded-lg p-2 inline-flex">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.5"
+                                                stroke="currentColor"
+                                                className="w-10 h-10"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
+                                                />
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+                                                />
+                                            </svg>
+                                            <span className="text-sm">
+                                                Take a Picture
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2 w-full">
+                                        <input
+                                            className="border-solid border-2 rounded-lg m-2 p-1 w-full"
+                                            type="text"
+                                            id="pagesField"
+                                            placeholder="Add a caption... (optional)"
+                                        />
+                                    </div>
+                                    <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2">
+                                        <button className="bg-custom-orange text-white rounded-lg p-3 inline-flex">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke-width="1.5"
+                                                stroke="currentColor"
+                                                className="w-6 h-6 mr-2"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+                                                />
+                                            </svg>
+
+                                            <span className="mr-1">Post</span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
