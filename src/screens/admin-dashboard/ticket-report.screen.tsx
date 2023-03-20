@@ -77,6 +77,13 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
             resolved[i] = (data.data.reported_posts[i].resolved);
         }
 
+
+        for (var k= 0; k < resolved.length; k++) {
+            if(!resolved[k]){
+                resolved[k]= false;
+            }
+        }
+        
         for (var j = 0; j < reportidArr.length; j++) {
             idarr.push(reportidArr[j]);
             reporterarr.push(reporterArr[j]);
@@ -85,6 +92,7 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
             resolvedarr.push(resolved[j]);
         }
     }
+
     const handleResolver = async (id: any) => {
         const payload = {
             repid: id,
