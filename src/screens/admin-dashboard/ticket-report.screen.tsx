@@ -28,10 +28,10 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
     let reportidArr = [0];
     let reporterArr = [0];
     let pageidArr = [0];
-    let reasonArr = ["balls"];
+    let reasonArr = [""];
     let resolved = [true];
 
-  
+
 
     useEffect(() => {
         const storedPage = localStorage.getItem("currentPage");
@@ -44,14 +44,6 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
         localStorage.setItem("currentPage", currentPage);
     }, [currentPage]);
 
-    // const empty = () => {
-    //     setIdArr([]);
-    //     setReporterarr([]);
-    //     setPagearr([]);
-    //     setReasonarr([]);
-    //     setresolvedarr([]);
-    // }
-  
     const displayTick = () => {
         setTick(!showTick);
     };
@@ -78,19 +70,16 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
         }
 
 
-        for (var k= 0; k < resolved.length; k++) {
-            if(!resolved[k]){
-                resolved[k]= false;
+        for (var k = 0; k < resolved.length; k++) {
+            if (!resolved[k]) {
+                resolved[k] = false;
             }
         }
-        
-        for (var j = 0; j < reportidArr.length; j++) {
-            idarr.push(reportidArr[j]);
-            reporterarr.push(reporterArr[j]);
-            pagearr.push(pageidArr[j]);
-            reasonarr.push(reasonArr[j]);
-            resolvedarr.push(resolved[j]);
-        }
+        setIdArr(reportidArr);
+        setReporterarr(reporterArr);
+        setPagearr(pageidArr);
+        setReasonarr(reasonArr);
+        setresolvedarr(resolved);
     }
 
     const handleResolver = async (id: any) => {
@@ -105,7 +94,6 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
             mode: "cors",
             body: JSON.stringify(payload),
         });
-        getReports();
     }
 
     const handleSummary = async () => {
@@ -163,9 +151,19 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
         }
         downloadTxtFile()
     }
-    if (gotCommFlag == 0) {
+
+
+    const showTicks = () => {
         getReports();
-        setGotCommFlag(1);
+        displayTick()
+
+    }
+    const weResolved = (report: number) => {
+        handleResolver(report);
+        navigation.reset({
+            index: 0,
+            routes: [{ name: "TicketScreen" }],
+        });
     }
 
     return (
@@ -214,7 +212,7 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
                         ) : (
                             <>
                                 <button className="bg-custom-blue dark:bg-dblue hover:bg-custom-blue-hover hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded 
-                focus:outline-none focus:shadow-outline" onClick={displayTick}> Show Tickets</button>
+                focus:outline-none focus:shadow-outline" onClick={showTicks}> Show Tickets</button>
                             </>
                         )}
                         {showTick && (
@@ -232,7 +230,7 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
                                                 {"Report ID - " + report}{" "}
                                             </p>
                                             <button className="pb-2 px-5 text-s row-start-3 bg-custom-blue dark:bg-dblue hover:bg-custom-blue-hover hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded 
-                focus:outline-none focus:shadow-outline " onClick={() => handleResolver(report)}> Resolved</button>
+                focus:outline-none focus:shadow-outline " onClick={() => weResolved(report)}> Resolved</button>
                                             <p
                                                 className="break-normal px-2 py-2 col-start-1 col-span-3 row-start-2 text-sm overflow-hidden text-justify"
                                                 style={{ wordWrap: "break-word" }}
@@ -241,7 +239,7 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
 
                                             </p>
                                             <p className="break-normal px-2 py-2 col-start-1 col-span-3 row-start-3 text-sm overflow-hidden text-justify">
-                                                Reporter User ID - {reporterArr[index]}
+                                                Reporter User ID - {reporterarr[index]}
                                             </p>
                                             <p
                                                 className="break-normal px-2 py-2 col-start-1 col-span-3 row-start-4 text-sm overflow-hidden text-justify"
@@ -262,10 +260,12 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
                                 }
                             </>
                         )}
+                        <button className="bg-custom-blue dark:bg-dblue hover:bg-custom-blue-hover hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded 
+                focus:outline-none focus:shadow-outline" onClick={() => handleSummary()}>
+                            Generate Summary
+                        </button>
                     </div>
-                    <button className="dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2" onClick={() => handleSummary()}>
-                        Generate Summary
-                    </button>
+
                 </div>
 
                 {/* A column on the right of the screen to display vertial lines. All 3 lines will be displayed on desktop. On mobile devices only 2 lines will be displayed to save space*/}
