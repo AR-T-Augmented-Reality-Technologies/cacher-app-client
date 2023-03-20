@@ -153,7 +153,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     // console.log(time + "timetaken")
 
     const difference = moment.duration(currdate.diff(timetwo)).asSeconds();
-    if(difference<0){
+    if (difference < 0) {
       return `now`;
     }
     else if (difference < 60) {
@@ -616,11 +616,11 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
               </div>
 
               {/* Comments */}
-              <div className="grid grid-cols-1 pl-5 pr-5 overflow-auto max-h-80 dark:bg-dback">
+              <div className="grid grid-cols-1 pl-5 pr-5 pt-3 overflow-auto max-h-80 dark:bg-dback">
                 {commentsarr.map((comment, index) => (
                   <div
                     key={index}
-                    className="dark:bg-dback bg-white border-solid border border-black break-normal h-auto rounded-lg mb-5 grid grid-cols-5 grid-rows-2"
+                    className="dark:bg-dback bg-white border-solid border border-black break-normal h-auto rounded-lg mb-5 grid grid-cols-5 grid-rows-1"
                   >
                     <p
                       className="break-normal px-2 py-2 col-start-1 col-span-3 row-start-1 text-sm overflow-hidden text-justify"
@@ -629,27 +629,39 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                       {comment}{" "}
                     </p>
                     <p
-                      className="break-normal px-2 py-2 col-start-1 col-span-3 row-start-2 text-sm overflow-hidden text-justify"
-                      style={{ wordWrap: "break-word" }}
+                      className="break-normal px-2 py-2 col-start-1 col-span-3 row-start-2 overflow-hidden text-justify"
+                      style={{ wordWrap: "break-word", fontSize: "0.5rem", lineHeight: "0.5rem" }}
                     >
                       {formatTime(commentTimes[index])}
                     </p>
                     {/* To flag a comment (add flag functionality) */}
-                    <p className="break-normal px-2 py-2 col-start-2 col-span-1 row-start-2 text-sm overflow-hidden text-justify">
+                    <p
+                      className="break-normal px-2 py-2 col-start-2 col-span-1 row-start-2 overflow-hidden text-justify"
+                      style={{ fontSize: "0.5rem", lineHeight: "0.5rem" }}
+                    >
                       <img onClick={() => { flagPostOrComment() }} style={{ height: "1.25rem", cursor: "pointer" }} src="images/flag-icon.png" alt="" />
                     </p>
-                    <img
-                      src="images/avatar-image.jpg"
-                      className="border-solid border-2 border-black rounded-lg w-3/4 float-right col-start-5 cols-span-1 mt-2"
-                    ></img>
-                    <p className="col-start-4 col-span-2 pt-5 pr-3 text-right text-sm">
+                    <p
+                      className="col-start-5 cols-span-1 mt-2"
+                    >
+                      <img
+                        className="border-solid border-2 border-black float-right"
+                        src="images/avatar-image.jpg"
+                        style={{ width: "3rem", marginRight: "0.75rem", borderRadius: "2rem" }}
+                      ></img>
+                    </p>
+                    <p
+                      className="col-start-5 col-span-1 py-2 pr-3 text-right"
+                      style={{ fontSize: "0.5rem", lineHeight: "0.5rem" }}
+                    >
                       User - {userarr[index]}
                     </p>
                   </div>
                 ))}
               </div>
 
-              <div className="grid grid-cols-5 grid-rows-1 pl-5 pr-5 pt-3 bg-transparent bottom-2 top-2">
+              <div className="grid grid-cols-5 grid-rows-1 pl-5 pr-5 pt-3 bg-transparent bottom-2 top-2"
+              >
                 <input
                   className="dark:bg-dback bg-white border-solid border border-black left-5 right-5 pl-2 h-auto rounded-lg col-span-4 col-start-1"
                   type="text"
