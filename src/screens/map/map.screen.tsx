@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef, ChangeEvent } from "react";
+import { useState, useEffect, useRef, ChangeEvent, useCallback } from "react";
 import { What3wordsAutosuggest } from "@what3words/react-components";
 import GoogleMap from "google-maps-react-markers";
 import Marker from "../../components/marker";
 import mapStyle from "../../mapStyle.json";
+import Webcam from "react-webcam";
 
 interface MapScreenProps {
     navigation: any;
@@ -32,6 +33,20 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         lng: 0,
     });
     const [w3wUserLocation, setW3wUserLocation] = useState("");
+
+    const videoConstraints = {
+        width: 360,
+        height: 360,
+        facingMode: "environment",
+    };
+
+    const webcamRef = useRef<Webcam>(null);
+    const [imageSrc, setImageSrc] = useState<string | null>(null);
+
+    const capture = useCallback(() => {
+        const imageSrc = webcamRef.current?.getScreenshot();
+        setImageSrc(imageSrc ?? null);
+    }, [webcamRef]);
 
     useEffect(() => {
         if (!navigator.geolocation) {
@@ -337,7 +352,10 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
         // Move map to the new marker
         const map = mapRef.current;
-            map.panTo({ lat: parseFloat(locations[0]), lng: parseFloat(locations[1]) });
+        map.panTo({
+            lat: parseFloat(locations[0]),
+            lng: parseFloat(locations[1]),
+        });
         setShowAddToScrapbook(true);
     };
 
@@ -568,33 +586,58 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                         </button>
                                     </div>
                                     <div className="col-start-2 justify-self-center inline-block pl-3 mr-1">
-                                        <button className="bg-custom-blue text-white rounded-lg p-2 inline-flex">
-                                        <div className="flex items-center">
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.5"
-                                                stroke="currentColor"
-                                                className="w-10 h-10"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
-                                                />
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
-                                                />
-                                            </svg>
-                                            <span className="text-sm">
-                                                Take a Picture
-                                            </span>
-                                        </div>
+                                        <button
+                                            className="bg-custom-blue text-white rounded-lg p-2 inline-flex"
+                                            onClick={capture}
+                                        >
+                                            <div className="flex items-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-10 h-10"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
+                                                    />
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+                                                    />
+                                                </svg>
+                                                <span className="text-sm">
+                                                    Take a Picture
+                                                </span>
+                                            </div>
                                         </button>
                                     </div>
+                                    <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2">
+                                        {imageSrc ? (
+                                            <img
+                                                src={imageSrc}
+                                                alt="captured"
+                                            />
+                                        ) : (
+                                            
+                                            <Webcam
+                                                audio={false}
+                                                height={videoConstraints.height}
+                                                ref={webcamRef}
+                                                screenshotFormat="image/jpeg"
+                                                width={videoConstraints.width}
+                                                videoConstraints={
+                                                    videoConstraints
+                                                }
+                                            />
+                                            
+                                        )}
+                                    </div>
+
                                     <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2 w-full">
                                         <input
                                             className="border-solid border-2 rounded-lg m-2 p-1 w-full"
