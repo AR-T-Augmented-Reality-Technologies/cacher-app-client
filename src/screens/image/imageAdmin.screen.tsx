@@ -545,16 +545,18 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                             (Not commented out yet to post new comments and test delete comment functionality)*/}
 
                             <div
-                                style={{ position: "relative", height: "3em", width: "100%" }}
+                                style={{ position: "fixed", height: "3em", width: "100%" }}
                                 className="grid grid-cols-5 grid-rows-1 pl-5 pr-5 pt-3 bg-transparent bottom-2">
                                 <input
-                                    className="dark:bg-dback bg-white border-solid border border-black left-5 right-5 pl-2 h-auto rounded-lg col-span-4 col-start-1"
+                                    style={{ left: "0.25rem", height: "2.25em", width: "100%" }}
+                                    className="dark:bg-dback bg-white border-solid border border-black right-5 pl-2 rounded-lg col-span-4 col-start-1"
                                     type="text"
                                     value={newComment}
                                     onChange={(event) => setNewComment(event.target.value)}
                                 />
                                 <button
-                                    className="dark:bg-dblue hover:dark:bg-dorange bg-gray-400 hover:bg-gray-500 text-white focus:outline-none focus:shadow-outline text-sm border h-full border-black ml-5 rounded-lg mb-5 col-start-5 col-span-1"
+                                style={{ marginLeft: "1em", marginRight: "0.75rem" }}
+                                    className="dark:bg-dblue hover:dark:bg-dorange bg-gray-400 hover:bg-gray-500 text-white focus:outline-none focus:shadow-outline text-sm border h-full border-black ml-5 rounded-lg mb-5 col-start-5 col-span-1 pr-3"
                                     onClick={() =>
                                         newComment.trim().length > 0 ? handleAddComment() : {}
                                     }
