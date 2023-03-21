@@ -67,8 +67,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
     const [file, setFile] = useState<any>("");
 
-    const [file, setFile] = useState<any>("");
-
     useEffect(() => {
         if (!navigator.geolocation) {
             setLocationEnabled(false);
