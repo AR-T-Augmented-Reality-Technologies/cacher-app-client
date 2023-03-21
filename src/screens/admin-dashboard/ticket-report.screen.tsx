@@ -31,6 +31,22 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
     let reasonArr = [""];
     let resolved = [true];
 
+    const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+
+    // eslint-disable-next-line
+    const toggleTheme = () => {
+      if (theme === "light") {
+        setTheme("dark");
+      } else {
+        setTheme("light");
+      }
+    };
+  
+    useEffect(() => {
+      localStorage.setItem("theme", theme);
+      document.body.className = theme;
+    }, [theme]);
+    
 
 
     useEffect(() => {

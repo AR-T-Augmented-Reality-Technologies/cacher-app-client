@@ -32,6 +32,23 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         lat: 0,
         lng: 0,
     });
+
+    const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+
+    // eslint-disable-next-line
+    const toggleTheme = () => {
+      if (theme === "light") {
+        setTheme("dark");
+      } else {
+        setTheme("light");
+      }
+    };
+  
+    useEffect(() => {
+      localStorage.setItem("theme", theme);
+      document.body.className = theme;
+    }, [theme]);
+    
     const [w3wUserLocation, setW3wUserLocation] = useState("");
 
     const videoConstraints = {

@@ -54,6 +54,23 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
         setShowDeleteMenu(!showDeleteMenu);
     };
 
+    const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+
+    // eslint-disable-next-line
+    const toggleTheme = () => {
+      if (theme === "light") {
+        setTheme("dark");
+      } else {
+        setTheme("light");
+      }
+    };
+  
+    useEffect(() => {
+      localStorage.setItem("theme", theme);
+      document.body.className = theme;
+    }, [theme]);
+    
+
     // Adding comments
     const handleAddComment = () => {
         const currentTime = new Date().getTime();

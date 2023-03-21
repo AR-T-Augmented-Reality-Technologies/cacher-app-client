@@ -51,6 +51,23 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     localStorage.setItem("currentPage", currentPage);
   }, [currentPage]);
 
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+
+  // eslint-disable-next-line
+  const toggleTheme = () => {
+    if (theme === "light") {
+      setTheme("dark");
+    } else {
+      setTheme("light");
+    }
+  };
+
+  useEffect(() => {
+    localStorage.setItem("theme", theme);
+    document.body.className = theme;
+  }, [theme]);
+  
+
   const dispatch = useDispatch();
 
   // Use our user store
