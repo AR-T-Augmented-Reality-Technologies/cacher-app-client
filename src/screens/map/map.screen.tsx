@@ -4,6 +4,8 @@ import GoogleMap from "google-maps-react-markers";
 import Marker from "../../components/marker";
 import mapStyle from "../../mapStyle.json";
 import Webcam from "react-webcam";
+import * as nsfwjs from 'nsfwjs'
+
 
 interface MapScreenProps {
     navigation: any;
@@ -60,8 +62,11 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const webcamRef = useRef<Webcam>(null);
     const [imageSrc, setImageSrc] = useState<string | null>(null);
 
-    const capture = useCallback(() => {
+    const capture = useCallback(async () => {
+        const model = await nsfwjs.load()
+        // const predictions = await model.classify(img)
         const imageSrc = webcamRef.current?.getScreenshot();
+        console.log(imageSrc);
         setImageSrc(imageSrc ?? null);
     }, [webcamRef]);
 
@@ -658,7 +663,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                     <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2">
                                         {imageSrc ? (
                                             <img
-                                                src={imageSrc}
+                                                src={nsf(imageSrc)}
                                                 alt="captured"
                                             />
                                         ) : (
