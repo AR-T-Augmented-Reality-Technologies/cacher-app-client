@@ -65,11 +65,25 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
     var Filter = require("bad-words"),
         filter = new Filter();
-
     // console.log('got comm flag  ' + gotCommFlag);
 
-    // Store current page in local storage
+    const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
+    // eslint-disable-next-line
+    const toggleTheme = () => {
+      if (theme === "light") {
+        setTheme("dark");
+      } else {
+        setTheme("light");
+      }
+    };
+  
+    useEffect(() => {
+      localStorage.setItem("theme", theme);
+      document.body.className = theme;
+    }, [theme]);
+    
+    // Store current page in local storage
     useEffect(() => {
         const storedPage = localStorage.getItem("currentPage");
         if (storedPage) {
