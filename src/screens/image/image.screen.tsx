@@ -361,6 +361,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     // const cleanWord = (word : string) => {
     //   return filter.clean(word);
     // }
+    const headerHeight = 64;
+    const postCommentSectionHeight = 80;
 
     return (
         <div className="dark:text-white">
@@ -706,7 +708,12 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                             </div>
 
                             {/* Comments */}
-                            <div className="grid grid-cols-1 pl-5 pr-5 overflow-auto max-h-80 dark:bg-dback">
+                            <div
+                                className="grid grid-cols-1 pl-5 pr-5 pt-3 pb-48 z-0 overflow-auto "
+                                style={{
+                                    height: `calc(100vh - ${headerHeight}px - ${postCommentSectionHeight}px)`,
+                                }}
+                            >
                                 {commentsarr.map((comment, index) => (
                                     <div
                                         key={index}
@@ -716,7 +723,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                                             className="break-normal px-2 py-2 col-start-1 col-span-3 row-start-1 text-sm overflow-hidden text-justify"
                                             style={{ wordWrap: "break-word" }}
                                         >
-                                            {comment}{" "}
+                                            {comment}
                                         </p>
                                         <p
                                             className="break-normal px-2 py-2 col-start-1 col-span-3 row-start-2 text-sm overflow-hidden text-justify"
@@ -749,7 +756,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                                 ))}
                             </div>
 
-                            <div className="grid grid-cols-5 grid-rows-1 pl-5 pr-5 pt-3 bg-transparent bottom-2 top-2">
+                            <div className="grid grid-cols-5 grid-rows-1 pb-4 pt-3 z-5 fixed bottom-0 left-7 right-7 bg-white">
                                 <input
                                     className="dark:bg-dback bg-white border-solid border border-black left-5 right-5 pl-2 h-auto rounded-lg col-span-4 col-start-1"
                                     type="text"
