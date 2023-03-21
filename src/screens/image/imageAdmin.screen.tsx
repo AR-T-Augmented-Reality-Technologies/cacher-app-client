@@ -13,6 +13,31 @@ import { method } from "cypress/types/bluebird";
 // eslint-disable-next-line
 import { add_image } from "../../features/image.slice";
 import { add_user } from "../../features/users.slice";
+import { cleanWord, badcheck } from "../../Hooks/filter";
+import moment from "moment";
+
+import {
+    EmailShareButton,
+    FacebookShareButton,
+    LineShareButton,
+    LinkedinShareButton,
+    PinterestShareButton,
+    RedditShareButton,
+    TwitterShareButton,
+    WhatsappShareButton,
+} from "react-share";
+
+import {
+    EmailIcon,
+    FacebookIcon,
+    LineIcon,
+    LinkedinIcon,
+    PinterestIcon,
+    RedditIcon,
+    TwitterIcon,
+    WhatsappIcon,
+} from "react-share";
+
 interface ImageScreenProps {
     navigation: any;
 }
@@ -26,16 +51,26 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
     const [showComments, setShowComments] = useState(false);
     const popupRef = useRef<HTMLDivElement>(null);
     const popupRefDel = useRef<HTMLDivElement>(null);
-    const [comments, setComments] = useState<string[]>([]);
-    const [newComment, setNewComment] = useState("");
-    const [commentTimes, setCommentTimes] = useState<number[]>([]);
+    const [commentsarr, setCommentsarr] = useState<string[]>([]);
+    const [userarr, setUserarr] = useState<string[]>([]);
+    const [commentTimes, setCommentTimes] = useState<string[]>([]);
     const [images, setImages] = useState<string[]>([]);
+    const [newComment, setNewComment] = useState("");
+    const popupRefShare = useRef<HTMLDivElement>(null);
     // eslint-disable-next-line
     const [shared, setShared] = useState(false);
     const [showDeleteMenu, setShowDeleteMenu] = useState(false);
     const user = useSelector((state: any) => state.users);
     const image = useSelector((state: any) => state.image);
+    const [showShareButton, setShowShareButton] = useState(false);
+    let [gotCommFlag, setGotCommFlag] = useState(0);
+    let commentArray = [""];
+    let timeArray = [];
+    let userTArray = [""];
+    const [caption, setCaption] = useState("");
 
+    var Filter = require("bad-words"),
+        filter = new Filter();
 
     // Store current page in local storage
     useEffect(() => {
@@ -58,53 +93,97 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
 
     // eslint-disable-next-line
     const toggleTheme = () => {
-      if (theme === "light") {
-        setTheme("dark");
-      } else {
-        setTheme("light");
-      }
+        if (theme === "light") {
+            setTheme("dark");
+        } else {
+            setTheme("light");
+        }
     };
-  
+
     useEffect(() => {
-      localStorage.setItem("theme", theme);
-      document.body.className = theme;
+        localStorage.setItem("theme", theme);
+        document.body.className = theme;
     }, [theme]);
-    
+
+
+    // getPastComment comments
+    const handleGetComments = async () => {
+        console.log("Getting comments");
+        const payload = {
+            imageid: "32", //placeholder because currently it is not saving images
+        };
+        const response = await fetch(
+            `${process.env.REACT_APP_REST_API_HOST}/images/getcomment`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                mode: "cors",
+                body: JSON.stringify(payload),
+            }
+        );
+        const data = await response.json();
+
+        commentArray = [data.data.comments[0].comment];
+        timeArray = [data.data.comments[0].timestamp];
+        userTArray = [data.data.comments[0].user_id];
+        for (var i = 1; i < data.data.comments.length; i++) {
+            commentArray[i] = data.data.comments[i].comment;
+            timeArray[i] = data.data.comments[i].timestamp;
+            userTArray[i] = data.data.comments[i].user_id;
+        }
+
+        for (var j = 0; j < commentArray.length; j++) {
+            commentsarr.push(commentArray[j]);
+            commentTimes.push(timeArray[j]);
+            userarr.push(userTArray[j]);
+        }
+    };
 
     // Adding comments
-    const handleAddComment = () => {
-        const currentTime = new Date().getTime();
-        setCommentTimes([...commentTimes, currentTime]);
-        setComments([...comments, newComment]);
+    async function handleAddComment() {
+        const currentTime = moment().toISOString();
+        console.log(currentTime);
+        setCommentTimes([currentTime, ...commentTimes]);
+        setCommentsarr([cleanWord(newComment), ...commentsarr]);
+        commentArray[commentArray.length] = newComment;
         setNewComment("");
 
-        const data = {
-            imageid: '32', //placeholder because currently it is not saving images
-            userid: user.id,
+        const payload = {
+            imageid: "32",
+            userid: 3,
             comment: newComment,
-            timestamp: Date.now()
+            timestamp: currentTime,
         };
 
-        console.log('User Id' + user.id);
-        console.log('image Id' + 32);
-        console.log('Comment ' + newComment);
-        console.log('Date ' + Date.now())
-
-
-        fetch(`${process.env.REACT_APP_REST_API_HOST}/images/addcomment`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        }).then((res) => res);
-    };
-
+        console.log(payload.timestamp + "Test");
+        //Future albaraa remember wait statements
+        const response = await fetch(
+            `${process.env.REACT_APP_REST_API_HOST}/images/addcomment`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            }
+        );
+        const data = await response.json();
+    }
     // Calculate time since comment was posted
-    const formatTime = (time: number) => {
-        const difference = Math.floor((Date.now() - time) / 1000);
-        if (difference < 60) {
-            return `${difference} seconds ago`;
+    const formatTime = (time: string) => {
+        // const secs = time.getUTCSeconds
+        var currdate = moment(moment().format());
+        var timetwo = moment(time);
+        // console.log(currdate + "curr");
+        // console.log(time + "timetaken")
+
+        const difference = moment.duration(currdate.diff(timetwo)).asSeconds();
+        if (difference < 0) {
+            return `now`;
+        } else if (difference < 60) {
+            return `${Math.floor(difference)} seconds ago`;
         } else if (difference < 3600) {
             return `${Math.floor(difference / 60)} minutes ago`;
         } else if (difference < 86400) {
@@ -132,66 +211,86 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
     }, []);
 
     const sharePost = async () => {
-        try {
-            await navigator.share({
-                title: "Share Title",
-                text: "Share Text",
-                url: window.location.href,
-            });
-            setShared(true);
-        } catch (err) {
-            console.error("Could not share:");
-        }
+        setShowShareButton(true);
     };
 
 
     //Attempting to get code for pulling likes from database
-    console.log("Like data " + image);
-
-    // eslint-disable-next-line
-    const getData = async () => {
-        console.log("User state data: " + image);
+    const getlikes = async () => {
+        const payload = {
+            imageid: "32",
+        };
         const response = await fetch(
-            `${process.env.REACT_APP_REST_API_HOST}/images/${image.id}`,
+            `${process.env.REACT_APP_REST_API_HOST}/images/getlikes`,
             {
-                method: "GET",
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 mode: "cors",
             }
         );
-        
-        // eslint-disable-next-line
-        const data = response.json().then((data) => {
-            console.log(data);
-            setLikeCount(data.image.likes);
-        })
+        const data = await response.json();
+        setLikeCount(data.data.image.likes);
+        setCaption(data.data.image.caption);
+        console.log("Caption " + caption);
+        console.log("This has been called");
     };
 
     // Like post
-    const likePost = () => {
-        setIsLiked(!isLiked);
-        if (!isLiked) {
-            setLikeCount(likeCount + 1);
-        } else {
-            setLikeCount(likeCount - 1);
+    const likePost = async () => {
+        const image_id = "32"; // Replace this with the actual image ID
+        const response = await fetch(
+            `${process.env.REACT_APP_REST_API_HOST}/images/${image_id}/like`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+
+        if (!response.ok) {
+            console.error("Failed to like the post");
+            return;
         }
-        setShowLikeCount(!showLikeCount);
 
-        //sends new like count to database
-        const data = {
-            id: '32',
-            likeCount: image.likes
-        };
+        const updatedImage = await response.json();
+        setLikeCount(updatedImage.likes);
+        setShowLikeCount(true);
+        setIsLiked(true);
+    };
 
-        fetch(`${process.env.REACT_APP_REST_API_HOST}/images/likeupdate`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        }).then((res) => res);
+    const unlikePost = async () => {
+        const image_id = "32"; // Replace this with the actual image ID
+        const response = await fetch(
+            `${process.env.REACT_APP_REST_API_HOST}/images/${image_id}/dislike`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+
+        if (!response.ok) {
+            console.error("Failed to unlike the post");
+            return;
+        }
+
+        const updatedImage = await response.json();
+        setLikeCount(updatedImage.likes);
+        setShowLikeCount(true);
+        setIsLiked(false);
+    };
+
+
+    const handleLike = () => {
+        if (!isLiked) {
+            likePost();
+        } else {
+            unlikePost();
+        }
     };
 
     // Show like count for 2 seconds
@@ -209,9 +308,6 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
         console.log("images: ", images);
     };
 
-    // Comment post
-    // eslint-disable-next-line
-    const commentPost = () => { };
 
     // Display comments
     const displayComments = () => {
@@ -220,7 +316,7 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
 
     // Delete comment
     const deleteComment = (index: number) => {
-        comments.splice(index, 1);
+        commentsarr.splice(index, 1);
         commentTimes.splice(index, 1);
         setNewComment(" ");
         setTimeout(() => { setNewComment("") });
@@ -231,6 +327,18 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
     const displayOptions = () => {
         setShowOptions(!showOptions);
     };
+
+    const getCurrTime = () => {
+        const currentDate = new Date().getTime();
+        return currentDate;
+    };
+
+    if (gotCommFlag == 0) {
+        handleGetComments();
+        getlikes();
+        setGotCommFlag(1);
+    }
+
 
     return (
         <div className="dark:text-white">
@@ -288,27 +396,90 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                     Delete
                 </button>
 
-                {/* share button */}
-                <button
-                    className="dark:text-white  dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-40 right-2"
-                    onClick={sharePost}
-                >
-                    <svg
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        className="w-6 h-6 mx-auto my-auto"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-                        />
-                    </svg>{" "}
-                    Share
-                </button>
+                {showShareButton && (
+                    <>
+                        <div
+                            ref={popupRefShare}
+                            className={`${showShareButton ? "opacity-100" : "opacity-0"
+                                }
+            transition-opacity ease-in-out duration-300`}
+                        >
+                            {/* Like count popup */}
+                            <div className="dark:bg-dback bg-white p-3 rounded-lg shadow-lg fixed bottom-24 right-20 border border-black">
+                                <FacebookShareButton
+                                    url={window.location.href}
+                                    quote={caption}
+                                    className="Demo__some-network__share-button"
+                                >
+                                    <FacebookIcon size={32} round />
+                                </FacebookShareButton>
+                                <TwitterShareButton
+                                    url={window.location.href}
+                                    title={caption}
+                                    className="Demo__some-network__share-button"
+                                >
+                                    <TwitterIcon size={32} round />
+                                </TwitterShareButton>
 
+                                <PinterestShareButton
+                                    url={window.location.href}
+                                    media={"images/cacher-logo.png"} //needs URL to current image
+                                    className="Demo__some-network__share-button"
+                                >
+                                    <PinterestIcon size={32} round />
+                                </PinterestShareButton>
+
+                                <RedditShareButton
+                                    url={window.location.href}
+                                    title={caption}
+                                    windowWidth={660}
+                                    windowHeight={460}
+                                    className="Demo__some-network__share-button"
+                                >
+                                    <RedditIcon size={32} round />
+                                </RedditShareButton>
+
+                                <WhatsappShareButton
+                                    url={window.location.href}
+                                    title={caption}
+                                    separator=":: "
+                                    className="Demo__some-network__share-button"
+                                >
+                                    <WhatsappIcon size={32} round />
+                                </WhatsappShareButton>
+
+                                <LinkedinShareButton
+                                    url={window.location.href}
+                                    className="Demo__some-network__share-button"
+                                >
+                                    <LinkedinIcon size={32} round />
+                                </LinkedinShareButton>
+                            </div>
+                        </div>
+                    </>
+                )}
+                {/* share button */}
+                <>
+                    <button
+                        className="dark:text-white  dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-40 right-2"
+                        onClick={sharePost}
+                    >
+                        <svg
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            className="w-6 h-6 mx-auto my-auto"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                            />
+                        </svg>{" "}
+                        Share
+                    </button>
+                </>
                 {/* like button */}
                 <button
                     className={`dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${isLiked ? "border-custom-blue dark:bg-dorange" : "border-black"
@@ -381,7 +552,7 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                 >
                     <div className="grid grid-rows-2">
                         <div className="row-start-1">
-                            <div className="pt-2 px-2 text-s">These pets are so cute!</div>
+                            <div className="pt-2 px-2 text-s">{caption}</div>
                         </div>
                         <div className="row-start-2">
                             <div className="pb-2 px-2 text-s text-right">- User123</div>
@@ -485,7 +656,7 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                             <div className="grid grid-rows-2">
                                 <div className="row-start-1">
                                     <div className="pt-5 px-5 text-s break-normal">
-                                        These pets are so cute!
+                                    {caption}
                                     </div>
                                 </div>
                                 <div className="row-start-2">
@@ -494,9 +665,8 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                                 </div>
                             </div>
 
-                            {/* Comments */}
                             <div className="grid grid-cols-1 pl-5 pr-5 overflow-auto max-h-80 dark:bg-dback">
-                                {comments.map((comment, index) => (
+                                {commentsarr.map((comment, index) => (
                                     <div
                                         key={index}
                                         className="dark:bg-dback bg-white border-solid border border-black break-normal h-auto rounded-lg mb-5 grid grid-cols-5 grid-rows-2"
@@ -511,19 +681,14 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                                             className="break-normal px-2 py-2 col-start-1 col-span-3 row-start-2 text-sm overflow-hidden text-justify"
                                             style={{ wordWrap: "break-word" }}
                                         >
-                                            ({formatTime(commentTimes[index])})
+                                            {formatTime(commentTimes[index])}
                                         </p>
-                                        {/* To delete comment */}
-                                        <p className="break-normal px-2 py-2 col-start-2 col-span-1 row-start-2 text-sm overflow-hidden text-justify">
-                                            <img onClick={() => { deleteComment(index) }} style={{ height: "1.25rem", cursor: "pointer" }} src="images/delete-icon.png" alt="" />
-                                        </p>
-                                        {/* eslint-disable-next-line */}
                                         <img
                                             src="images/avatar-image.jpg"
                                             className="border-solid border-2 border-black rounded-lg w-3/4 float-right col-start-5 cols-span-1 mt-2"
                                         ></img>
                                         <p className="col-start-4 col-span-2 pt-5 pr-3 text-right text-sm">
-                                            User123456
+                                            User - {userarr[index]}
                                         </p>
                                     </div>
                                 ))}

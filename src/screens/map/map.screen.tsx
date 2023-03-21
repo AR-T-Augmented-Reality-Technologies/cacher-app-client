@@ -826,7 +826,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             </button>
             {/* options button */}
             <button
-                className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
+                className={`dark:border-dorange dark:bg-dback dark:text-white w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
                     showOptions ? "border-custom-blue" : "border-black"
                 } text-center fixed bottom-2 left-2`}
                 onClick={displayOptions}
