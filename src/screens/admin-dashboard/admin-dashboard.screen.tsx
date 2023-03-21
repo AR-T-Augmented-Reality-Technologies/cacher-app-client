@@ -418,20 +418,18 @@ export const AdminDashboardScreen = ({ navigation }: AdmiDashboardProps) => {
           disableDefaultUI: true, // disable all default controls and buttons
         }}
       >
-        {markers.map((marker) => (
+        {markers.map((marker, idx) => (
           <Marker
             lat={marker.lat}
             lng={marker.lng}
             markerId={marker.id}
             className="marker"
-            key={marker.id}
+            key={idx}
             onClick={() =>
               onMarkerClick(marker.id, marker.lat, marker.lng)
             }
-            icon={{
-              url: "map-marker.png",
-              scaledSize: new google.maps.Size(32, 32),
-            }}
+            scaledSize={new google.maps.Size(32, 32)}
+            url="https://i.imgur.com/4Z0ZQ9A.png"
           />
         ))}
       </GoogleMap>
@@ -831,8 +829,8 @@ export const AdminDashboardScreen = ({ navigation }: AdmiDashboardProps) => {
       {/* options button */}
       <button
         className={`dark:bg-dback w-16 h-16 rounded-full text-xs text-black dark:text-white bg-white font-bold border-solid border-2 ${showOptions
-            ? "border-custom-blue dark:border-dorange"
-            : "border-black"
+          ? "border-custom-blue dark:border-dorange"
+          : "border-black"
           } text-center fixed bottom-2 left-2`}
         onClick={displayOptions}
       >
