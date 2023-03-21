@@ -65,6 +65,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         setImageSrc(imageSrc ?? null);
     }, [webcamRef]);
 
+    const [file, setFile] = useState<any>("");
+
     useEffect(() => {
         if (!navigator.geolocation) {
             setLocationEnabled(false);
@@ -385,6 +387,26 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         }
     }, 10);
 
+    const handleUploadImage = async (e: any) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.append("image", file);
+
+        const response = await fetch(
+            `${process.env.REACT_APP_REST_API_HOST}/images/upload`,
+            {
+                method: "POST",
+                body: formData,
+            }
+        );
+
+        const data = await response.json();
+        console.log(data);
+    
+        return data;
+    };
+
     // Google map component
     return (
         <>
@@ -399,20 +421,18 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                     disableDefaultUI: true, // disable all default controls and buttons
                 }}
             >
-                {markers.map((marker) => (
+                {markers.map((marker, idx) => (
                     <Marker
                         lat={marker.lat}
                         lng={marker.lng}
                         markerId={marker.id}
                         className="marker"
-                        key={marker.id}
+                        key={idx}
                         onClick={() =>
                             onMarkerClick(marker.id, marker.lat, marker.lng)
                         }
-                        icon={{
-                            url: "map-marker.png",
-                            scaledSize: new google.maps.Size(32, 32),
-                        }}
+                        scaledSize={new google.maps.Size(32, 32)}
+                        url="https://i.imgur.com/4Z0ZQ9A.png"
                     />
                 ))}
             </GoogleMap>
@@ -596,7 +616,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                     />
                                                 </svg>
 
-                                                <span className="text-sm">
+                                                <input type="file" onChange={(e) => e.target.files && setFile(e.target.files[0])} accept="image/*" />
+
+                                                <span className="text-sm" onClick={(e) => handleUploadImage(e)}>
                                                     Upload Photo
                                                 </span>
                                             </div>

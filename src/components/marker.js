@@ -1,10 +1,10 @@
 import { func, number, oneOfType, string } from 'prop-types'
 
-const Marker = ({ className, lat, lng, markerId, onClick, icon }) => {
+const Marker = ({ className, lat, lng, markerId, onClick, scaledSize, url}) => {
     return (
         <img
             className={className}
-            src={icon.url}
+            src={"map-marker.png"}
             // eslint-disable-next-line react/no-unknown-property
             lat={lat}
             // eslint-disable-next-line react/no-unknown-property
@@ -18,6 +18,11 @@ const Marker = ({ className, lat, lng, markerId, onClick, icon }) => {
 }
 
 Marker.defaultProps = {}
+
+Marker.iconScaledSize = { 
+    width: number,
+    height: number
+}
 
 Marker.propTypes = {
     className: string,
@@ -37,7 +42,9 @@ Marker.propTypes = {
      * The function to call when the marker is clicked.
      */
 
-    icon: { url: string, scaledSize: { width: number, height: number }},
+    scaledSize: Marker.iconScaledSize,
+
+    url: string,
 
     onClick: func,
 }
