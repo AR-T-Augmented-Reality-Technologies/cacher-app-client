@@ -367,7 +367,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       <div className="grid grid-cols-5 dark:bg-dback">
         {/* Home button */}
         <button
-          className="dark:bg-dblue text-black bg-white text-sm font-bold py-1 px-2 rounded-full border-solid border-2 border-black top-3 absolute left-5 "
+          className="dark:text-white dark:border-dorange dark:bg-dblue text-black bg-white text-sm font-bold py-1 px-2 rounded-full border-solid border-2 border-black top-3 absolute left-5 "
           type="button"
           onClick={() => {
             navigation.reset({

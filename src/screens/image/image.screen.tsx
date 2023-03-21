@@ -71,18 +71,18 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
     // eslint-disable-next-line
     const toggleTheme = () => {
-      if (theme === "light") {
-        setTheme("dark");
-      } else {
-        setTheme("light");
-      }
+        if (theme === "light") {
+            setTheme("dark");
+        } else {
+            setTheme("light");
+        }
     };
-  
+
     useEffect(() => {
-      localStorage.setItem("theme", theme);
-      document.body.className = theme;
+        localStorage.setItem("theme", theme);
+        document.body.className = theme;
     }, [theme]);
-    
+
     // Store current page in local storage
     useEffect(() => {
         const storedPage = localStorage.getItem("currentPage");
@@ -334,8 +334,6 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         setImages(["images/image1.jpg", "images/image2.jpg"]);
     };
 
-    // Comment post
-    const commentPost = () => {};
 
     // Display comments
     const displayComments = () => {
@@ -427,9 +425,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                     <>
                         <div
                             ref={popupRefShare}
-                            className={`${
-                                showShareButton ? "opacity-100" : "opacity-0"
-                            }
+                            className={`${showShareButton ? "opacity-100" : "opacity-0"
+                                }
             transition-opacity ease-in-out duration-300`}
                         >
                             {/* Like count popup */}
@@ -510,11 +507,10 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                 </>
                 {/* like button */}
                 <button
-                    className={`dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
-                        isLiked
+                    className={`dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${isLiked
                             ? "border-custom-blue dark:bg-dorange"
                             : "border-black"
-                    } text-center fixed bottom-20 right-2`}
+                        } text-center fixed bottom-20 right-2`}
                     onClick={handleLike}
                 >
                     <svg
@@ -556,11 +552,10 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
                 {/* options button */}
                 <button
-                    className={`dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
-                        showOptions
+                    className={`dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${showOptions
                             ? "border-custom-blue dark:border-dorange"
                             : "border-black"
-                    } text-center fixed bottom-2 left-2`}
+                        } text-center fixed bottom-2 left-2`}
                     onClick={displayOptions}
                 >
                     <svg
@@ -657,9 +652,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                 <>
                     {/* Like count popup */}
                     <div
-                        className={`${
-                            showLikeCount ? "opacity-100" : "opacity-0"
-                        } transition-opacity ease-in-out duration-300`}
+                        className={`${showLikeCount ? "opacity-100" : "opacity-0"
+                            } transition-opacity ease-in-out duration-300`}
                     >
                         <div className="dark:bg-dback bg-white p-3 rounded-lg shadow-lg fixed bottom-24 right-20 border border-black">
                             <svg
@@ -685,9 +679,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                     {/* Comments popup */}
                     <div
                         ref={popupRef}
-                        className={`${
-                            showComments ? "opacity-100" : "opacity-0"
-                        } transition-opacity ease-in-out duration-300`}
+                        className={`${showComments ? "opacity-100" : "opacity-0"
+                            } transition-opacity ease-in-out duration-300`}
                     >
                         <div className="dark:bg-dback h-screen bg-white border-solid border-2 border-black fixed top-48 left-2 right-2 rounded-t-3xl border-b-0">
                             {/* Post description*/}
@@ -780,9 +773,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                     {/* TODO Position pop-up at center of screen */}
                     <div
                         ref={popupRefFlag}
-                        className={`${
-                            showFlagMenu ? "opacity-100" : "opacity-0"
-                        }
+                        className={`${showFlagMenu ? "opacity-100" : "opacity-0"
+                            }
             transition-opacity ease-in-out duration-300`}
                     >
                         <div
