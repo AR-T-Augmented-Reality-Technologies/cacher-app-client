@@ -58,18 +58,18 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
 
     // eslint-disable-next-line
     const toggleTheme = () => {
-      if (theme === "light") {
-        setTheme("dark");
-      } else {
-        setTheme("light");
-      }
+        if (theme === "light") {
+            setTheme("dark");
+        } else {
+            setTheme("light");
+        }
     };
-  
+
     useEffect(() => {
-      localStorage.setItem("theme", theme);
-      document.body.className = theme;
+        localStorage.setItem("theme", theme);
+        document.body.className = theme;
     }, [theme]);
-    
+
 
     // Adding comments
     const handleAddComment = () => {
@@ -161,7 +161,7 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                 mode: "cors",
             }
         );
-        
+
         // eslint-disable-next-line
         const data = response.json().then((data) => {
             console.log(data);
@@ -480,7 +480,9 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                         className={`${showComments ? "opacity-100" : "opacity-0"
                             } transition-opacity ease-in-out duration-300`}
                     >
-                        <div className="dark:bg-dback h-screen bg-white border-solid border-2 border-black fixed top-48 left-2 right-2 rounded-t-3xl border-b-0">
+                        <div
+                            // style={{ height: "80vh" }}
+                            className="dark:bg-dback h-screen bg-white border-solid border-2 border-black fixed top-48 left-2 right-2 rounded-t-3xl border-b-0">
                             {/* Post description*/}
                             <div className="grid grid-rows-2">
                                 <div className="row-start-1">
@@ -495,10 +497,13 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                             </div>
 
                             {/* Comments */}
-                            <div className="grid grid-cols-1 pl-5 pr-5 overflow-auto max-h-80 dark:bg-dback">
+                            <div
+                                style={{ maxHeight: "55%" }}
+                                className="grid grid-cols-1 pl-5 pr-5 overflow-auto max-h-80 dark:bg-dback">
                                 {comments.map((comment, index) => (
                                     <div
                                         key={index}
+                                        style={{ height: "4em", paddingBottom: "0.5em" }}
                                         className="dark:bg-dback bg-white border-solid border border-black break-normal h-auto rounded-lg mb-5 grid grid-cols-5 grid-rows-2"
                                     >
                                         <p
@@ -508,21 +513,28 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                                             {comment}{" "}
                                         </p>
                                         <p
-                                            className="break-normal px-2 py-2 col-start-1 col-span-3 row-start-2 text-sm overflow-hidden text-justify"
-                                            style={{ wordWrap: "break-word" }}
+                                            className="break-normal px-2 py-2 col-start-1 col-span-1 row-start-2 overflow-hidden text-justify"
+                                            style={{ wordWrap: "break-word", color: "rgb(160,160,160)", fontSize: "0.8rem" }}
                                         >
                                             ({formatTime(commentTimes[index])})
                                         </p>
                                         {/* To delete comment */}
-                                        <p className="break-normal px-2 py-2 col-start-2 col-span-1 row-start-2 text-sm overflow-hidden text-justify">
-                                            <img onClick={() => { deleteComment(index) }} style={{ height: "1.25rem", cursor: "pointer" }} src="images/delete-icon.png" alt="" />
+                                        <p className="break-normal px-2 py-2 col-start-1 col-span-1 row-start-2 text-sm overflow-hidden text-justify">
+                                            <img onClick={() => { deleteComment(index) }} style={{ height: "1.25rem", cursor: "pointer", float: "right" }} src="images/delete-icon.png" alt="" />
                                         </p>
                                         {/* eslint-disable-next-line */}
-                                        <img
-                                            src="images/avatar-image.jpg"
-                                            className="border-solid border-2 border-black rounded-lg w-3/4 float-right col-start-5 cols-span-1 mt-2"
-                                        ></img>
-                                        <p className="col-start-4 col-span-2 pt-5 pr-3 text-right text-sm">
+                                        <p
+                                        className="col-start-5 cols-span-1 pr-3"
+                                        >
+                                            <img
+                                                src="images/avatar-image.jpg"
+                                                style={{ height: "2em", width: "2em", borderRadius: "2em" }}
+                                                className="border-solid border-2 border-black w-3/4 float-right col-start-5 cols-span-1 mt-2"
+                                            ></img>
+                                        </p>
+                                        <p 
+                                        style={{ paddingTop: "0.75rem", paddingBottom: "0.5rem", fontSize: "0.8rem" }}
+                                        className="col-start-4 col-span-2 pr-3 text-right py-2 px-2">
                                             User123456
                                         </p>
                                     </div>
@@ -532,7 +544,9 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                             {/* Admin cannot post comments, only view and delete them
                             (Not commented out yet to post new comments and test delete comment functionality)*/}
 
-                            <div className="grid grid-cols-5 grid-rows-1 pl-5 pr-5 pt-3 bg-transparent bottom-2 top-2">
+                            <div
+                                style={{ position: "relative", height: "3em", width: "100%" }}
+                                className="grid grid-cols-5 grid-rows-1 pl-5 pr-5 pt-3 bg-transparent bottom-2">
                                 <input
                                     className="dark:bg-dback bg-white border-solid border border-black left-5 right-5 pl-2 h-auto rounded-lg col-span-4 col-start-1"
                                     type="text"
