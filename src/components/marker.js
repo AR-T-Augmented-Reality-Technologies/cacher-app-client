@@ -1,6 +1,6 @@
 import { func, number, oneOfType, string } from 'prop-types'
 
-const Marker = ({ className, lat, lng, markerId, onClick, scaledSize, url}) => {
+const Marker = ({ className, lat, lng, markerId, onClick, scaledSize, url, scrapbookId }) => {
     return (
         <img
             className={className}
@@ -13,6 +13,7 @@ const Marker = ({ className, lat, lng, markerId, onClick, scaledSize, url}) => {
             onClick={(e) => (onClick ? onClick(e, { markerId, lat, lng }) : null)}
             style={{ cursor: 'pointer', fontSize: 40 }}
             alt={markerId}
+            scrapbookId={scrapbookId}
         />
     )
 }
@@ -47,6 +48,8 @@ Marker.propTypes = {
     url: string,
 
     onClick: func,
+
+    scrapbookId: number,
 }
 
 export default Marker

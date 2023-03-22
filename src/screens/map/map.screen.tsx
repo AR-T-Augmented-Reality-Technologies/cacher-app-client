@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, ChangeEvent, useCallback } from "react";
 import { What3wordsAutosuggest } from "@what3words/react-components";
 import GoogleMap from "google-maps-react-markers";
+import { useSelector, useDispatch } from "react-redux";
 import Marker from "../../components/marker";
 import mapStyle from "../../mapStyle.json";
 import Webcam from "react-webcam";
@@ -32,6 +33,14 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         lat: 0,
         lng: 0,
     });
+
+    const [caption, setCaption] = useState("");
+    const [selectedScrapbook, setSelectedScrapbook] = useState(0);
+
+    const dispatch = useDispatch();
+
+    // Use our user store
+    const user = useSelector((state: any) => state.users);
 
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
@@ -187,6 +196,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             );
 
             const data = await response.json();
+            console.log(data[0]);
 
             const markers = data.data.books.map(async (book: any) => {
                 const bookLocation = book.location;
@@ -203,6 +213,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                     lat,
                     lng,
                     id: bookLocation,
+                    scrapbookId: book.scrapbook_id,
                 };
                 return marker;
             });
@@ -236,11 +247,12 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     };
 
     // On marker click
-    const onMarkerClick = (markerId: any, lat: any, lng: any) => {
+    const onMarkerClick = (markerId: any, lat: any, lng: any, scrapbookId: number) => {
         mapRef.current.panTo({ lat, lng });
         mapRef.current.setZoom(16);
         setShowMarkerPopup(true);
         // navigation.navigate(Image);
+        setSelectedScrapbook(scrapbookId);
     };
 
     const locBlocker = async (location: string, curr: string) => {
@@ -402,9 +414,27 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         );
 
         const data = await response.json();
-        console.log(data);
-    
-        return data;
+        console.log(data.uploadURL);
+        
+        // Create a api call to add image to scrapbook
+        const updatedScrapbook = await fetch(
+            `${process.env.REACT_APP_REST_API_HOST}/images/addImageToScrapbook`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                mode: "cors",
+                body: JSON.stringify({
+                    scrapbookID: selectedScrapbook,
+                    userID: user.id,
+                    imageURL: data.uploadURL,
+                    caption: caption,
+                }),
+            }
+        );
+
+        console.log(updatedScrapbook);
     };
 
     // Google map component
@@ -429,7 +459,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                         className="marker"
                         key={idx}
                         onClick={() =>
-                            onMarkerClick(marker.id, marker.lat, marker.lng)
+                            onMarkerClick(marker.id, marker.lat, marker.lng, marker.scrapbookId)
                         }
                         scaledSize={new google.maps.Size(32, 32)}
                         url="https://i.imgur.com/4Z0ZQ9A.png"
@@ -683,6 +713,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                             type="text"
                                             id="pagesField"
                                             placeholder="Add a caption... (optional)"
+                                            onChange={(e) => setCaption(e.target.value)}
                                         />
                                     </div>
                                     <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2">
