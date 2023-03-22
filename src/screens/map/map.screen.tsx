@@ -86,7 +86,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         });
 
         console.log(file);
-
     }, [webcamRef]);
 
     const [file, setFile] = useState<any>("");
@@ -454,7 +453,12 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             }
         );
 
-        console.log(updatedScrapbook);
+        if (updatedScrapbook.ok) {
+            console.log(updatedScrapbook);
+            navigation.navigate("Image");
+        } else {
+            console.log("Error adding image to scrapbook");
+        }
     };
 
     // Google map component
@@ -749,25 +753,47 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                     </div>
                                     <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2">
                                         <button
-                                            className="bg-custom-orange text-white rounded-lg p-3 inline-flex"
+                                            className={`bg-custom-orange text-white rounded-lg p-3 inline-flex ${
+                                                !file
+                                                    ? "bg-gray-400 cursor-not-allowed"
+                                                    : ""
+                                            }`}
                                             onClick={(e) =>
                                                 handleUploadImage(e)
                                             }
+                                            disabled={!file}
                                         >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.5"
-                                                stroke="currentColor"
-                                                className="w-6 h-6 mr-2"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
-                                                />
-                                            </svg>
+                                            {file ? (
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 mr-2"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+                                                    />
+                                                </svg>
+                                            ) : (
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-6 h-6 mr-2"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+                                                    />
+                                                </svg>
+                                            )}
 
                                             <span className="mr-1">Post</span>
                                         </button>
