@@ -54,6 +54,17 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
         setShowDeleteMenu(!showDeleteMenu);
     };
 
+    // console msg for deleted post
+    function deleteConsoleMsg() {
+        var e = document.getElementById("reason") as HTMLSelectElement;
+        var msg = (e.options[e.selectedIndex] as HTMLOptionElement).text;
+        if (msg == "other") {
+            msg = (document.getElementById("otherReason") as HTMLInputElement).value;
+        }
+        console.log("Reason for deletion: " + msg);
+        deletePost();
+    };
+
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
     // eslint-disable-next-line
@@ -582,7 +593,7 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
 
                         <br /><br />
 
-                        <form action="" method="post" id="reasonForDelete">
+                        <form action="" method="" id="reasonForDelete">
                             {/* Reason for deleting */}
                             <div>
                                 <select name="reason" id="reason" form="reasonForDelete" required style={{ color: "rgb(69,69,69)", width: "100%" }}>
@@ -613,7 +624,7 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                                     <input type="submit" value="Cancel" onClick={() => { deletePost() }} style={{ cursor: "pointer" }} />
                                 </div>
                                 <div style={{ flex: "0" }}>
-                                    <input type="submit" value="Delete" style={{ cursor: "pointer", color: "rgb(230,0,0)" }} />
+                                    <input type="submit" value="Delete" onClick={() => { deleteConsoleMsg() }} style={{ cursor: "pointer", color: "rgb(230,0,0)" }} />
                                 </div>
                             </div>
 

@@ -191,8 +191,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     // console msg for flagged post
     function flagConsoleMsg() {
         var e = document.getElementById("reason") as HTMLSelectElement;
-        var msg = e.options[e.selectedIndex].text;
-        if (msg = "other") {
+        var msg = (e.options[e.selectedIndex] as HTMLOptionElement).text;
+        if (msg == "other") {
             msg = (document.getElementById("otherReason") as HTMLInputElement).value;
         }
         console.log(msg);
