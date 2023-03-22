@@ -824,7 +824,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                             <br />
                             <br />
 
-                            <form action="" method="post" id="reasonForFlag">
+                            <form action="" method="" id="reasonForFlag">
                                 {/* Reason for deleting */}
                                 <div>
                                     <select
