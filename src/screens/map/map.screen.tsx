@@ -42,22 +42,24 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     // Use our user store
     const user = useSelector((state: any) => state.users);
 
-    const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+    const [theme, setTheme] = useState(
+        localStorage.getItem("theme") || "light"
+    );
 
     // eslint-disable-next-line
     const toggleTheme = () => {
-      if (theme === "light") {
-        setTheme("dark");
-      } else {
-        setTheme("light");
-      }
+        if (theme === "light") {
+            setTheme("dark");
+        } else {
+            setTheme("light");
+        }
     };
-  
+
     useEffect(() => {
-      localStorage.setItem("theme", theme);
-      document.body.className = theme;
+        localStorage.setItem("theme", theme);
+        document.body.className = theme;
     }, [theme]);
-    
+
     const [w3wUserLocation, setW3wUserLocation] = useState("");
 
     const videoConstraints = {
@@ -247,7 +249,12 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     };
 
     // On marker click
-    const onMarkerClick = (markerId: any, lat: any, lng: any, scrapbookId: number) => {
+    const onMarkerClick = (
+        markerId: any,
+        lat: any,
+        lng: any,
+        scrapbookId: number
+    ) => {
         mapRef.current.panTo({ lat, lng });
         mapRef.current.setZoom(16);
         setShowMarkerPopup(true);
@@ -415,7 +422,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
         const data = await response.json();
         console.log(data.uploadURL);
-        
+
         // Create a api call to add image to scrapbook
         const updatedScrapbook = await fetch(
             `${process.env.REACT_APP_REST_API_HOST}/images/addImageToScrapbook`,
@@ -459,7 +466,12 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                         className="marker"
                         key={idx}
                         onClick={() =>
-                            onMarkerClick(marker.id, marker.lat, marker.lng, marker.scrapbookId)
+                            onMarkerClick(
+                                marker.id,
+                                marker.lat,
+                                marker.lng,
+                                marker.scrapbookId
+                            )
                         }
                         scaledSize={new google.maps.Size(32, 32)}
                         url="https://i.imgur.com/4Z0ZQ9A.png"
@@ -629,7 +641,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                             <div className="fixed top-1/3 left-1/3 transform -translate-x-1/4 -translate-y-1/2 bg-white border-solid border-2 p-4 rounded-lg shadow-lg">
                                 <div className="grid grid-cols-2">
                                     <div className="col-start-1 justify-self-center inline-flex pr-3 ml-1">
-                                        <button className="bg-custom-blue text-white rounded-lg p-2">
+                                        <label className="bg-custom-blue text-white rounded-lg p-2 inline-flex">
                                             <div className="flex items-center">
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -637,7 +649,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                     viewBox="0 0 24 24"
                                                     stroke-width="1.5"
                                                     stroke="currentColor"
-                                                    className="w-10 h-10"
+                                                    className="w-10 h-10 mr-2"
                                                 >
                                                     <path
                                                         stroke-linecap="round"
@@ -645,14 +657,20 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                         d="M15 11.25l-3-3m0 0l-3 3m3-3v7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                                     />
                                                 </svg>
-
-                                                <input type="file" onChange={(e) => e.target.files && setFile(e.target.files[0])} accept="image/*" />
-
-                                                <span className="text-sm" onClick={(e) => handleUploadImage(e)}>
-                                                    Upload Photo
+                                                <span className="text-sm">
+                                                    Upload Image
                                                 </span>
                                             </div>
-                                        </button>
+                                            <input
+                                                type="file"
+                                                onChange={(e) =>
+                                                    e.target.files &&
+                                                    setFile(e.target.files[0])
+                                                }
+                                                accept="image/*"
+                                                className="hidden"
+                                            />
+                                        </label>
                                     </div>
                                     <div className="col-start-2 justify-self-center inline-block pl-3 mr-1">
                                         <button
@@ -692,7 +710,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                 alt="captured"
                                             />
                                         ) : (
-                                            
                                             <Webcam
                                                 audio={false}
                                                 height={videoConstraints.height}
@@ -703,7 +720,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                     videoConstraints
                                                 }
                                             />
-                                            
                                         )}
                                     </div>
 
@@ -713,11 +729,18 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                             type="text"
                                             id="pagesField"
                                             placeholder="Add a caption... (optional)"
-                                            onChange={(e) => setCaption(e.target.value)}
+                                            onChange={(e) =>
+                                                setCaption(e.target.value)
+                                            }
                                         />
                                     </div>
                                     <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2">
-                                        <button className="bg-custom-orange text-white rounded-lg p-3 inline-flex">
+                                        <button
+                                            className="bg-custom-orange text-white rounded-lg p-3 inline-flex"
+                                            onClick={(e) =>
+                                                handleUploadImage(e)
+                                            }
+                                        >
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
