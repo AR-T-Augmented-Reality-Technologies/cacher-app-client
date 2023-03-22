@@ -19,6 +19,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const onChange = (e: ChangeEvent<HTMLInputElement>): void =>
         setValue(e.target.value);
     const [showOptions, setShowOptions] = useState(false);
+    const [showAdmin, setShowAdmin] = useState(false);
     const [currentPage, setCurrentPage] = useState("Map");
     const [mapReady, setMapReady] = useState(false);
     const [markers, setMarkers] = useState<any[]>([]);
@@ -30,18 +31,36 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [showMarkerPopup, setShowMarkerPopup] = useState(false);
     const [showAddToScrapbook, setShowAddToScrapbook] = useState(false);
     const popupRefFlag = useRef<HTMLDivElement>(null);
+    const [showDeleteMenu, setShowDeleteMenu] = useState(false);
     const popupRef = useRef<HTMLDivElement>(null);
+    const popupRefDel = useRef<HTMLDivElement>(null);
     const [userLocation, setUserLocation] = useState({
         lat: 0,
         lng: 0,
     });
 
+    let [gotCommFlag, setGotCommFlag] = useState(0);
     const [caption, setCaption] = useState("");
     const [selectedScrapbook, setSelectedScrapbook] = useState(0);
 
     const [pictureType, setPictureType] = useState("capture"); // can be 'capture' or 'uploaded'
 
     const dispatch = useDispatch();
+
+
+    const checkAdmin = async () => {
+        const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/admin/${user.id}/checkAdmin`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await response.json();
+
+        if (data.data.admin != null && data.data.admin.roles_name == "Admin") {
+            setShowAdmin(true);
+        }
+    }
 
     // Use our user store
     const user = useSelector((state: any) => state.users);
@@ -131,6 +150,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         ) {
             setShowMarkerPopup(false);
             setShowAddToScrapbook(false);
+        } else if (popupRefDel.current && !popupRefDel.current.contains(event.target as Node)) {
+            setShowDeleteMenu(false);
         }
     };
     useEffect(() => {
@@ -156,6 +177,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const displayOptions = () => {
         setShowOptions(!showOptions);
     };
+
+
 
     // On map load
     const onGoogleApiLoaded = async ({
@@ -445,7 +468,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         const model = await nsfwjs.load();
         var imagey = new Image();
         imagey.src = String(base64image);
-        
+
         if (pictureType == "upload") {
             imagey.width = 1080;
             imagey.height = 1350;
@@ -457,23 +480,22 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         const predictions = await model.classify(imagey);
         var breakflag = 0;
         for (var i = 0; i < predictions.length; i++) {
-            if (predictions[i].className == "Hentai" && (predictions[i].probability) > 0.5) {
+            if (predictions[i].className == "Hentai" && (predictions[i].probability) > 0.7) {
                 breakflag = 1;
-                setMessage("This has been deemed inappropriate");
+                setMessage("This has been deemed inappropriate with Hentai with probability" + predictions[i].probability);
                 setShowMessage(true);
             } else if (predictions[i].className == "Porn" && (predictions[i].probability) > 0.5) {
                 breakflag = 1;
-                setMessage("This has been deemed inappropriate");
+                setMessage("This has been deemed inappropriate with Porn with probability" + predictions[i].probability);
                 setShowMessage(true);
-            } else if (predictions[i].className == "Sexy" && (predictions[i].probability) > 0.5) {
+            } else if (predictions[i].className == "Sexy" && (predictions[i].probability) > 0.7) {
                 breakflag = 1;
-                setMessage("This has been deemed inappropriate");
+                setMessage("This has been deemed inappropriate with Sexy with probability " + predictions[i].probability);
                 setShowMessage(true);
             }
         }
 
         if (breakflag == 0) {
-            console.log("Sexiness not detected");
             const response = await fetch(
                 `${process.env.REACT_APP_REST_API_HOST}/images/upload`,
                 {
@@ -502,7 +524,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                     }),
                 }
             );
-            
+
 
             if (updatedScrapbook.ok) {
                 console.log(updatedScrapbook);
@@ -511,6 +533,31 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 console.log("Error adding image to scrapbook");
             }
         }
+    }
+
+    function openReportsDashboard() {
+        navigation.navigate("TicketScreen");
+    }
+    const deletePost = () => {
+        setShowDeleteMenu(!showDeleteMenu);
+    };
+
+    if (gotCommFlag == 0) {
+        checkAdmin();
+        setGotCommFlag(1);
+    }
+
+    const deleteScrapbook = async () => {
+        const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/${selectedScrapbook}/deleteBook`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        setShowDeleteMenu(false);
+        setShowMarkerPopup(false);
+        getMarkers();
+        
     }
 
     // Google map component
@@ -654,6 +701,52 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                             </div>
                                         </button>
                                     </div>
+                                    {showAdmin ? (
+                                        <>
+                                            <div className="col-start-3 justify-self-center">
+                                                <button
+                                                    className="bg-red text-white rounded-lg p-2"
+                                                    onClick={() => deletePost()}
+                                                >
+                                                    <div className="bg-custom-blue text-white rounded-lg mx-auto">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            fill="none"
+                                                            viewBox="0 0 24 24"
+                                                            stroke-width="1.5"
+                                                            stroke="currentColor"
+                                                            className="w-6 h-6 inline-block mr-2"
+                                                        >
+                                                            <path
+                                                                stroke-linecap="round"
+                                                                stroke-linejoin="round"
+                                                                d="M12 4.5v15m7.5-7.5h-15"
+                                                            />
+                                                        </svg>
+                                                        <span className="mr-1">
+                                                            Delete
+                                                        </span>
+                                                    </div>
+                                                </button>
+                                            </div>
+                                            {showDeleteMenu && (
+                                                <>
+                                                    <div
+                                                        ref={popupRefDel}
+                                                        className={`${showDeleteMenu ? "opacity-100" : "opacity-0"
+                                                            } transition-opacity ease-in-out duration-300 left-48 top-64`}
+                                                        style={{ color: "rgb(219,219,219)", backgroundColor: "rgb(66,66,66)", position: "fixed", borderRadius: "5px", border: "0.2rem solid rgb(153,0,0)", textAlign: "left", padding: "20px" }}>
+                                                        <button className="" onClick={() => deleteScrapbook()}>Delete
+                                                        </button>
+                                                    </div>
+                                                </>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <>
+
+                                        </>
+                                    )}
                                     <hr className="my-4 col-start-1 col-span-2" />
                                     <div className="col-start-1 col-span-1 text-right pr-4">
                                         <label
@@ -731,7 +824,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                             <input
                                                 type="file"
                                                 onChange={(e) => {
-                                                    if(e.target.files) {
+                                                    if (e.target.files) {
                                                         setFile(e.target.files[0])
                                                         setPictureType("upload")
                                                     }
@@ -805,11 +898,10 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                     </div>
                                     <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2">
                                         <button
-                                            className={`bg-custom-orange text-white rounded-lg p-3 inline-flex ${
-                                                !file
-                                                    ? "bg-gray-400 cursor-not-allowed"
-                                                    : ""
-                                            }`}
+                                            className={`bg-custom-orange text-white rounded-lg p-3 inline-flex ${!file
+                                                ? "bg-gray-400 cursor-not-allowed"
+                                                : ""
+                                                }`}
                                             onClick={(e) =>
                                                 handleUploadImage(e)
                                             }
@@ -1035,7 +1127,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                         </svg>
                         Profile
                     </button>
-
                     {/* Settings button */}
                     <button
                         className="dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-20 left-2 transition duration-500 ease-in-out"
@@ -1063,6 +1154,25 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                         </svg>
                         Settings
                     </button>
+                </>
+            )}
+
+            {showAdmin ? (
+                <>
+                    <button>
+                        {/* eslint-disable-next-line */}
+                        <img
+                            src="images/envelope-icon.png"
+                            onClick={() => {
+                                openReportsDashboard();
+                            }}
+                            className="fixed top-0 right-2"
+                        />
+                    </button>
+                </>
+            ) : (
+                <>
+
                 </>
             )}
         </>

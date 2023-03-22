@@ -193,7 +193,7 @@ export const TicketScreen = ({ navigation }: TicketScreenProps) => {
                 focus:outline-none focus:shadow-outline"
                         type="button"
                         onClick={() => {
-                            navigation.navigate("AdminDashboard");
+                            navigation.navigate("Map");
                         }}
                     >
                         <svg
