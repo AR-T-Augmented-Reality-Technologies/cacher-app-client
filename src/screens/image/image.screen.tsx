@@ -706,10 +706,11 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                             </div>
 
                             {/* Comments */}
-                            <div className="grid grid-cols-1 pl-5 pr-5 overflow-auto max-h-80 dark:bg-dback">
+                            <div style={{ maxHeight: "55%" }} className="grid grid-cols-1 pl-5 pr-5 overflow-auto max-h-80 dark:bg-dback">
                                 {commentsarr.map((comment, index) => (
                                     <div
                                         key={index}
+                                        style={{ height: "4em", paddingBottom: "0.5em" }}
                                         className="dark:bg-dback bg-white border-solid border border-black break-normal h-auto rounded-lg mb-5 grid grid-cols-5 grid-rows-2"
                                     >
                                         <p
@@ -719,39 +720,45 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                                             {comment}{" "}
                                         </p>
                                         <p
-                                            className="break-normal px-2 py-2 col-start-1 col-span-3 row-start-2 text-sm overflow-hidden text-justify"
-                                            style={{ wordWrap: "break-word" }}
+                                            className="break-normal px-2 py-2 col-start-1 col-span-1 row-start-2 overflow-hidden text-justify"
+                                            style={{ wordWrap: "break-word", color: "rgb(160,160,160)", fontSize: "0.8rem" }}
                                         >
                                             {formatTime(commentTimes[index])}
                                         </p>
                                         {/* To flag a comment (add flag functionality) */}
-                                        <p className="break-normal px-2 py-2 col-start-2 col-span-1 row-start-2 text-sm overflow-hidden text-justify">
+                                        <p className="break-normal px-2 py-2 col-start-1 col-span-1 row-start-2 text-sm overflow-hidden text-justify">
                                             <img
                                                 onClick={() => {
                                                     flagPostOrComment();
                                                 }}
-                                                style={{
-                                                    height: "1.25rem",
-                                                    cursor: "pointer",
-                                                }}
+                                                style={{ height: "1.25rem", cursor: "pointer", float: "right" }}
                                                 src="images/flag-icon.png"
                                                 alt=""
                                             />
                                         </p>
-                                        <img
-                                            src="images/avatar-image.jpg"
-                                            className="border-solid border-2 border-black rounded-lg w-3/4 float-right col-start-5 cols-span-1 mt-2"
-                                        ></img>
-                                        <p className="col-start-4 col-span-2 pt-5 pr-3 text-right text-sm">
+                                        <p
+                                        className="col-start-5 cols-span-1 pr-3"
+                                        >
+                                            <img
+                                                src="images/avatar-image.jpg"
+                                                style={{ height: "2em", width: "2em", borderRadius: "2em" }}
+                                                className="border-solid border-2 border-black w-3/4 float-right col-start-5 cols-span-1 mt-2"
+                                            ></img>
+                                        </p>
+                                        <p
+                                        style={{ paddingTop: "0.75rem", paddingBottom: "0.5rem", fontSize: "0.8rem" }}
+                                        className="col-start-4 col-span-2 pr-3 text-right py-2 px-2">
                                             User - {userarr[index]}
                                         </p>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="grid grid-cols-5 grid-rows-1 pl-5 pr-5 pt-3 bg-transparent bottom-2 top-2">
+                            <div style={{ position: "fixed", height: "3em", width: "100%" }}
+                                className="grid grid-cols-5 grid-rows-1 pl-5 pr-5 pt-3 bg-transparent bottom-2">
                                 <input
-                                    className="dark:bg-dback bg-white border-solid border border-black left-5 right-5 pl-2 h-auto rounded-lg col-span-4 col-start-1"
+                                    style={{ left: "0.25rem", height: "2.25em", width: "100%" }}
+                                    className="dark:bg-dback bg-white border-solid border border-black right-5 pl-2 rounded-lg col-span-4 col-start-1"
                                     type="text"
                                     value={newComment}
                                     onChange={(event) =>
@@ -759,7 +766,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                                     }
                                 />
                                 <button
-                                    className="dark:bg-dblue hover:dark:bg-dorange bg-gray-400 hover:bg-gray-500 text-white focus:outline-none focus:shadow-outline text-sm border h-full border-black ml-5 rounded-lg mb-5 col-start-5 col-span-1"
+                                style={{ marginLeft: "1em", marginRight: "0.75rem" }}
+                                className="dark:bg-dblue hover:dark:bg-dorange bg-gray-400 hover:bg-gray-500 text-white focus:outline-none focus:shadow-outline text-sm border h-full border-black ml-5 rounded-lg mb-5 col-start-5 col-span-1 pr-3"
                                     onClick={() =>
                                         newComment.trim().length > 0
                                             ? handleAddComment()
