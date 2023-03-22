@@ -188,6 +188,17 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         setShowFlagMenu(!showFlagMenu);
     };
 
+    // console msg for flagged post
+    function flagConsoleMsg() {
+        var e = document.getElementById("reason") as HTMLSelectElement;
+        var msg = e.options[e.selectedIndex].text;
+        if (msg = "other") {
+            msg = (document.getElementById("otherReason") as HTMLInputElement).value;
+        }
+        console.log(msg);
+        flagPostOrComment();
+    };
+
     // Dismiss the window when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
         if (
@@ -905,6 +916,9 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                                             style={{
                                                 cursor: "pointer",
                                                 color: "rgb(230,0,0)",
+                                            }}
+                                            onClick={() => {
+                                                flagConsoleMsg();
                                             }}
                                         />
                                     </div>
