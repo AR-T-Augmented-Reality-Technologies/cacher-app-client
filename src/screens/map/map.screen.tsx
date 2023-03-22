@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Marker from "../../components/marker";
 import mapStyle from "../../mapStyle.json";
 import Webcam from "react-webcam";
+import { url } from "inspector";
 
 interface MapScreenProps {
     navigation: any;
@@ -71,9 +72,21 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const webcamRef = useRef<Webcam>(null);
     const [imageSrc, setImageSrc] = useState<string | null>(null);
 
+    const urltoFile = async (url: any, filename: any, mimeType: any) => {
+        const res = await fetch(url);
+        const buffer = await res.arrayBuffer();
+        return new File([buffer], filename, { type: mimeType });
+    };
+
     const capture = useCallback(() => {
         const imageSrc = webcamRef.current?.getScreenshot();
         setImageSrc(imageSrc ?? null);
+        urltoFile(imageSrc, "test.jpg", "image/jpeg").then((file) => {
+            setFile(file);
+        });
+
+        console.log(file);
+
     }, [webcamRef]);
 
     const [file, setFile] = useState<any>("");

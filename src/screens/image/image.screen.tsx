@@ -247,7 +247,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     //Attempting to get code for pulling likes from database
     const getlikes = async () => {
         const payload = {
-            imageid: "2",
+            imageid: 1,
         };
         const response = await fetch(
             `${process.env.REACT_APP_REST_API_HOST}/images/${payload.imageid}/getlikes`,
@@ -268,7 +268,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
     // Like post
     const likePost = async () => {
-        const image_id = "2"; // Replace this with the actual image ID
+        const image_id = 1; // Replace this with the actual image ID
         const response = await fetch(
             `${process.env.REACT_APP_REST_API_HOST}/images/${image_id}/like`,
             {
@@ -291,7 +291,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     };
 
     const unlikePost = async () => {
-        const image_id = "2"; // Replace this with the actual image ID
+        const image_id = 1; // Replace this with the actual image ID
         const response = await fetch(
             `${process.env.REACT_APP_REST_API_HOST}/images/${image_id}/dislike`,
             {
