@@ -6,6 +6,7 @@ import Marker from "../../components/marker";
 import mapStyle from "../../mapStyle.json";
 import Webcam from "react-webcam";
 import { url } from "inspector";
+import * as nsfwjs from 'nsfwjs';
 
 interface MapScreenProps {
     navigation: any;
@@ -78,15 +79,13 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         return new File([buffer], filename, { type: mimeType });
     };
 
-    const capture = useCallback(() => {
+    const capture = useCallback(async () => {
         const imageSrc = webcamRef.current?.getScreenshot();
+        const model = await nsfwjs.load();
         setImageSrc(imageSrc ?? null);
-        urltoFile(imageSrc, "test.jpg", "image/jpeg").then((file) => {
+        urltoFile(imageSrc, "test.jpg", "image/jpeg").then(async (file) => {
             setFile(file);
         });
-
-        console.log(file);
-
     }, [webcamRef]);
 
     const [file, setFile] = useState<any>("");
@@ -425,36 +424,60 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         const formData = new FormData();
         formData.append("image", file);
 
-        const response = await fetch(
-            `${process.env.REACT_APP_REST_API_HOST}/images/upload`,
-            {
-                method: "POST",
-                body: formData,
+        const model = await nsfwjs.load()
+        var imagey = new Image();
+        imagey.src = String(imageSrc);
+        const predictions = await model.classify(imagey);
+        var breakflag = 0;
+        for (var i = 0; i < predictions.length; i++) {
+            if (predictions[i].className == "Hentai" && (predictions[i].probability) > 0.5) {
+                breakflag = 1;
+                setMessage("This has been deemed inappropriate");
+                setShowMessage(true);
+            } else if (predictions[i].className == "Porn" && (predictions[i].probability) > 0.5) {
+                breakflag = 1;
+                setMessage("This has been deemed inappropriate");
+                setShowMessage(true);
+            } else if (predictions[i].className == "Sexy" && (predictions[i].probability) > 0.5) {
+                breakflag = 1;
+                setMessage("This has been deemed inappropriate");
+                setShowMessage(true);
             }
-        );
+        }
 
-        const data = await response.json();
-        console.log(data.uploadURL);
+        if (breakflag == 0) {
+            console.log("Sexiness not detected");
+            const response = await fetch(
+                `${process.env.REACT_APP_REST_API_HOST}/images/upload`,
+                {
+                    method: "POST",
+                    body: formData,
+                }
+            );
 
-        // Create a api call to add image to scrapbook
-        const updatedScrapbook = await fetch(
-            `${process.env.REACT_APP_REST_API_HOST}/images/addImageToScrapbook`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                mode: "cors",
-                body: JSON.stringify({
-                    scrapbookID: selectedScrapbook,
-                    userID: user.id,
-                    imageURL: data.uploadURL,
-                    caption: caption,
-                }),
-            }
-        );
+            const data = await response.json();
+            console.log(data.uploadURL);
 
-        console.log(updatedScrapbook);
+            // Create a api call to add image to scrapbook
+            const updatedScrapbook = await fetch(
+                `${process.env.REACT_APP_REST_API_HOST}/images/addImageToScrapbook`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    mode: "cors",
+                    body: JSON.stringify({
+                        scrapbookID: selectedScrapbook,
+                        userID: user.id,
+                        imageURL: data.uploadURL,
+                        caption: caption,
+                    }),
+                }
+            );
+
+            console.log(updatedScrapbook);
+        }
     };
 
     // Google map component
@@ -531,9 +554,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                     <>
                         <div
                             ref={popupRef}
-                            className={`${
-                                showMarkerPopup ? "opacity-100" : "opacity-0"
-                            } transition-opacity ease-in-out duration-300`}
+                            className={`${showMarkerPopup ? "opacity-100" : "opacity-0"
+                                } transition-opacity ease-in-out duration-300`}
                         >
                             <div className="fixed top-1/3 left-1/3 transform -translate-x-1/4 -translate-y-1/2 bg-white border-solid border-2 p-4 rounded-lg shadow-lg">
                                 <div className="grid grid-cols-2">
@@ -647,9 +669,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                     <>
                         <div
                             ref={popupRef}
-                            className={`${
-                                showAddToScrapbook ? "opacity-100" : "opacity-0"
-                            } transition-opacity ease-in-out duration-300`}
+                            className={`${showAddToScrapbook ? "opacity-100" : "opacity-0"
+                                } transition-opacity ease-in-out duration-300`}
                         >
                             <div className="fixed top-1/3 left-1/3 transform -translate-x-1/4 -translate-y-1/2 bg-white border-solid border-2 p-4 rounded-lg shadow-lg">
                                 <div className="grid grid-cols-2">
@@ -843,9 +864,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 <>
                     {/* Message popup */}
                     <div
-                        className={`${
-                            showMessage ? "opacity-100" : "opacity-0"
-                        } transition-opacity ease-in-out duration-500`}
+                        className={`${showMessage ? "opacity-100" : "opacity-0"
+                            } transition-opacity ease-in-out duration-10000`}
                     >
                         <div className="dark:bg-dback bg-white p-3 rounded-lg shadow-lg fixed bottom-24 right-5 left-5 border-solid border-2 border-black">
                             <p className="text-center">{message}</p>
@@ -891,11 +911,10 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             </button>
             {/* options button */}
             <button
-                className={`dark:bg-dback w-16 h-16 rounded-full text-xs text-black dark:text-white bg-white font-bold border-solid border-2 ${
-                    showOptions
-                        ? "border-custom-blue dark:border-dorange"
-                        : "border-black"
-                } text-center fixed bottom-2 left-2`}
+                className={`dark:bg-dback w-16 h-16 rounded-full text-xs text-black dark:text-white bg-white font-bold border-solid border-2 ${showOptions
+                    ? "border-custom-blue dark:border-dorange"
+                    : "border-black"
+                    } text-center fixed bottom-2 left-2`}
                 onClick={displayOptions}
             >
                 <svg
@@ -915,9 +934,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             </button>
             {/* options button */}
             <button
-                className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
-                    showOptions ? "border-custom-blue" : "border-black"
-                } text-center fixed bottom-2 left-2`}
+                className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${showOptions ? "border-custom-blue" : "border-black"
+                    } text-center fixed bottom-2 left-2`}
                 onClick={displayOptions}
             >
                 <svg
