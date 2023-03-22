@@ -47,7 +47,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     const popupRef = useRef<HTMLDivElement>(null);
     const popupRefFlag = useRef<HTMLDivElement>(null);
     const popupRefShare = useRef<HTMLDivElement>(null);
-
+    const [showAdmin, setShowAdmin] = useState(false);
     const [commentsarr, setCommentsarr] = useState<string[]>([]);
     const [userarr, setUserarr] = useState<string[]>([]);
     const [newComment, setNewComment] = useState("");
@@ -63,6 +63,20 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     let userTArray = [""];
     const [caption, setCaption] = useState("");
 
+    const checkAdmin = async () => {
+        const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/admin/${user.id}/checkAdmin`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await response.json();
+
+        if (data.data.admin != null && data.data.admin.roles_name == "Admin") {
+            setShowAdmin(true);
+        }
+    }
+
     var Filter = require("bad-words"),
         filter = new Filter();
     // console.log('got comm flag  ' + gotCommFlag);
@@ -71,18 +85,18 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
     // eslint-disable-next-line
     const toggleTheme = () => {
-      if (theme === "light") {
-        setTheme("dark");
-      } else {
-        setTheme("light");
-      }
+        if (theme === "light") {
+            setTheme("dark");
+        } else {
+            setTheme("light");
+        }
     };
-  
+
     useEffect(() => {
-      localStorage.setItem("theme", theme);
-      document.body.className = theme;
+        localStorage.setItem("theme", theme);
+        document.body.className = theme;
     }, [theme]);
-    
+
     // Store current page in local storage
     useEffect(() => {
         const storedPage = localStorage.getItem("currentPage");
@@ -335,7 +349,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     };
 
     // Comment post
-    const commentPost = () => {};
+    const commentPost = () => { };
 
     // Display comments
     const displayComments = () => {
@@ -355,6 +369,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     if (gotCommFlag == 0) {
         handleGetComments();
         getlikes();
+        checkAdmin();
         setGotCommFlag(1);
     }
 
@@ -429,9 +444,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                     <>
                         <div
                             ref={popupRefShare}
-                            className={`${
-                                showShareButton ? "opacity-100" : "opacity-0"
-                            }
+                            className={`${showShareButton ? "opacity-100" : "opacity-0"
+                                }
             transition-opacity ease-in-out duration-300`}
                         >
                             {/* Like count popup */}
@@ -488,6 +502,27 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                         </div>
                     </>
                 )}
+                {showAdmin ? (
+                    <>
+                        <button
+                            style={{ bottom: "15rem", color: "red" }}
+                            className="dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs bg-white font-bold border-solid border-2 border-black text-center fixed right-2"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="19.9 19.4 12.2 14.7"
+                                className="w-6 h-6 mx-auto my-auto"
+                            >
+                                <path d="M 21 22 L 22 34 L 30 34 L 31 22 L 21 22 M 25 22 M 20 22 L 20 21 L 32 21 L 32 22 M 24 21 C 24 19 28 19 28 21 M 23 24 L 24 31 M 29 24 L 28 31 M 26 24 L 26 31" stroke="#fff" stroke-width="0.1" fill="red" />
+                            </svg>{" "}
+                            Delete
+                        </button>
+                    </>
+                ) : (
+                    <>
+
+                    </>
+                )}
                 {/* share button */}
                 <>
                     <button
@@ -512,11 +547,10 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                 </>
                 {/* like button */}
                 <button
-                    className={`dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
-                        isLiked
-                            ? "border-custom-blue dark:bg-dorange"
-                            : "border-black"
-                    } text-center fixed bottom-20 right-2`}
+                    className={`dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${isLiked
+                        ? "border-custom-blue dark:bg-dorange"
+                        : "border-black"
+                        } text-center fixed bottom-20 right-2`}
                     onClick={handleLike}
                 >
                     <svg
@@ -558,11 +592,10 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
                 {/* options button */}
                 <button
-                    className={`dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
-                        showOptions
-                            ? "border-custom-blue dark:border-dorange"
-                            : "border-black"
-                    } text-center fixed bottom-2 left-2`}
+                    className={`dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${showOptions
+                        ? "border-custom-blue dark:border-dorange"
+                        : "border-black"
+                        } text-center fixed bottom-2 left-2`}
                     onClick={displayOptions}
                 >
                     <svg
@@ -659,9 +692,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                 <>
                     {/* Like count popup */}
                     <div
-                        className={`${
-                            showLikeCount ? "opacity-100" : "opacity-0"
-                        } transition-opacity ease-in-out duration-300`}
+                        className={`${showLikeCount ? "opacity-100" : "opacity-0"
+                            } transition-opacity ease-in-out duration-300`}
                     >
                         <div className="dark:bg-dback bg-white p-3 rounded-lg shadow-lg fixed bottom-24 right-20 border border-black">
                             <svg
@@ -687,9 +719,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                     {/* Comments popup */}
                     <div
                         ref={popupRef}
-                        className={`${
-                            showComments ? "opacity-100" : "opacity-0"
-                        } transition-opacity ease-in-out duration-300`}
+                        className={`${showComments ? "opacity-100" : "opacity-0"
+                            } transition-opacity ease-in-out duration-300`}
                     >
                         <div className="dark:bg-dback h-screen bg-white border-solid border-2 border-black fixed top-48 left-2 right-2 rounded-t-3xl border-b-0">
                             {/* Post description*/}
@@ -739,7 +770,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                                             />
                                         </p>
                                         <p
-                                        className="col-start-5 cols-span-1 pr-3"
+                                            className="col-start-5 cols-span-1 pr-3"
                                         >
                                             <img
                                                 src="images/avatar-image.jpg"
@@ -748,8 +779,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                                             ></img>
                                         </p>
                                         <p
-                                        style={{ paddingTop: "0.75rem", paddingBottom: "0.5rem", fontSize: "0.8rem" }}
-                                        className="col-start-4 col-span-2 pr-3 text-right py-2 px-2">
+                                            style={{ paddingTop: "0.75rem", paddingBottom: "0.5rem", fontSize: "0.8rem" }}
+                                            className="col-start-4 col-span-2 pr-3 text-right py-2 px-2">
                                             User - {userarr[index]}
                                         </p>
                                     </div>
@@ -768,8 +799,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                                     }
                                 />
                                 <button
-                                style={{ marginLeft: "1em", marginRight: "0.75rem" }}
-                                className="dark:bg-dblue hover:dark:bg-dorange bg-gray-400 hover:bg-gray-500 text-white focus:outline-none focus:shadow-outline text-sm border h-full border-black ml-5 rounded-lg mb-5 col-start-5 col-span-1 pr-3"
+                                    style={{ marginLeft: "1em", marginRight: "0.75rem" }}
+                                    className="dark:bg-dblue hover:dark:bg-dorange bg-gray-400 hover:bg-gray-500 text-white focus:outline-none focus:shadow-outline text-sm border h-full border-black ml-5 rounded-lg mb-5 col-start-5 col-span-1 pr-3"
                                     onClick={() =>
                                         newComment.trim().length > 0
                                             ? handleAddComment()
@@ -790,9 +821,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                     {/* TODO Position pop-up at center of screen */}
                     <div
                         ref={popupRefFlag}
-                        className={`${
-                            showFlagMenu ? "opacity-100" : "opacity-0"
-                        }
+                        className={`${showFlagMenu ? "opacity-100" : "opacity-0"
+                            }
             transition-opacity ease-in-out duration-300`}
                     >
                         <div
