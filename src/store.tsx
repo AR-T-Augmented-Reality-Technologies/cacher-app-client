@@ -1,18 +1,38 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import usersReducer from "./features/users.slice";
+import scrapbookReducer from "./features/scrapbook.slice";
 
-const persistConfig = {
+const rootPersistConfig = {
   key: 'root',
-  storage
-}
+  storage,
+  whitelist: ['users','scrapbook'],
+};
 
-const persistedReducer = persistReducer(persistConfig, usersReducer)
+const usersPersistConfig = {
+  key: 'users',
+  storage,
+};
+
+const scrapbookPersistConfig = {
+  key: 'scrapbook',
+  storage,
+};
+
+const usersPersistedReducer = persistReducer(usersPersistConfig, usersReducer);
+const scrapbookPersistedReducer = persistReducer(scrapbookPersistConfig, scrapbookReducer);
+
+// const rootReducer = combineReducers({
+//   users: usersPersistedReducer,
+//   scrapbook: scrapbookPersistedReducer
+// });
+
 
 const store = configureStore({
   reducer: {
-    users: persistedReducer
+    users: usersPersistedReducer,
+    scrapbook: scrapbookPersistedReducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     serializableCheck: {

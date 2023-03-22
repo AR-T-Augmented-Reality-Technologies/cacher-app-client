@@ -7,6 +7,7 @@ import mapStyle from "../../mapStyle.json";
 import Webcam from "react-webcam";
 import { url } from "inspector";
 import * as nsfwjs from 'nsfwjs';
+import { focus_scrapbook, unfocus_scrapbook } from "../../features/scrapbook.slice";
 
 interface MapScreenProps {
     navigation: any;
@@ -265,7 +266,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     };
 
     // On marker click
-    const onMarkerClick = (
+    const onMarkerClick = async (
         markerId: any,
         lat: any,
         lng: any,
@@ -276,6 +277,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         setShowMarkerPopup(true);
         // navigation.navigate(Image);
         setSelectedScrapbook(scrapbookId);
+        await refresh_selected_scrapbook();
     };
 
     const locBlocker = async (location: string, curr: string) => {
@@ -506,12 +508,39 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
             if (updatedScrapbook.ok) {
                 console.log(updatedScrapbook);
+
+                await refresh_selected_scrapbook();
+
                 navigation.navigate("Image");
             } else {
                 console.log("Error adding image to scrapbook");
             }
         }
     }
+
+    const refresh_selected_scrapbook = async () => {
+        dispatch(unfocus_scrapbook());
+
+        // Get the scrapbook from API
+        const scrapbook = await fetch(
+            `${process.env.REACT_APP_REST_API_HOST}/scrap/${selectedScrapbook}`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                mode: "cors",
+            }
+        );
+
+        const scrapbookData = await scrapbook.json();
+
+
+        console.log("Adding this to scraobook: ", scrapbookData.data);
+
+        // Update the scrapbook in the store
+        dispatch(focus_scrapbook(scrapbookData.data.scrapbook));
+    };
 
     // Google map component
     return (
