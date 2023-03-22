@@ -419,12 +419,14 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     }, 10);
 
     const handleUploadImage = async (e: any) => {
+
+        console.log("file", file);
         e.preventDefault();
 
         const formData = new FormData();
         formData.append("image", file);
 
-        const model = await nsfwjs.load()
+        const model = await nsfwjs.load();
         var imagey = new Image();
         imagey.src = String(imageSrc);
         const predictions = await model.classify(imagey);
@@ -484,7 +486,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 console.log("Error adding image to scrapbook");
             }
         }
-    };
+    }
 
     // Google map component
     return (
