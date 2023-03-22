@@ -39,6 +39,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [caption, setCaption] = useState("");
     const [selectedScrapbook, setSelectedScrapbook] = useState(0);
 
+    const [pictureType, setPictureType] = useState("capture"); // can be 'capture' or 'uploaded'
+
     const dispatch = useDispatch();
 
     // Use our user store
@@ -86,6 +88,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         urltoFile(imageSrc, "test.jpg", "image/jpeg").then(async (file) => {
             setFile(file);
         });
+
+        setPictureType("capture");
     }, [webcamRef]);
 
     const [file, setFile] = useState<any>("");
@@ -426,9 +430,30 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         const formData = new FormData();
         formData.append("image", file);
 
+        var reader = new FileReader();
+
+        var base64image = "";
+
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            base64image = reader.result as string;
+        };
+        reader.onerror = function (error) {
+            console.log("Error: ", error);
+        };
+
         const model = await nsfwjs.load();
         var imagey = new Image();
-        imagey.src = String(imageSrc);
+        imagey.src = String(base64image);
+        
+        if (pictureType == "upload") {
+            imagey.width = 1080;
+            imagey.height = 1350;
+        } else {
+            imagey.width = 360;
+            imagey.height = 360;
+        }
+
         const predictions = await model.classify(imagey);
         var breakflag = 0;
         for (var i = 0; i < predictions.length; i++) {
@@ -705,10 +730,12 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                             </div>
                                             <input
                                                 type="file"
-                                                onChange={(e) =>
-                                                    e.target.files &&
-                                                    setFile(e.target.files[0])
-                                                }
+                                                onChange={(e) => {
+                                                    if(e.target.files) {
+                                                        setFile(e.target.files[0])
+                                                        setPictureType("upload")
+                                                    }
+                                                }}
                                                 accept="image/*"
                                                 className="hidden"
                                             />
