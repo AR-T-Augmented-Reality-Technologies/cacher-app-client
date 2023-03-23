@@ -272,6 +272,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         lng: any,
         scrapbookId: number
     ) => {
+        console.log("scrapbook: ",scrapbookId);
+        setSelectedScrapbook(scrapbookId);
         mapRef.current.panTo({ lat, lng });
         mapRef.current.setZoom(16);
         setShowMarkerPopup(true);
@@ -485,7 +487,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
             const data = await response.json();
             console.log(data.uploadURL);
-
+            console.log("scrapbook id", selectedScrapbook)
             // Create a api call to add image to scrapbook
             const updatedScrapbook = await fetch(
                 `${process.env.REACT_APP_REST_API_HOST}/images/addImageToScrapbook`,
