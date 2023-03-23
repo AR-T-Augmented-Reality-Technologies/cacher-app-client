@@ -295,12 +295,13 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         lng: any,
         scrapbookId: number
     ) => {
+        console.log("scrapbook: ",scrapbookId);
+        setSelectedScrapbook(scrapbookId);
         mapRef.current.panTo({ lat, lng });
         mapRef.current.setZoom(16);
         setShowMarkerPopup(true);
         // navigation.navigate(Image);
-        setSelectedScrapbook(scrapbookId);
-        await refresh_selected_scrapbook();
+        await refresh_selected_scrapbook(scrapbookId);
     };
 
     const locBlocker = async (location: string, curr: string) => {
@@ -509,7 +510,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
             const data = await response.json();
             console.log(data.uploadURL);
-
+            console.log("scrapbook id", selectedScrapbook)
             // Create a api call to add image to scrapbook
             const updatedScrapbook = await fetch(
                 `${process.env.REACT_APP_REST_API_HOST}/images/addImageToScrapbook`,
@@ -532,13 +533,25 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             if (updatedScrapbook.ok) {
                 console.log(updatedScrapbook);
 
-                await refresh_selected_scrapbook();
+                await refresh_selected_scrapbook((await updatedScrapbook.json()).data.scrapbook.scrapbook_id);
 
                 navigation.navigate("Image");
             } else {
                 console.log("Error adding image to scrapbook");
             }
         }
+    }
+    
+    function openReportsDashboard() {
+        navigation.navigate("TicketScreen");
+    }
+    const deletePost = () => {
+        setShowDeleteMenu(!showDeleteMenu);
+    };
+
+    if (gotCommFlag == 0) {
+        checkAdmin();
+        setGotCommFlag(1);
     }
 
     function openReportsDashboard() {
@@ -552,7 +565,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         checkAdmin();
         setGotCommFlag(1);
     }
-
+    
     const deleteScrapbook = async () => {
         const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/${selectedScrapbook}/deleteBook`, {
             method: "POST",
@@ -560,6 +573,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 "Content-Type": "application/json",
             },
         });
+        
         const responseBook = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/${selectedScrapbook}/getBook`, {
             method: "POST",
             headers: {
@@ -574,19 +588,19 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 "Content-Type": "application/json",
             },
         });
-
+        
         setShowDeleteMenu(false);
         setShowMarkerPopup(false);
         getMarkers();
         
     }
-
-    const refresh_selected_scrapbook = async () => {
+    
+    const refresh_selected_scrapbook = async (scrapbookID: number) => {
         dispatch(unfocus_scrapbook());
 
         // Get the scrapbook from API
         const scrapbook = await fetch(
-            `${process.env.REACT_APP_REST_API_HOST}/scrap/${selectedScrapbook}`,
+            `${process.env.REACT_APP_REST_API_HOST}/scrap/${scrapbookID}`,
             {
                 method: "GET",
                 headers: {
