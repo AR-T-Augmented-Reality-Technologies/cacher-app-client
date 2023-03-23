@@ -31,6 +31,7 @@ import {
 } from "react-share";
 import dayjs, { Dayjs } from "dayjs";
 import moment, { Moment } from "moment";
+import { imag } from "@tensorflow/tfjs";
 
 interface ImageScreenProps {
     navigation: any;
@@ -114,7 +115,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     const handleGetComments = async () => {
         console.log("Getting comments");
         const payload = {
-            imageid: "2", //placeholder because currently it is not saving images
+            imageid: scrapbook.images[0].photo_id //placeholder because currently it is not saving images
         };
         const response = await fetch(
             `${process.env.REACT_APP_REST_API_HOST}/images/${payload.imageid}/getcomment`,
@@ -155,8 +156,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         setNewComment("");
 
         const payload = {
-            imageid: 2,
-            userid: 1,
+            imageid: scrapbook.images[0].photo_id,
+            userid: user.id,
             comment: newComment,
             timestamp: currentTime,
         };
@@ -262,7 +263,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     //Attempting to get code for pulling likes from database
     const getlikes = async () => {
         const payload = {
-            imageid: 1,
+            imageid: scrapbook.images[0].photo_id
         };
         const response = await fetch(
             `${process.env.REACT_APP_REST_API_HOST}/images/${payload.imageid}/getlikes`,
@@ -283,7 +284,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
 
     // Like post
     const likePost = async () => {
-        const image_id = 1; // Replace this with the actual image ID
+        const image_id = scrapbook.images[0].photo_id; // Replace this with the actual image ID
         const response = await fetch(
             `${process.env.REACT_APP_REST_API_HOST}/images/${image_id}/like`,
             {
@@ -306,7 +307,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     };
 
     const unlikePost = async () => {
-        const image_id = 1; // Replace this with the actual image ID
+        const image_id = scrapbook.images[0].photo_id; // Replace this with the actual image ID
         const response = await fetch(
             `${process.env.REACT_APP_REST_API_HOST}/images/${image_id}/dislike`,
             {
@@ -618,7 +619,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                         </div>
                         <div className="row-start-2">
                             <div className="pb-2 px-2 text-s text-right">
-                                - User123
+                                - johndoe99
                             </div>
                         </div>
                     </div>
@@ -725,7 +726,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                                 </div>
                                 <div className="row-start-2">
                                     <div className="pb-2 px-5 text-s text-right">
-                                        - User123
+                                        - johndoe99
                                     </div>
                                     <hr className="border border-gray-500 ml-5 mr-5" />
                                 </div>
@@ -775,6 +776,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                                             style={{ paddingTop: "0.75rem", paddingBottom: "0.5rem", fontSize: "0.8rem" }}
                                             className="col-start-4 col-span-2 pr-3 text-right py-2 px-2">
                                             User - {userarr[index]}
+                                            
                                         </p>
                                     </div>
                                 ))}
