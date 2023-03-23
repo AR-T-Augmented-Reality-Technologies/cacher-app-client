@@ -541,18 +541,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             }
         }
     }
-    
-    function openReportsDashboard() {
-        navigation.navigate("TicketScreen");
-    }
-    const deletePost = () => {
-        setShowDeleteMenu(!showDeleteMenu);
-    };
-
-    if (gotCommFlag == 0) {
-        checkAdmin();
-        setGotCommFlag(1);
-    }
 
     function openReportsDashboard() {
         navigation.navigate("TicketScreen");
@@ -1089,15 +1077,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                     if (!locationEnabled) {
                         setShowPopup(true);
                     } else {
-                        navigator.geolocation.getCurrentPosition((position) => {
-                            setUserLocation({
-                                lat: position.coords.latitude,
-                                lng: position.coords.longitude,
-                            });
                             addMarker(
                                 userLocation.lat + "," + userLocation.lng
-                            );
-                        });
+                            ); 
                     }
                 }}
             >
