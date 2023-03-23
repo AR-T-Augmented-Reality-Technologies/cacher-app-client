@@ -134,7 +134,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         timeArray = [data.data.comments[0].timestamp];
         userTArray = [data.data.comments[0].user_id];
         for (var i = 1; i < data.data.comments.length; i++) {
-            commentArray[i] = data.data.comments[i].comment;
+            commentArray[i] = cleanWord(data.data.comments[i].comment);
             timeArray[i] = data.data.comments[i].timestamp;
             userTArray[i] = data.data.comments[i].user_id;
         }
