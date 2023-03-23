@@ -61,6 +61,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         if (data.data.admin != null && data.data.admin.roles_name == "Admin") {
             setShowAdmin(true);
         }
+        // check if roles is empty
+        
     }
 
     // Use our user store
@@ -385,7 +387,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     // Adds a marker to the map
     const addMarker = async (location: string) => {
         //Splits the string of lat and lon into an array of 2 elements
-        var locations = location.split(",");
+        var locations = await location.split(",");
 
         //Gets the w3w value as a string
         const response = await fetch(
