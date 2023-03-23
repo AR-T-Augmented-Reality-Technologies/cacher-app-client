@@ -276,8 +276,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         mapRef.current.setZoom(16);
         setShowMarkerPopup(true);
         // navigation.navigate(Image);
-        setSelectedScrapbook(scrapbookId);
-        await refresh_selected_scrapbook();
+        await refresh_selected_scrapbook(scrapbookId);
     };
 
     const locBlocker = async (location: string, curr: string) => {
@@ -509,7 +508,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             if (updatedScrapbook.ok) {
                 console.log(updatedScrapbook);
 
-                await refresh_selected_scrapbook();
+                await refresh_selected_scrapbook((await updatedScrapbook.json()).data.scrapbook.scrapbook_id);
 
                 navigation.navigate("Image");
             } else {
@@ -518,12 +517,12 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         }
     }
 
-    const refresh_selected_scrapbook = async () => {
+    const refresh_selected_scrapbook = async (scrapbookID: number) => {
         dispatch(unfocus_scrapbook());
 
         // Get the scrapbook from API
         const scrapbook = await fetch(
-            `${process.env.REACT_APP_REST_API_HOST}/scrap/${selectedScrapbook}`,
+            `${process.env.REACT_APP_REST_API_HOST}/scrap/${scrapbookID}`,
             {
                 method: "GET",
                 headers: {
