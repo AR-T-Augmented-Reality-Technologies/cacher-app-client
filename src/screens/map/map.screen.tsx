@@ -7,6 +7,7 @@ import mapStyle from "../../mapStyle.json";
 import Webcam from "react-webcam";
 import { url } from "inspector";
 import * as nsfwjs from 'nsfwjs';
+import { focus_scrapbook, unfocus_scrapbook } from "../../features/scrapbook.slice";
 
 interface MapScreenProps {
     navigation: any;
@@ -288,17 +289,19 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     };
 
     // On marker click
-    const onMarkerClick = (
+    const onMarkerClick = async (
         markerId: any,
         lat: any,
         lng: any,
         scrapbookId: number
     ) => {
+        console.log("scrapbook: ",scrapbookId);
+        setSelectedScrapbook(scrapbookId);
         mapRef.current.panTo({ lat, lng });
         mapRef.current.setZoom(16);
         setShowMarkerPopup(true);
         // navigation.navigate(Image);
-        setSelectedScrapbook(scrapbookId);
+        await refresh_selected_scrapbook(scrapbookId);
     };
 
     const locBlocker = async (location: string, curr: string) => {
@@ -506,7 +509,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
             const data = await response.json();
             console.log(data.uploadURL);
-
+            console.log("scrapbook id", selectedScrapbook)
             // Create a api call to add image to scrapbook
             const updatedScrapbook = await fetch(
                 `${process.env.REACT_APP_REST_API_HOST}/images/addImageToScrapbook`,
@@ -528,13 +531,16 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
             if (updatedScrapbook.ok) {
                 console.log(updatedScrapbook);
+
+                await refresh_selected_scrapbook((await updatedScrapbook.json()).data.scrapbook.scrapbook_id);
+
                 navigation.navigate("Image");
             } else {
                 console.log("Error adding image to scrapbook");
             }
         }
     }
-
+    
     function openReportsDashboard() {
         navigation.navigate("TicketScreen");
     }
@@ -559,6 +565,30 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         getMarkers();
         
     }
+    
+    const refresh_selected_scrapbook = async (scrapbookID: number) => {
+        dispatch(unfocus_scrapbook());
+
+        // Get the scrapbook from API
+        const scrapbook = await fetch(
+            `${process.env.REACT_APP_REST_API_HOST}/scrap/${scrapbookID}`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                mode: "cors",
+            }
+        );
+
+        const scrapbookData = await scrapbook.json();
+
+
+        console.log("Adding this to scraobook: ", scrapbookData.data);
+
+        // Update the scrapbook in the store
+        dispatch(focus_scrapbook(scrapbookData.data.scrapbook));
+    };
 
     // Google map component
     return (

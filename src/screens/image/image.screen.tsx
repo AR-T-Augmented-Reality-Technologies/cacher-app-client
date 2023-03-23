@@ -52,11 +52,12 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     const [userarr, setUserarr] = useState<string[]>([]);
     const [newComment, setNewComment] = useState("");
     const [commentTimes, setCommentTimes] = useState<string[]>([]);
-    const [images, setImages] = useState<string[]>([]);
     const [shared, setShared] = useState(false);
     const [showFlagMenu, setShowFlagMenu] = useState(false);
     const user = useSelector((state: any) => state.users);
-    const image = useSelector((state: any) => state.image);
+    // const image = useSelector((state: any) => state.image);
+    const scrapbook = useSelector((state: any) => state.scrapbook);
+
     let [gotCommFlag, setGotCommFlag] = useState(0);
     let commentArray = [""];
     let timeArray = [];
@@ -326,14 +327,6 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         setShowLikeCount(false);
     }, 2000);
 
-    useEffect(() => {
-        setImages(["images/image2.jpg", "images/image1.jpg"]);
-    }, [setImages]);
-
-    const displayImages = () => {
-        setImages(["images/image1.jpg", "images/image2.jpg"]);
-    };
-
     // Comment post
     const commentPost = () => {};
 
@@ -373,8 +366,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                         aria-label="Image carousel"
                         options={{ arrows: false, pagination: false }}
                     >
-                        {images.map((imgSrc) => {
-                            return <ImageSliderChild srcUrl={imgSrc} />;
+                        {scrapbook.images.map((image: { photo_id: number, image: string, likes: number, num_comments: number, caption: string, upload_date: string, scrap_id: number }) => {
+                            return <ImageSliderChild srcUrl={image.image} />;
                         })}
                     </Splide>
                 </div>
