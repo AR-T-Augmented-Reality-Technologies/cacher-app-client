@@ -365,7 +365,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         for (var k = 0; k < words.length; k++) {
             const payload = {
                 loc: words[k],
-                bestloc: words[0],
+                bestloc: words[10],
             };
             const responseget = await fetch(
                 `${process.env.REACT_APP_REST_API_HOST}/scrap/setBlocked`,
@@ -379,6 +379,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 }
             );
         }
+
     };
 
     // Adds a marker to the map
@@ -553,6 +554,18 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         setGotCommFlag(1);
     }
 
+    function openReportsDashboard() {
+        navigation.navigate("TicketScreen");
+    }
+    const deletePost = () => {
+        setShowDeleteMenu(!showDeleteMenu);
+    };
+
+    if (gotCommFlag == 0) {
+        checkAdmin();
+        setGotCommFlag(1);
+    }
+    
     const deleteScrapbook = async () => {
         const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/${selectedScrapbook}/deleteBook`, {
             method: "POST",
@@ -560,6 +573,22 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 "Content-Type": "application/json",
             },
         });
+        
+        const responseBook = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/${selectedScrapbook}/getBook`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await response.json();
+
+        const responseDel = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/${data.data.deleted.location}/deletePreq`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        
         setShowDeleteMenu(false);
         setShowMarkerPopup(false);
         getMarkers();
