@@ -6,7 +6,7 @@ import Marker from "../../components/marker";
 import mapStyle from "../../mapStyle.json";
 import Webcam from "react-webcam";
 import { url } from "inspector";
-import * as nsfwjs from 'nsfwjs';
+// import * as nsfwjs from 'nsfwjs';
 import { focus_scrapbook, unfocus_scrapbook } from "../../features/scrapbook.slice";
 
 interface MapScreenProps {
@@ -105,7 +105,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
     const capture = useCallback(async () => {
         const imageSrc = webcamRef.current?.getScreenshot();
-        const model = await nsfwjs.load();
+        // const model = await nsfwjs.load();
         setImageSrc(imageSrc ?? null);
         urltoFile(imageSrc, "test.jpg", "image/jpeg").then(async (file) => {
             setFile(file);
