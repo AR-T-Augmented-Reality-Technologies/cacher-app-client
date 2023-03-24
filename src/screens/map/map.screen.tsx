@@ -6,7 +6,6 @@ import Marker from "../../components/marker";
 import mapStyle from "../../mapStyle.json";
 import Webcam from "react-webcam";
 import { url } from "inspector";
-import * as nsfwjs from 'nsfwjs';
 import { focus_scrapbook, unfocus_scrapbook } from "../../features/scrapbook.slice";
 
 interface MapScreenProps {
@@ -105,8 +104,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
     const capture = useCallback(async () => {
         const imageSrc = webcamRef.current?.getScreenshot();
-        const model = await nsfwjs.load();
-        setImageSrc(imageSrc ?? null);
+        setImageSrc(imageSrc || null);
         urltoFile(imageSrc, "test.jpg", "image/jpeg").then(async (file) => {
             setFile(file);
         });
@@ -459,88 +457,44 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         const formData = new FormData();
         formData.append("image", file);
 
-        var reader = new FileReader();
+        const response = await fetch(
+            `${process.env.REACT_APP_REST_API_HOST}/images/upload`,
+            {
+                method: "POST",
+                body: formData,
+            }
+        );
 
-        var base64image = "";
+        const data = await response.json();
+        console.log(data.uploadURL);
+        console.log("scrapbook id", selectedScrapbook)
+        // Create a api call to add image to scrapbook
+        const updatedScrapbook = await fetch(
+            `${process.env.REACT_APP_REST_API_HOST}/images/addImageToScrapbook`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                mode: "cors",
+                body: JSON.stringify({
+                    scrapbookID: selectedScrapbook,
+                    userID: user.id,
+                    imageURL: data.uploadURL,
+                    caption: caption,
+                }),
+            }
+        );
 
-        reader.readAsDataURL(file);
-        reader.onload = function () {
-            base64image = reader.result as string;
-        };
-        reader.onerror = function (error) {
-            console.log("Error: ", error);
-        };
 
-        const model = await nsfwjs.load();
-        var imagey = new Image();
-        imagey.src = String(base64image);
+        if (updatedScrapbook.ok) {
+            console.log(updatedScrapbook);
 
-        if (pictureType == "upload") {
-            imagey.width = 1080;
-            imagey.height = 1350;
+            await refresh_selected_scrapbook((await updatedScrapbook.json()).data.scrapbook.scrapbook_id);
+
+            navigation.navigate("Image");
         } else {
-            imagey.width = 360;
-            imagey.height = 360;
-        }
-
-        const predictions = await model.classify(imagey);
-        var breakflag = 0;
-        for (var i = 0; i < predictions.length; i++) {
-            if (predictions[i].className == "Hentai" && (predictions[i].probability) > 0.7) {
-                breakflag = 1;
-                setMessage("This has been deemed inappropriate with Hentai with probability" + predictions[i].probability);
-                setShowMessage(true);
-            } else if (predictions[i].className == "Porn" && (predictions[i].probability) > 0.5) {
-                breakflag = 1;
-                setMessage("This has been deemed inappropriate with Porn with probability" + predictions[i].probability);
-                setShowMessage(true);
-            } else if (predictions[i].className == "Sexy" && (predictions[i].probability) > 0.7) {
-                breakflag = 1;
-                setMessage("This has been deemed inappropriate with Sexy with probability " + predictions[i].probability);
-                setShowMessage(true);
-            }
-        }
-
-        if (breakflag == 0) {
-            const response = await fetch(
-                `${process.env.REACT_APP_REST_API_HOST}/images/upload`,
-                {
-                    method: "POST",
-                    body: formData,
-                }
-            );
-
-            const data = await response.json();
-            console.log(data.uploadURL);
-            console.log("scrapbook id", selectedScrapbook)
-            // Create a api call to add image to scrapbook
-            const updatedScrapbook = await fetch(
-                `${process.env.REACT_APP_REST_API_HOST}/images/addImageToScrapbook`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    mode: "cors",
-                    body: JSON.stringify({
-                        scrapbookID: selectedScrapbook,
-                        userID: user.id,
-                        imageURL: data.uploadURL,
-                        caption: caption,
-                    }),
-                }
-            );
-
-
-            if (updatedScrapbook.ok) {
-                console.log(updatedScrapbook);
-
-                await refresh_selected_scrapbook((await updatedScrapbook.json()).data.scrapbook.scrapbook_id);
-
-                navigation.navigate("Image");
-            } else {
-                console.log("Error adding image to scrapbook");
-            }
+            console.log("Error adding image to scrapbook");
         }
     }
 
