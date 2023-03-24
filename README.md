@@ -39,3 +39,9 @@ Opens the cypress automated testing GUI
 # Important
 
 The application will not run locally until you create the appropriate .env files in the client and server directories
+
+
+## Branches
+- master
+- development
+- with-nsfwjs
