@@ -4,6 +4,7 @@ import { Button, View, ImageBackground } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { logout_user } from "../../features/users.slice";
 import { badcheck } from "../../Hooks/filter";
+import { FileUploader } from "react-drag-drop-files";
 
 interface ProfileScreenProps {
   navigation: any;
@@ -38,6 +39,10 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [dob, setDob] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [profileImage, setProfileImage] = useState("");
+
+  // Profile Picture
+  const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
 
   // Store current page in local storage
   useEffect(() => {
@@ -98,6 +103,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     setEmail(data.data.user.user_email);
     setPassword(data.data.user.user_password);
     setDob(formatedDob);
+    setProfileImage(data.data.user.profile_pic)
 
     console.log(data);
   };
@@ -145,7 +151,54 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   };
 
   // Change profile picture
-  const changeProfilePicture = () => {
+  const changeProfilePicture = async () => {
+    // if there is no file, return
+    if (!profilePictureFile) {
+      setShowChangeProfilePicture(!showChangeProfilePicture);
+      return;
+    }
+
+    console.log(profilePictureFile.text());
+    console.log(profilePictureFile.stream());
+    // create a new form data
+    const formData = new FormData();
+
+    // add the file to the form data
+    formData.append("image", profilePictureFile);
+
+    // send the form data to the server
+    const imageUploadRespose = await fetch(`${process.env.REACT_APP_REST_API_HOST}/images/uploadProfilePic`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+      body: formData,
+    });
+
+    const imageData = await imageUploadRespose.json();
+    console.log(await imageData);
+
+    const uploadProfilePictureResponse = await fetch(
+      `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}/updateProfilePicture`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${user.token}`,
+        },
+        mode: "cors",
+        body: JSON.stringify({
+          imageURL: await imageData.uploadURL,
+        }),
+      }
+    );
+
+    const uploadProfilePictureData = await uploadProfilePictureResponse.json();
+
+    console.log(await uploadProfilePictureData);
+    setProfileImage(await imageData.uploadURL);
+
+    // Finally close the dialog
     setShowChangeProfilePicture(!showChangeProfilePicture);
     console.log("Change profile picture");
   };
@@ -483,8 +536,8 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           <div className="flex justify-center pb-2">
             <button onClick={changeProfilePicture}>
               <img
-                src="images/avatar-image.jpg"
-                className="border-solid border-2 border-black rounded"
+                src={profileImage}                className="border-solid border-2 border-black rounded"
+                alt="profile"
               ></img>
             </button>
           </div>
@@ -737,6 +790,12 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
                         <p className="text-sm text-gray-500">
                           Select a new profile picture.
                         </p>
+                        <FileUploader
+                          multiple={false}
+                          handleChange={(file: File) => setProfilePictureFile(file)}
+                          name="file"
+                          types={['JPEG', 'PNG', 'GIF']}
+                        />
                       </div>
                     </div>
                   </div>
