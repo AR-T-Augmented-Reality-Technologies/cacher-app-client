@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ReactElement } from "react";
 // eslint-disable-next-line
 import { Button, View, ImageBackground } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
@@ -40,6 +40,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [profileImage, setProfileImage] = useState("");
+  const [userImages, setUserImages] = useState([]);
 
   // Profile Picture
   const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
@@ -79,6 +80,7 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
   const user = useSelector((state: any) => state.users);
 
   const getData = async () => {
+    // Get user data
     const response = await fetch(
       `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}`,
       {
@@ -93,8 +95,6 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
     const data = await response.json();
 
-    console.log(data);
-
     // eslint-disable-next-line
     const formatedDob = data.data.age.dob.split("T")[0];
     setUsername(data.data.user.user_username);
@@ -105,7 +105,26 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     setDob(formatedDob);
     setProfileImage(data.data.user.profile_pic)
 
-    console.log(data);
+    // Get user images
+    const imageResponse = await fetch(
+      `${process.env.REACT_APP_REST_API_HOST}/images/user/${user.id}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        mode: "cors",
+        body: JSON.stringify({
+          page: 1,
+          limit: 15
+        }),
+      }
+    );
+
+    const imageData = await imageResponse.json();
+
+    setUserImages(await imageData.images);
   };
 
   useEffect(() => {
@@ -158,8 +177,6 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       return;
     }
 
-    console.log(profilePictureFile.text());
-    console.log(profilePictureFile.stream());
     // create a new form data
     const formData = new FormData();
 
@@ -176,7 +193,6 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     });
 
     const imageData = await imageUploadRespose.json();
-    console.log(await imageData);
 
     const uploadProfilePictureResponse = await fetch(
       `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}/updateProfilePicture`,
@@ -193,14 +209,14 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
       }
     );
 
+    // Get data json parsed
     const uploadProfilePictureData = await uploadProfilePictureResponse.json();
 
-    console.log(await uploadProfilePictureData);
+    // Set profile picture
     setProfileImage(await imageData.uploadURL);
 
     // Finally close the dialog
     setShowChangeProfilePicture(!showChangeProfilePicture);
-    console.log("Change profile picture");
   };
 
   // Cancel change profile picture
@@ -396,24 +412,34 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
     setShowLabel("Friends List");
   };
 
-  const images = [];
-  for (let i = 0; i < 15; i++) {
-    images.push(
-      <button
-        key={i}
-        className="mx-1 my-1 "
-        onClick={() => {
-          navigation.navigate("Image");
-        }}
-      >
-        <img
-          src="images/image-placeholder.png"
-          className="border-solid border-2 rounded border-black "
-          alt="placeholder"
-        ></img>
-      </button>
-    );
-  }
+  const generateImages = () => {
+    // check userImages isn't null
+    if (userImages === null) {
+      return;
+    }
+
+    const images: ReactElement[] = [];
+
+    userImages.forEach((image: { photo_id: number, image: string, likes: number }) => {
+      images.push(
+        <button
+          key={image.photo_id}
+          className="mx-1 my-1 "
+          onClick={() => {
+            navigation.navigate("Image");
+          }}
+        >
+          <img
+            src={image.image}
+            className="border-solid border-2 rounded border-black "
+            alt="placeholder"
+          ></img>
+        </button>
+      );
+    });
+
+    return images;
+  };
 
   return (
     <div className="dark:bg-dback">
@@ -685,7 +711,11 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
           <hr className="w-full border-2 border-custom-orange col-span-5 mt-2" />
         </div>
       </div>
-      <div className="grid grid-cols-5">{images}</div>
+      {userImages.length > 0 &&
+        <div className="grid grid-cols-5">
+          {generateImages()}
+        </div>
+      }
 
       {showDeletePopup && (
         <>
