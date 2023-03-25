@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 import Marker from "../../components/marker";
 import mapStyle from "../../mapStyle.json";
 import Webcam from "react-webcam";
-import { url } from "inspector";
 import { focus_scrapbook, unfocus_scrapbook } from "../../features/scrapbook.slice";
 
 interface MapScreenProps {

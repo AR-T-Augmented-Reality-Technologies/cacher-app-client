@@ -2,14 +2,15 @@ import React from 'react';
 import { SplideSlide } from '@splidejs/react-splide';
 
 interface ImageSliderChildProps {
-    srcUrl: string
+    srcUrl: string;
+    idx: number;
 }
 
-export const ImageSliderChild = ({ srcUrl }: ImageSliderChildProps) => {
+export const ImageSliderChild = ({ srcUrl, idx }: ImageSliderChildProps) => {
     return (
-        <SplideSlide>
+        <SplideSlide >
              {/* eslint-disable-next-line */}
-            <img className="h-screen w-screen" src={srcUrl}/>
+            <img className="h-screen w-screen" src={srcUrl} key={idx}/>
         </SplideSlide>
         
     );

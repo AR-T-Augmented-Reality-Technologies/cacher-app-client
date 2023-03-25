@@ -241,8 +241,8 @@ export const ImageAdminScreen = ({ navigation }: ImageScreenProps) => {
                         aria-label="Image carousel"
                         options={{ arrows: false, pagination: false }}
                     >
-                        {images.map((imgSrc) => {
-                            return <ImageSliderChild srcUrl={imgSrc} />;
+                        {images.map((imgSrc, index: number) => {
+                            return <ImageSliderChild srcUrl={imgSrc} idx={index} />;
                         })}
                     </Splide>
                 </div>

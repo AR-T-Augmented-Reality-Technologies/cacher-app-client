@@ -1,17 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Button, View, ImageBackground } from "react-native";
-import { Splide, SplideTrack } from "@splidejs/react-splide";
+import { Splide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 import { ImageSliderChild } from "../../components/ImageSliderChild.component";
-import { add_user } from "../../features/users.slice";
-import { add_image } from "../../features/image.slice";
 import { useSelector } from "react-redux";
-import { current } from "@reduxjs/toolkit";
-import { cleanWord, badcheck } from "../../Hooks/filter";
+import { cleanWord } from "../../Hooks/filter";
 import {
-    EmailShareButton,
     FacebookShareButton,
-    LineShareButton,
     LinkedinShareButton,
     PinterestShareButton,
     RedditShareButton,
@@ -20,18 +14,14 @@ import {
 } from "react-share";
 
 import {
-    EmailIcon,
     FacebookIcon,
-    LineIcon,
     LinkedinIcon,
     PinterestIcon,
     RedditIcon,
     TwitterIcon,
     WhatsappIcon,
-} from "react-share";
-import dayjs, { Dayjs } from "dayjs";
-import moment, { Moment } from "moment";
-import { imag } from "@tensorflow/tfjs";
+} from "react-share"
+import moment from "moment";
 
 interface ImageScreenProps {
     navigation: any;
@@ -50,10 +40,11 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     const popupRefShare = useRef<HTMLDivElement>(null);
     const [showAdmin, setShowAdmin] = useState(false);
     const [commentsarr, setCommentsarr] = useState<string[]>([]);
+
+    // eslint-disable-next-line
     const [userarr, setUserarr] = useState<string[]>([]);
     const [newComment, setNewComment] = useState("");
     const [commentTimes, setCommentTimes] = useState<string[]>([]);
-    const [shared, setShared] = useState(false);
     const [showFlagMenu, setShowFlagMenu] = useState(false);
     const user = useSelector((state: any) => state.users);
     // const image = useSelector((state: any) => state.image);
@@ -74,13 +65,15 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         });
         const data = await response.json();
 
+        // eslint-disable-next-line
         if (data.data.admin != null && data.data.admin.roles_name == "Admin") {
             setShowAdmin(true);
         }
     }
 
-    var Filter = require("bad-words"),
-        filter = new Filter();
+    var Filter = require("bad-words");
+    // eslint-disable-next-line
+    const filter = new Filter();
     // console.log('got comm flag  ' + gotCommFlag);
 
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -174,6 +167,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                 body: JSON.stringify(payload),
             }
         );
+
+        // eslint-disable-next-line
         const data = await response.json();
     }
 
@@ -343,6 +338,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     }, 2000);
 
     // Comment post
+    // eslint-disable-next-line
     const commentPost = () => { };
 
     // Display comments
@@ -355,11 +351,13 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
         setShowOptions(!showOptions);
     };
 
+    // eslint-disable-next-line
     const getCurrTime = () => {
         const currentDate = new Date().getTime();
         return currentDate;
     };
 
+    // eslint-disable-next-line
     if (gotCommFlag == 0) {
         handleGetComments();
         getlikes();
@@ -370,7 +368,9 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
     // const cleanWord = (word : string) => {
     //   return filter.clean(word);
     // }
+    // eslint-disable-next-line
     const headerHeight = 64;
+    // eslint-disable-next-line
     const postCommentSectionHeight = 80;
 
     return (
@@ -382,8 +382,8 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                         aria-label="Image carousel"
                         options={{ arrows: false, pagination: false }}
                     >
-                        {scrapbook.images.map((image: { photo_id: number, image: string, likes: number, num_comments: number, caption: string, upload_date: string, scrap_id: number }) => {
-                            return <ImageSliderChild srcUrl={image.image} />;
+                        {scrapbook.images.map((image: { photo_id: number, image: string, likes: number, num_comments: number, caption: string, upload_date: string, scrap_id: number }, index: number) => {
+                            return <ImageSliderChild srcUrl={image.image} idx={index} />;
                         })}
                     </Splide>
                 </div>
@@ -770,6 +770,7 @@ export const ImageScreen = ({ navigation }: ImageScreenProps) => {
                                                 src="images/avatar-image.jpg"
                                                 style={{ height: "2em", width: "2em", borderRadius: "2em" }}
                                                 className="border-solid border-2 border-black w-3/4 float-right col-start-5 cols-span-1 mt-2"
+                                                alt="avatar"
                                             ></img>
                                         </p>
                                         <p
