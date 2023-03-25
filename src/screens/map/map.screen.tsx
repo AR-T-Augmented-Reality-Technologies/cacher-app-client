@@ -5,7 +5,11 @@ import { useSelector, useDispatch } from "react-redux";
 import Marker from "../../components/marker";
 import mapStyle from "../../mapStyle.json";
 import Webcam from "react-webcam";
-import { focus_scrapbook, unfocus_scrapbook } from "../../features/scrapbook.slice";
+import {
+    focus_scrapbook,
+    unfocus_scrapbook,
+} from "../../features/scrapbook.slice";
+import { useMediaQuery } from "react-responsive";
 
 interface MapScreenProps {
     navigation: any;
@@ -43,25 +47,28 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [selectedScrapbook, setSelectedScrapbook] = useState(0);
 
     const [pictureType, setPictureType] = useState("capture"); // can be 'capture' or 'uploaded'
-
+    
     const dispatch = useDispatch();
 
+    const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
 
     const checkAdmin = async () => {
-        const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/admin/${user.id}/checkAdmin`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        const response = await fetch(
+            `${process.env.REACT_APP_REST_API_HOST}/admin/${user.id}/checkAdmin`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
         const data = await response.json();
 
         if (data.data.admin != null && data.data.admin.roles_name == "Admin") {
             setShowAdmin(true);
         }
         // check if roles is empty
-        
-    }
+    };
 
     // Use our user store
     const user = useSelector((state: any) => state.users);
@@ -87,8 +94,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [w3wUserLocation, setW3wUserLocation] = useState("");
 
     const videoConstraints = {
-        width: 360,
-        height: 360,
+        width: 1080,
+        height: 1350,
         facingMode: "environment",
     };
 
@@ -150,7 +157,10 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         ) {
             setShowMarkerPopup(false);
             setShowAddToScrapbook(false);
-        } else if (popupRefDel.current && !popupRefDel.current.contains(event.target as Node)) {
+        } else if (
+            popupRefDel.current &&
+            !popupRefDel.current.contains(event.target as Node)
+        ) {
             setShowDeleteMenu(false);
         }
     };
@@ -177,8 +187,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const displayOptions = () => {
         setShowOptions(!showOptions);
     };
-
-
 
     // On map load
     const onGoogleApiLoaded = async ({
@@ -294,7 +302,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         lng: any,
         scrapbookId: number
     ) => {
-        console.log("scrapbook: ",scrapbookId);
+        console.log("scrapbook: ", scrapbookId);
         setSelectedScrapbook(scrapbookId);
         mapRef.current.panTo({ lat, lng });
         mapRef.current.setZoom(16);
@@ -378,7 +386,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 }
             );
         }
-
     };
 
     // Adds a marker to the map
@@ -449,7 +456,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     }, 10);
 
     const handleUploadImage = async (e: any) => {
-
         console.log("file", file);
         e.preventDefault();
 
@@ -466,7 +472,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
         const data = await response.json();
         console.log(data.uploadURL);
-        console.log("scrapbook id", selectedScrapbook)
+        console.log("scrapbook id", selectedScrapbook);
         // Create a api call to add image to scrapbook
         const updatedScrapbook = await fetch(
             `${process.env.REACT_APP_REST_API_HOST}/images/addImageToScrapbook`,
@@ -485,17 +491,20 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             }
         );
 
-
         if (updatedScrapbook.ok) {
             console.log(updatedScrapbook);
 
-            await refresh_selected_scrapbook((await updatedScrapbook.json()).data.scrapbook.scrapbook_id);
+            await refresh_selected_scrapbook(
+                (
+                    await updatedScrapbook.json()
+                ).data.scrapbook.scrapbook_id
+            );
 
             navigation.navigate("Image");
         } else {
             console.log("Error adding image to scrapbook");
         }
-    }
+    };
 
     function openReportsDashboard() {
         navigation.navigate("TicketScreen");
@@ -508,36 +517,44 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         checkAdmin();
         setGotCommFlag(1);
     }
-    
+
     const deleteScrapbook = async () => {
-        const response = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/${selectedScrapbook}/deleteBook`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        
-        const responseBook = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/${selectedScrapbook}/getBook`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        const response = await fetch(
+            `${process.env.REACT_APP_REST_API_HOST}/scrap/${selectedScrapbook}/deleteBook`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+
+        const responseBook = await fetch(
+            `${process.env.REACT_APP_REST_API_HOST}/scrap/${selectedScrapbook}/getBook`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
         const data = await response.json();
 
-        const responseDel = await fetch(`${process.env.REACT_APP_REST_API_HOST}/scrap/${data.data.deleted.location}/deletePreq`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        
+        const responseDel = await fetch(
+            `${process.env.REACT_APP_REST_API_HOST}/scrap/${data.data.deleted.location}/deletePreq`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+
         setShowDeleteMenu(false);
         setShowMarkerPopup(false);
         getMarkers();
-        
-    }
-    
+    };
+
     const refresh_selected_scrapbook = async (scrapbookID: number) => {
         dispatch(unfocus_scrapbook());
 
@@ -554,7 +571,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         );
 
         const scrapbookData = await scrapbook.json();
-
 
         console.log("Adding this to scraobook: ", scrapbookData.data);
 
@@ -636,8 +652,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                     <>
                         <div
                             ref={popupRef}
-                            className={`${showMarkerPopup ? "opacity-100" : "opacity-0"
-                                } transition-opacity ease-in-out duration-300`}
+                            className={`${
+                                showMarkerPopup ? "opacity-100" : "opacity-0"
+                            } transition-opacity ease-in-out duration-300`}
                         >
                             <div className="fixed top-1/3 left-1/3 transform -translate-x-1/4 -translate-y-1/2 bg-white border-solid border-2 p-4 rounded-lg shadow-lg">
                                 <div className="grid grid-cols-2">
@@ -735,19 +752,36 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                 <>
                                                     <div
                                                         ref={popupRefDel}
-                                                        className={`${showDeleteMenu ? "opacity-100" : "opacity-0"
-                                                            } transition-opacity ease-in-out duration-300 left-48 top-64`}
-                                                        style={{ color: "rgb(219,219,219)", backgroundColor: "rgb(66,66,66)", position: "fixed", borderRadius: "5px", border: "0.2rem solid rgb(153,0,0)", textAlign: "left", padding: "20px" }}>
-                                                        <button className="" onClick={() => deleteScrapbook()}>Delete
+                                                        className={`${
+                                                            showDeleteMenu
+                                                                ? "opacity-100"
+                                                                : "opacity-0"
+                                                        } transition-opacity ease-in-out duration-300 left-48 top-64`}
+                                                        style={{
+                                                            color: "rgb(219,219,219)",
+                                                            backgroundColor:
+                                                                "rgb(66,66,66)",
+                                                            position: "fixed",
+                                                            borderRadius: "5px",
+                                                            border: "0.2rem solid rgb(153,0,0)",
+                                                            textAlign: "left",
+                                                            padding: "20px",
+                                                        }}
+                                                    >
+                                                        <button
+                                                            className=""
+                                                            onClick={() =>
+                                                                deleteScrapbook()
+                                                            }
+                                                        >
+                                                            Delete
                                                         </button>
                                                     </div>
                                                 </>
                                             )}
                                         </>
                                     ) : (
-                                        <>
-
-                                        </>
+                                        <></>
                                     )}
                                     <hr className="my-4 col-start-1 col-span-2" />
                                     <div className="col-start-1 col-span-1 text-right pr-4">
@@ -797,12 +831,13 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                     <>
                         <div
                             ref={popupRef}
-                            className={`${showAddToScrapbook ? "opacity-100" : "opacity-0"
-                                } transition-opacity ease-in-out duration-300`}
+                            className={`${
+                                showAddToScrapbook ? "opacity-100" : "opacity-0"
+                            } transition-opacity ease-in-out duration-300`}
                         >
                             <div className="fixed top-1/3 left-1/3 transform -translate-x-1/4 -translate-y-1/2 bg-white border-solid border-2 p-4 rounded-lg shadow-lg">
                                 <div className="grid grid-cols-2">
-                                    <div className="col-start-1 justify-self-center inline-flex pr-3 ml-1">
+                                <div className={`col-start-1 ${isDesktop ? 'col-span-1' : 'col-span-2'} justify-self-center inline-flex pr-3 ml-1`}>
                                         <label className="bg-custom-blue text-white rounded-lg p-2 inline-flex">
                                             <div className="flex items-center">
                                                 <svg
@@ -820,15 +855,19 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                     />
                                                 </svg>
                                                 <span className="text-sm">
-                                                    Upload Image
+                                                {isDesktop ? 'Upload photo' : 'Add photo'}
                                                 </span>
                                             </div>
                                             <input
                                                 type="file"
                                                 onChange={(e) => {
                                                     if (e.target.files) {
-                                                        setFile(e.target.files[0])
-                                                        setPictureType("upload")
+                                                        setFile(
+                                                            e.target.files[0]
+                                                        );
+                                                        setPictureType(
+                                                            "upload"
+                                                        );
                                                     }
                                                 }}
                                                 accept="image/*"
@@ -836,38 +875,40 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                             />
                                         </label>
                                     </div>
-                                    <div className="col-start-2 justify-self-center inline-block pl-3 mr-1">
-                                        <button
-                                            className="bg-custom-blue text-white rounded-lg p-2 inline-flex"
-                                            onClick={capture}
-                                        >
-                                            <div className="flex items-center">
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke-width="1.5"
-                                                    stroke="currentColor"
-                                                    className="w-10 h-10"
-                                                >
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
-                                                    />
-                                                    <path
-                                                        stroke-linecap="round"
-                                                        stroke-linejoin="round"
-                                                        d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
-                                                    />
-                                                </svg>
-                                                <span className="text-sm">
-                                                    Take a Picture
-                                                </span>
-                                            </div>
-                                        </button>
-                                    </div>
-                                    <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2">
+                                    {isDesktop && (
+                                        <div className="col-start-2 justify-self-center inline-block pl-3 mr-1">
+                                            <button
+                                                className="bg-custom-blue text-white rounded-lg p-2 inline-flex"
+                                                onClick={capture}
+                                            >
+                                                <div className="flex items-center">
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke-width="1.5"
+                                                        stroke="currentColor"
+                                                        className="w-10 h-10"
+                                                    >
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
+                                                        />
+                                                        <path
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+                                                        />
+                                                    </svg>
+                                                    <span className="text-sm">
+                                                        Take a Picture
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    )}
+                                    <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2 hidden">
                                         {imageSrc ? (
                                             <img
                                                 src={imageSrc}
@@ -900,10 +941,11 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                     </div>
                                     <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2">
                                         <button
-                                            className={`bg-custom-orange text-white rounded-lg p-3 inline-flex ${!file
-                                                ? "bg-gray-400 cursor-not-allowed"
-                                                : ""
-                                                }`}
+                                            className={`bg-custom-orange text-white rounded-lg p-3 inline-flex ${
+                                                !file
+                                                    ? "bg-gray-400 cursor-not-allowed"
+                                                    : ""
+                                            }`}
                                             onClick={(e) =>
                                                 handleUploadImage(e)
                                             }
@@ -1015,8 +1057,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 <>
                     {/* Message popup */}
                     <div
-                        className={`${showMessage ? "opacity-100" : "opacity-0"
-                            } transition-opacity ease-in-out duration-10000`}
+                        className={`${
+                            showMessage ? "opacity-100" : "opacity-0"
+                        } transition-opacity ease-in-out duration-10000`}
                     >
                         <div className="dark:bg-dback bg-white p-3 rounded-lg shadow-lg fixed bottom-24 right-5 left-5 border-solid border-2 border-black">
                             <p className="text-center">{message}</p>
@@ -1032,9 +1075,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                     if (!locationEnabled) {
                         setShowPopup(true);
                     } else {
-                            addMarker(
-                                userLocation.lat + "," + userLocation.lng
-                            ); 
+                        addMarker(userLocation.lat + "," + userLocation.lng);
                     }
                 }}
             >
@@ -1056,10 +1097,11 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             </button>
             {/* options button */}
             <button
-                className={`dark:bg-dback w-16 h-16 rounded-full text-xs text-black dark:text-white bg-white font-bold border-solid border-2 ${showOptions
-                    ? "border-custom-blue dark:border-dorange"
-                    : "border-black"
-                    } text-center fixed bottom-2 left-2`}
+                className={`dark:bg-dback w-16 h-16 rounded-full text-xs text-black dark:text-white bg-white font-bold border-solid border-2 ${
+                    showOptions
+                        ? "border-custom-blue dark:border-dorange"
+                        : "border-black"
+                } text-center fixed bottom-2 left-2`}
                 onClick={displayOptions}
             >
                 <svg
@@ -1079,8 +1121,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             </button>
             {/* options button */}
             <button
-                className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${showOptions ? "border-custom-blue" : "border-black"
-                    } text-center fixed bottom-2 left-2`}
+                className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
+                    showOptions ? "border-custom-blue" : "border-black"
+                } text-center fixed bottom-2 left-2`}
                 onClick={displayOptions}
             >
                 <svg
@@ -1167,9 +1210,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                     </button>
                 </>
             ) : (
-                <>
-
-                </>
+                <></>
             )}
         </>
     );
