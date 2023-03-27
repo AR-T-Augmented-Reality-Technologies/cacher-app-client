@@ -46,7 +46,10 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
     let [gotCommFlag, setGotCommFlag] = useState(0);
     const [caption, setCaption] = useState("");
-    const [selectedScrapbook, setSelectedScrapbook] = useState(0);
+
+    const [selectedScrapbook, setSelectedScrapbook] = useState(0); // scrapbook.scrapbook_id
+    const [selectedScrapbookAuthor, setSelectedScrapbookAuthor] = useState({}); // scrapbook.managed_by
+    const [selectedScrapbookNumImages, setSelectedScrapbookNumImages] = useState(0); // scrapbook.images.length
 
     const [pictureType, setPictureType] = useState("capture"); // can be 'capture' or 'uploaded'
 
@@ -264,11 +267,32 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 const datacord = await cords.json();
                 const lat = datacord.coordinates.lat;
                 const lng = datacord.coordinates.lng;
+
+                console.log(book.managed_by_id);
+                
+                // Get user with id: book.managed_by_id.user_id
+                const authorResponse = await fetch(
+                    `${process.env.REACT_APP_REST_API_HOST}/users/${book.managed_by_id?.user_id}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${user.token}`,
+                        },
+                        mode: "cors",
+                    }
+                );
+
+                const author = await authorResponse.json();
+
+                console.log(author.data.user);                
                 const marker = {
                     lat,
                     lng,
                     id: bookLocation,
+                    num_images: book.images.length,
                     scrapbookId: book.scrapbook_id,
+                    author: author.data.user
                 };
                 return marker;
             });
@@ -306,10 +330,14 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         markerId: any,
         lat: any,
         lng: any,
-        scrapbookId: number
+        num_images: number,
+        scrapbookId: number,
+        author: any
     ) => {
         console.log("scrapbook: ", scrapbookId);
         setSelectedScrapbook(scrapbookId);
+        setSelectedScrapbookNumImages(num_images);
+        setSelectedScrapbookAuthor(author);
         mapRef.current.panTo({ lat, lng });
         mapRef.current.setZoom(16);
         setShowMarkerPopup(true);
@@ -607,7 +635,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
         const scrapbookData = await scrapbook.json();
 
-        console.log("Adding this to scraobook: ", scrapbookData.data);
+        console.log("Adding this to scrapbook: ", scrapbookData.data);
 
         // Update the scrapbook in the store
         dispatch(focus_scrapbook(scrapbookData.data.scrapbook));
@@ -639,7 +667,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                 marker.id,
                                 marker.lat,
                                 marker.lng,
-                                marker.scrapbookId
+                                marker.num_images,
+                                marker.scrapbookId,
+                                marker.author
                             )
                         }
                         scaledSize={new google.maps.Size(32, 32)}
@@ -832,7 +862,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                             className="border-none rounded-lg"
                                             type="text"
                                             id="authorField"
-                                            value="John Doe"
+                                            value={selectedScrapbook >= 0 ? (selectedScrapbookAuthor.user_firstname + " " + selectedScrapbookAuthor.user_lastname) : "Loading..."}
                                             disabled={true}
                                         />
                                     </div>
@@ -840,17 +870,17 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                     <div className="col-start-1 col-span-1 text-right pr-4">
                                         <label
                                             className="font-bold"
-                                            htmlFor="pagesLabel"
+                                            htmlFor="imagesTotalLabel"
                                         >
-                                            Pages:
+                                            Images:
                                         </label>
                                     </div>
                                     <div className="col-start-2 col-span-1 pl-2">
                                         <input
                                             className="border-none rounded-lg"
                                             type="text"
-                                            id="pagesField"
-                                            value="10"
+                                            id="imagesTotalLabel"
+                                            value={selectedScrapbookNumImages}
                                             disabled={true}
                                         />
                                     </div>
@@ -913,7 +943,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                         );
                                                     }
                                                 }}
-                                                accept="image/*,image/heic"
+                                                accept="image/*"
                                                 className="hidden"
                                             />
                                         </label>
