@@ -913,7 +913,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                         );
                                                     }
                                                 }}
-                                                accept="image/*"
+                                                accept="image/*,image/heic"
                                                 className="hidden"
                                             />
                                         </label>
