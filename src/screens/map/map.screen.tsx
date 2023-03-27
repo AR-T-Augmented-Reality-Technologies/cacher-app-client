@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Marker from "../../components/marker";
 import mapStyle from "../../mapStyle.json";
 import Webcam from "react-webcam";
+import heic2any from "heic2any";
 import {
     focus_scrapbook,
     unfocus_scrapbook,
@@ -468,7 +469,31 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         e.preventDefault();
 
         const formData = new FormData();
-        formData.append("image", file);
+
+        // Check if file is HEIC format
+        if (file.type === "image/heic") {
+            // Convert HEIC to JPEG
+            const jpegFile = await heic2any({
+                blob: file,
+                toType: "image/jpeg",
+            });
+            if (Array.isArray(jpegFile)) {
+                // If jpegFile is an array, append each Blob object to formData
+                jpegFile.forEach((blob, index) => {
+                    formData.append(
+                        `image${index}`,
+                        blob,
+                        `image${index}.jpeg`
+                    );
+                });
+            } else {
+                // If jpegFile is a single Blob object, append it to formData
+                formData.append("image", jpegFile, "image.jpeg");
+            }
+        } else {
+            // Add file to formData as is
+            formData.append("image", file);
+        }
 
         const response = await fetch(
             `${process.env.REACT_APP_REST_API_HOST}/images/upload`,
@@ -481,6 +506,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         const data = await response.json();
         console.log(data.uploadURL);
         console.log("scrapbook id", selectedScrapbook);
+        
         // Create a api call to add image to scrapbook
         const updatedScrapbook = await fetch(
             `${process.env.REACT_APP_REST_API_HOST}/images/addImageToScrapbook`,
@@ -887,7 +913,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                         );
                                                     }
                                                 }}
-                                                accept="image/*"
+                                                accept="image/*,image/heic"
                                                 className="hidden"
                                             />
                                         </label>
@@ -898,7 +924,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                 className="bg-custom-blue text-white rounded-lg p-2 inline-flex"
                                                 onClick={() => {
                                                     setOpenCamera(true);
-                                                    setShowAddToScrapbook(false);
+                                                    setShowAddToScrapbook(
+                                                        false
+                                                    );
                                                 }}
                                             >
                                                 <div className="flex items-center">
@@ -1064,11 +1092,14 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                             openCamera ? "opacity-100" : "opacity-0"
                         } transition-opacity ease-in-out duration-300`}
                     >
-                        <div 
-    className="fixed top-1/2 left-1/3 transform -translate-x-1/4 -translate-y-1/2 bg-white border-solid border-2 p-4 rounded-lg shadow-lg flex justify-center items-center 
+                        <div
+                            className="fixed top-1/2 left-1/3 transform -translate-x-1/4 -translate-y-1/2 bg-white border-solid border-2 p-4 rounded-lg shadow-lg flex justify-center items-center 
              sm:max-w-lg sm:mx-auto sm:top-1/3 sm:transform-none"
-    style={{ top: "50%", transform: "translate(-25%, -50%)" }}
->
+                            style={{
+                                top: "50%",
+                                transform: "translate(-25%, -50%)",
+                            }}
+                        >
                             <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2">
                                 {imageSrc ? (
                                     <img src={imageSrc} alt="captured" />
