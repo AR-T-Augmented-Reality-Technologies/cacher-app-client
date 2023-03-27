@@ -442,6 +442,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         // Add new marker to the map
         getMarkers();
 
+        // Set selected marker to the new marker
+        setSelectedScrapbook((await responseget.json()).data.books.id);
+
         // Move map to the new marker
         const map = mapRef.current;
         map.panTo({
