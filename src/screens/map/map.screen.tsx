@@ -254,7 +254,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             );
 
             const data = await response.json();
-            console.log(data[0]);
 
             const markers = data.data.books.map(async (book: any) => {
                 const bookLocation = book.location;
@@ -267,8 +266,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 const datacord = await cords.json();
                 const lat = datacord.coordinates.lat;
                 const lng = datacord.coordinates.lng;
-
-                console.log(book.managed_by_id);
                 
                 // Get user with id: book.managed_by_id.user_id
                 const authorResponse = await fetch(
@@ -284,8 +281,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 );
 
                 const author = await authorResponse.json();
-
-                console.log(author.data.user);                
+               
                 const marker = {
                     lat,
                     lng,
@@ -334,7 +330,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         scrapbookId: number,
         author: any
     ) => {
-        console.log("scrapbook: ", scrapbookId);
+        console.log("selected scrapbook: ", scrapbookId);
         setSelectedScrapbook(scrapbookId);
         setSelectedScrapbookNumImages(num_images);
         setSelectedScrapbookAuthor(author);
@@ -440,7 +436,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
         // Check if the location is already occupied
         if (blocked.some((item: any) => item.location === data.words)) {
-            console.log("A scrapbook already exists here");
             setMessage("A scrapbook already exists here");
             setShowMessage(true);
             return;
@@ -450,7 +445,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             loc: data.words, //placeholder because currently it is not saving images
             user_id: user.id
         };
-        
+
         const responseget = await fetch(
             `${process.env.REACT_APP_REST_API_HOST}/scrap/setBooks`,
             {
@@ -466,7 +461,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         // Block surrounding squares
         locBlocker(location, "");
 
-        console.log("Marker added at: ", data.words);
         setMessage("Scrapbook created");
         setShowMessage(true);
 
@@ -495,7 +489,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     }, 10);
 
     const handleUploadImage = async (e: any) => {
-        console.log("file", file);
         e.preventDefault();
 
         const formData = new FormData();
@@ -534,8 +527,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         );
 
         const data = await response.json();
-        console.log(data.uploadURL);
-        console.log("scrapbook id", selectedScrapbook);
         
         // Create a api call to add image to scrapbook
         const updatedScrapbook = await fetch(
@@ -556,13 +547,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         );
 
         if (updatedScrapbook.ok) {
-            console.log(updatedScrapbook);
-
-            await refresh_selected_scrapbook(
-                (
-                    await updatedScrapbook.json()
-                ).data.scrapbook.scrapbook_id
-            );
+            const scrapbookId = (await updatedScrapbook.json()).data.scrapbook.scrapbook_id;
+            await refresh_selected_scrapbook(scrapbookId);
 
             navigation.navigate("Image");
             setFile(null);
