@@ -95,10 +95,21 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
     const [w3wUserLocation, setW3wUserLocation] = useState("");
 
-    const videoConstraints = {
+    const [videoConstraints, setVideoConstraints] = useState({
         width: 1080,
-        height: 1350,
+        height: 2520,
         facingMode: "environment",
+        screenshotQuality: 1,
+    });
+
+    const toggleFacingMode = () => {
+        const newFacingMode =
+            videoConstraints.facingMode === "user" ? "environment" : "environment";
+        setVideoConstraints({
+            ...videoConstraints,
+            facingMode: newFacingMode,
+        });
+        console.log("Facing mode:", videoConstraints.facingMode);
     };
 
     const webcamRef = useRef<Webcam>(null);
@@ -506,7 +517,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         const data = await response.json();
         console.log(data.uploadURL);
         console.log("scrapbook id", selectedScrapbook);
-        
+
         // Create a api call to add image to scrapbook
         const updatedScrapbook = await fetch(
             `${process.env.REACT_APP_REST_API_HOST}/images/addImageToScrapbook`,
@@ -872,13 +883,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                         >
                             <div className="fixed top-1/3 left-1/3 transform -translate-x-1/4 -translate-y-1/2 bg-white border-solid border-2 p-4 rounded-lg shadow-lg">
                                 <div className="grid grid-cols-2">
-                                    <div
-                                        className={`col-start-1 ${
-                                            isDesktop
-                                                ? "col-span-1"
-                                                : "col-span-2"
-                                        } justify-self-center inline-flex pr-3 ml-1`}
-                                    >
+                                    <div className="col-start-1 col-span-1 justify-self-center inline-flex pr-3 ml-1">
                                         <label className="bg-custom-blue text-white rounded-lg p-2 inline-flex">
                                             <div className="flex items-center">
                                                 <svg
@@ -896,9 +901,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                     />
                                                 </svg>
                                                 <span className="text-sm">
-                                                    {isDesktop
-                                                        ? "Upload photo"
-                                                        : "Add photo"}
+                                                    Upload photo
                                                 </span>
                                             </div>
                                             <input
@@ -918,44 +921,40 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                             />
                                         </label>
                                     </div>
-                                    {isDesktop && (
-                                        <div className="col-start-2 justify-self-center inline-block pl-3 mr-1">
-                                            <button
-                                                className="bg-custom-blue text-white rounded-lg p-2 inline-flex"
-                                                onClick={() => {
-                                                    setOpenCamera(true);
-                                                    setShowAddToScrapbook(
-                                                        false
-                                                    );
-                                                }}
-                                            >
-                                                <div className="flex items-center">
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        stroke-width="1.5"
-                                                        stroke="currentColor"
-                                                        className="w-10 h-10"
-                                                    >
-                                                        <path
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
-                                                        />
-                                                        <path
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
-                                                        />
-                                                    </svg>
-                                                    <span className="text-sm">
-                                                        Take a Picture
-                                                    </span>
-                                                </div>
-                                            </button>
-                                        </div>
-                                    )}
+                                    <div className="col-start-2 justify-self-center inline-block pl-3 mr-1">
+                                        <button
+                                            className="bg-custom-blue text-white rounded-lg p-2 inline-flex"
+                                            onClick={() => {
+                                                setOpenCamera(true);
+                                                setShowAddToScrapbook(false);
+                                            }}
+                                        >
+                                            <div className="flex items-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-10 h-10"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
+                                                    />
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+                                                    />
+                                                </svg>
+                                                <span className="text-sm">
+                                                    Take a Picture
+                                                </span>
+                                            </div>
+                                        </button>
+                                    </div>
                                     <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2 w-full">
                                         <input
                                             className="border-solid border-2 rounded-lg m-2 p-1 w-full"
@@ -1093,31 +1092,31 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                         } transition-opacity ease-in-out duration-300`}
                     >
                         <div
-                            className="fixed top-1/2 left-1/3 transform -translate-x-1/4 -translate-y-1/2 bg-white border-solid border-2 p-4 rounded-lg shadow-lg flex justify-center items-center 
-             sm:max-w-lg sm:mx-auto sm:top-1/3 sm:transform-none"
-                            style={{
-                                top: "50%",
-                                transform: "translate(-25%, -50%)",
-                            }}
+                            className="fixed top-1/2 left-1/4 transform -translate-x-1/4 -translate-y-1/4 bg-white border-solid border-2 p-2 rounded-lg shadow-lg flex justify-center items-center 
+                            sm:max-w-lg sm:mx-auto sm:top-1/3 sm:transform-none"
+                           style={{
+                               width: "100vw",
+                               top: "50%",
+                               transform: "translate(-25%, -50%)",
+                           }}
                         >
-                            <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2">
-                                {imageSrc ? (
-                                    <img src={imageSrc} alt="captured" />
-                                ) : (
-                                    <Webcam
-                                        audio={false}
-                                        height={videoConstraints.height}
-                                        ref={webcamRef}
-                                        screenshotFormat="image/jpeg"
-                                        width={videoConstraints.width}
-                                        videoConstraints={videoConstraints}
-                                    />
-                                )}
-                            </div>
+                            {imageSrc ? (
+                                <img src={imageSrc} alt="captured" />
+                            ) : (
+                                <Webcam
+                                    audio={false}
+                                    height={videoConstraints.height}
+                                    ref={webcamRef}
+                                    screenshotFormat="image/jpeg"
+                                    width={videoConstraints.width}
+                                    forceScreenshotSourceSize
+                                    videoConstraints={videoConstraints}
+                                />
+                            )}
 
-                            <div className="col-start-1 col-span-2 justify-self-center fixed bottom-8 inline-flex pt-2">
+                            <div className="col-start-1 col-span-2 justify-self-center fixed bottom-4 inline-flex pt-2">
                                 <button
-                                    className="dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center transition duration-500 ease-in-out"
+                                    className="dark:text-white dark:bg-dback w-14 h-14 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center transition duration-500 ease-in-out"
                                     onClick={capture}
                                 >
                                     <svg
@@ -1137,6 +1136,28 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
                                             d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div className="col-start-1 col-span-2 justify-self-center fixed bottom-4 right-4 inline-flex pt-2">
+                                <button
+                                    className="dark:text-white dark:bg-dback w-14 h-14 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center transition duration-500 ease-in-out"
+                                    onClick={toggleFacingMode}
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                        className="w-8 h-8 mx-auto"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3"
                                         />
                                     </svg>
                                 </button>
