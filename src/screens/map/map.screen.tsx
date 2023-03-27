@@ -48,7 +48,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [caption, setCaption] = useState("");
 
     const [selectedScrapbook, setSelectedScrapbook] = useState(0); // scrapbook.scrapbook_id
-    const [selectedScrapbookAuthor, setSelectedScrapbookAuthor] = useState({}); // scrapbook.managed_by
+    const [selectedScrapbookAuthor, setSelectedScrapbookAuthor] = useState({ user_firstname: "", user_lastname: "", user_id: 0 }); // scrapbook.managed_by
     const [selectedScrapbookNumImages, setSelectedScrapbookNumImages] = useState(0); // scrapbook.images.length
 
     const [pictureType, setPictureType] = useState("capture"); // can be 'capture' or 'uploaded'
@@ -448,7 +448,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
         const payload = {
             loc: data.words, //placeholder because currently it is not saving images
+            user_id: user.id
         };
+        
         const responseget = await fetch(
             `${process.env.REACT_APP_REST_API_HOST}/scrap/setBooks`,
             {
