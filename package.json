@@ -53,10 +53,10 @@
     "when-dom-ready": "^1.2.12"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "FAST_REFRESH=false react-scripts start",
+    "build": "FAST_REFRESH=false react-scripts build",
+    "test": "FAST_REFRESH=false react-scripts test",
+    "eject": "FAST_REFRESH=false react-scripts eject",
     "clean": "./scripts/clear_install_npm.sh",
     "tsc:check": "tsc --noEmit",
     "tsc:checkapp": "tsc --noEmit --project ./cypress/tsconfig.json"
