@@ -138,14 +138,13 @@ export const ProfileScreen = ({ navigation }: ProfileScreenProps) => {
 
   // Delete account
   const deleteAccount = async () => {
-    //TODO delete account
-    const response = await fetch(
+    await fetch(
       `${process.env.REACT_APP_REST_API_HOST}/users/${user.id}`,
       {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
+          "Authorization": `Bearer ${user.token}`,
         },
         mode: "cors",
       }
