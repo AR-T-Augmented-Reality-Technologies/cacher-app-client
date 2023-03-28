@@ -10,8 +10,6 @@ import {
     focus_scrapbook,
     unfocus_scrapbook,
 } from "../../features/scrapbook.slice";
-import { useMediaQuery } from "react-responsive";
-
 interface MapScreenProps {
     navigation: any;
 }
@@ -36,9 +34,11 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [showAddToScrapbook, setShowAddToScrapbook] = useState(false);
     const popupRefFlag = useRef<HTMLDivElement>(null);
     const [showDeleteMenu, setShowDeleteMenu] = useState(false);
+    const [showUI, setShowUI] = useState(true);
     const [openCamera, setOpenCamera] = useState(false);
     const popupRef = useRef<HTMLDivElement>(null);
     const popupRefDel = useRef<HTMLDivElement>(null);
+    const [chosenImage, setChosenImage] = useState<any>("");
     const [userLocation, setUserLocation] = useState({
         lat: 0,
         lng: 0,
@@ -54,8 +54,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [pictureType, setPictureType] = useState("capture"); // can be 'capture' or 'uploaded'
 
     const dispatch = useDispatch();
-
-    const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
 
     const checkAdmin = async () => {
         const response = await fetch(
@@ -98,10 +96,21 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
     const [w3wUserLocation, setW3wUserLocation] = useState("");
 
-    const videoConstraints = {
+    const [videoConstraints, setVideoConstraints] = useState({
         width: 1080,
-        height: 1350,
+        height: 2560,
         facingMode: "environment",
+        screenshotQuality: 1,
+    });
+
+    const toggleFacingMode = () => {
+        const newFacingMode =
+            videoConstraints.facingMode === "user" ? "environment" : "user";
+        setVideoConstraints({
+            ...videoConstraints,
+            facingMode: newFacingMode,
+        });
+        console.log("Facing mode:", videoConstraints.facingMode);
     };
 
     const webcamRef = useRef<Webcam>(null);
@@ -122,6 +131,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
         setPictureType("capture");
         setOpenCamera(false);
+        setShowUI(true);
         setShowAddToScrapbook(true);
     }, [webcamRef]);
 
@@ -158,6 +168,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             setShowMarkerPopup(false);
             setShowAddToScrapbook(false);
             setOpenCamera(false);
+            setShowUI(true);
         } else if (
             popupRef.current &&
             !popupRefFlag.current &&
@@ -166,6 +177,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             setShowMarkerPopup(false);
             setShowAddToScrapbook(false);
             setOpenCamera(false);
+            setShowUI(true);
         } else if (
             popupRefDel.current &&
             !popupRefDel.current.contains(event.target as Node)
@@ -527,7 +539,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         );
 
         const data = await response.json();
-        
         // Create a api call to add image to scrapbook
         const updatedScrapbook = await fetch(
             `${process.env.REACT_APP_REST_API_HOST}/images/addImageToScrapbook`,
@@ -552,6 +563,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
             navigation.navigate("Image");
             setFile(null);
+            setChosenImage(null);
+            setImageSrc(null);
         } else {
             console.log("Error adding image to scrapbook");
         }
@@ -890,13 +903,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                         >
                             <div className="fixed top-1/3 left-1/3 transform -translate-x-1/4 -translate-y-1/2 bg-white border-solid border-2 p-4 rounded-lg shadow-lg">
                                 <div className="grid grid-cols-2">
-                                    <div
-                                        className={`col-start-1 ${
-                                            isDesktop
-                                                ? "col-span-1"
-                                                : "col-span-2"
-                                        } justify-self-center inline-flex pr-3 ml-1`}
-                                    >
+                                    <div className="col-start-1 col-span-1 justify-self-center inline-flex pr-3 ml-1">
                                         <label className="bg-custom-blue text-white rounded-lg p-2 inline-flex">
                                             <div className="flex items-center">
                                                 <svg
@@ -905,7 +912,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                     viewBox="0 0 24 24"
                                                     stroke-width="1.5"
                                                     stroke="currentColor"
-                                                    className="w-10 h-10 mr-2"
+                                                    className="w-10 h-10"
                                                 >
                                                     <path
                                                         stroke-linecap="round"
@@ -914,9 +921,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                     />
                                                 </svg>
                                                 <span className="text-sm">
-                                                    {isDesktop
-                                                        ? "Upload photo"
-                                                        : "Add photo"}
+                                                    Upload photo
                                                 </span>
                                             </div>
                                             <input
@@ -929,6 +934,13 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                         setPictureType(
                                                             "upload"
                                                         );
+                                                        setChosenImage(
+                                                            URL.createObjectURL(
+                                                                e.target
+                                                                    .files[0]
+                                                            )
+                                                        );
+                                                        setImageSrc(null);
                                                     }
                                                 }}
                                                 accept="image/*"
@@ -936,41 +948,73 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                             />
                                         </label>
                                     </div>
-                                    {isDesktop && (
-                                        <div className="col-start-2 justify-self-center inline-block pl-3 mr-1">
+                                    <div className="col-start-2 justify-self-center inline-block pl-3 mr-1">
+                                        <button
+                                            className="bg-custom-blue text-white rounded-lg p-2 inline-flex"
+                                            onClick={() => {
+                                                setOpenCamera(true);
+                                                setShowAddToScrapbook(false);
+                                                setShowUI(false);
+                                            }}
+                                        >
+                                            <div className="flex items-center">
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke-width="1.5"
+                                                    stroke="currentColor"
+                                                    className="w-10 h-10"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
+                                                    />
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+                                                    />
+                                                </svg>
+
+                                                <span className="text-sm">
+                                                    Take a Picture
+                                                </span>
+                                            </div>
+                                        </button>
+                                    </div>
+                                    {chosenImage && (
+                                        <div className="col-start-1 col-span-2 flex justify-center pt-2">
+                                            <img
+                                                src={chosenImage}
+                                                className="w-20 h-20"
+                                            />
                                             <button
-                                                className="bg-custom-blue text-white rounded-lg p-2 inline-flex"
+                                                className="bg-red-500 text-white font-bold px-2 rounded-full fixed ml-16"
                                                 onClick={() => {
-                                                    setOpenCamera(true);
-                                                    setShowAddToScrapbook(
-                                                        false
-                                                    );
+                                                    setChosenImage(null);
+                                                    setFile(null);
                                                 }}
                                             >
-                                                <div className="flex items-center">
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        stroke-width="1.5"
-                                                        stroke="currentColor"
-                                                        className="w-10 h-10"
-                                                    >
-                                                        <path
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
-                                                        />
-                                                        <path
-                                                            stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
-                                                        />
-                                                    </svg>
-                                                    <span className="text-sm">
-                                                        Take a Picture
-                                                    </span>
-                                                </div>
+                                                X
+                                            </button>
+                                        </div>
+                                    )}
+                                    {imageSrc && (
+                                        <div className="col-start-1 col-span-2 flex justify-center pt-2">
+                                            <img
+                                                src={imageSrc}
+                                                className="w-20 h-20"
+                                            />
+                                            <button
+                                                className="bg-red-500 text-white font-bold px-2 rounded-full fixed ml-16"
+                                                onClick={() => {
+                                                    setImageSrc(null);
+                                                    setFile(null);
+                                                }}
+                                            >
+                                                X
                                             </button>
                                         </div>
                                     )}
@@ -1111,32 +1155,35 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                         } transition-opacity ease-in-out duration-300`}
                     >
                         <div
-                            className="fixed top-1/2 left-1/3 transform -translate-x-1/4 -translate-y-1/2 bg-white border-solid border-2 p-4 rounded-lg shadow-lg flex justify-center items-center 
-             sm:max-w-lg sm:mx-auto sm:top-1/3 sm:transform-none"
+                            className="fixed top-1/2 left-1/4 transform -translate-x-1/4 -translate-y-1/4 bg-white border-solid border-2 p-2 rounded-lg shadow-lg flex justify-center items-center 
+                            sm:max-w-lg sm:mx-auto sm:top-1/3 sm:transform-none"
                             style={{
+                                width: "100vw",
                                 top: "50%",
                                 transform: "translate(-25%, -50%)",
                             }}
                         >
-                            <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2">
-                                {imageSrc ? (
-                                    <img src={imageSrc} alt="captured" />
-                                ) : (
-                                    <Webcam
-                                        audio={false}
-                                        height={videoConstraints.height}
-                                        ref={webcamRef}
-                                        screenshotFormat="image/jpeg"
-                                        width={videoConstraints.width}
-                                        videoConstraints={videoConstraints}
-                                    />
-                                )}
-                            </div>
+                            {imageSrc ? (
+                                <img src={imageSrc} alt="captured" />
+                            ) : (
+                                <Webcam
+                                    audio={false}
+                                    height={videoConstraints.height}
+                                    ref={webcamRef}
+                                    screenshotFormat="image/jpeg"
+                                    width={videoConstraints.width}
+                                    forceScreenshotSourceSize
+                                    videoConstraints={videoConstraints}
+                                />
+                            )}
 
-                            <div className="col-start-1 col-span-2 justify-self-center fixed bottom-8 inline-flex pt-2">
+                            <div className="col-start-1 col-span-2 justify-self-center fixed bottom-4 inline-flex pt-2">
                                 <button
-                                    className="dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center transition duration-500 ease-in-out"
-                                    onClick={capture}
+                                    className="dark:text-white dark:bg-dback w-14 h-14 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center transition duration-500 ease-in-out"
+                                    onClick={() => {
+                                        capture();
+                                        setChosenImage(null);
+                                    }}
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -1155,6 +1202,52 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                             stroke-linecap="round"
                                             stroke-linejoin="round"
                                             d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div className="col-start-1 col-span-2 justify-self-center fixed bottom-4 right-4 inline-flex pt-2">
+                                <button
+                                    className="dark:text-white dark:bg-dback w-14 h-14 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center transition duration-500 ease-in-out"
+                                    onClick={toggleFacingMode}
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                        className="w-8 h-8 mx-auto"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div className="col-start-1 col-span-2 justify-self-center fixed bottom-4 left-4 inline-flex pt-2">
+                                <button
+                                    className="dark:text-white dark:bg-dback w-14 h-14 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center transition duration-500 ease-in-out"
+                                    onClick={() => {
+                                        setOpenCamera(false);
+                                        setShowUI(true);
+                                    }}
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                        className="w-6 h-6 mx-auto"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
                                         />
                                     </svg>
                                 </button>
@@ -1179,79 +1272,65 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 </>
             )}
 
-            {/* Add new scrapbook button */}
-            <button
-                className="dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-2 right-2 transition duration-500 ease-in-out"
-                onClick={() => {
-                    if (!locationEnabled) {
-                        setShowPopup(true);
-                    } else {
-                        addMarker(userLocation.lat + "," + userLocation.lng);
-                    }
-                }}
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    className="w-6 h-6 mx-auto my-auto"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 4.5v15m7.5-7.5h-15"
-                    />
-                </svg>
-                New
-            </button>
-            {/* options button */}
-            <button
-                className={`dark:bg-dback w-16 h-16 rounded-full text-xs text-black dark:text-white bg-white font-bold border-solid border-2 ${
-                    showOptions
-                        ? "border-custom-blue dark:border-dorange"
-                        : "border-black"
-                } text-center fixed bottom-2 left-2`}
-                onClick={displayOptions}
-            >
-                <svg
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    className="w-6 h-6 mx-auto my-auto"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-                    />
-                </svg>
-                Options
-            </button>
-            {/* options button */}
-            <button
-                className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
-                    showOptions ? "border-custom-blue" : "border-black"
-                } text-center fixed bottom-2 left-2`}
-                onClick={displayOptions}
-            >
-                <svg
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    className="w-6 h-6 mx-auto my-auto"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-                    />
-                </svg>
-                Options
-            </button>
+            {showUI && (
+                <>
+                    {/* Add new scrapbook button */}
+                    <button
+                        className="dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-2 right-2 transition duration-500 ease-in-out"
+                        onClick={() => {
+                            if (!locationEnabled) {
+                                setShowPopup(true);
+                            } else {
+                                addMarker(
+                                    userLocation.lat + "," + userLocation.lng
+                                );
+                            }
+                        }}
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            className="w-6 h-6 mx-auto my-auto"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 4.5v15m7.5-7.5h-15"
+                            />
+                        </svg>
+                        New
+                    </button>
+                </>
+            )}
+            {showUI && (
+                <>
+                    {/* options button */}
+                    <button
+                        className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
+                            showOptions ? "border-custom-blue" : "border-black"
+                        } text-center fixed bottom-2 left-2`}
+                        onClick={displayOptions}
+                    >
+                        <svg
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            className="w-6 h-6 mx-auto my-auto"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+                            />
+                        </svg>
+                        Options
+                    </button>
+                </>
+            )}
             {/* options menu - Display when the Options button is clicked*/}
             {showOptions && (
                 <>
