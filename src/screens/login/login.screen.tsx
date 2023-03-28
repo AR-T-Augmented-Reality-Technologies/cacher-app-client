@@ -159,27 +159,18 @@ export const LoginScreen = ({ navigation }: LoginScreenProps) => {
                 </div>
               )}
             </div>
-            <div className="flex items-center justify-between">
-              <button
-                className="bg-custom-blue hover:bg-custom-blue-hover dark:bg-dblue hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded
-                        focus:outline-none focus:shadow-outline"
-                type="button"
-                onClick={(e) => {
-                  validateForm();
-                }}
-              >
-                Sign In
-              </button>
-              <button
-                className="bg-custom-blue hover:bg-custom-blue-hover dark:bg-dblue hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded
-                        focus:outline-none focus:shadow-outline"
-                type="button"
-                onClick={() => {
-                  navigation.navigate("Register");
-                }}
-              >
-                Register
-              </button>
+            <button
+              className="flex-1 bg-custom-blue hover:bg-custom-blue-hover dark:bg-dblue hover:dark:bg-dorange text-white font-bold w-full py-2 px-4 rounded
+                      focus:outline-none focus:shadow-outline"
+              type="button"
+              onClick={(e) => {
+                validateForm();
+              }}
+            >
+              Sign In
+            </button>
+            <div className="w-full py-4 px-2">
+                Not registered yet? <span className="text-custom-blue hover:text-custom-blue-hover dark:text-dblue hover:dark:text-dorange cursor-pointer font-bold" onClick={() => {navigation.navigate("Register")}}>Sign-up Now!</span>
             </div>
           </form>
         </div>

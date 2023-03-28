@@ -507,10 +507,10 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                   {message}
                 </div>
               )}
-              <div className="flex justify-center mb-8 mt-6">
+              <div className="flex justify-center mb-2 mt-6">
                 <button
                   className="bg-custom-blue hover:bg-custom-blue-hover hover:dark:bg-dorange text-white font-bold py-2 px-4 rounded
-                        focus:outline-none focus:shadow-outline dark:bg-dblue"
+                        focus:outline-none focus:shadow-outline dark:bg-dblue w-full"
                   type="button"
                   onClick={(e) => {
                     validateForm(e) && submitForm();
@@ -518,6 +518,10 @@ export const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                 >
                   Register
                 </button>
+              </div>
+
+              <div className="w-full py-4 px-2">
+                Got an account already? <span className="text-custom-blue hover:text-custom-blue-hover dark:text-dblue hover:dark:text-dorange cursor-pointer font-bold" onClick={() => {navigation.navigate("Login")}}>Login Now!</span>
               </div>
             </form>
           )}
