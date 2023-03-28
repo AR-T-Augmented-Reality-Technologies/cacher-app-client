@@ -19,7 +19,7 @@
     "@types/react-dom": "^18.0.11",
     "@types/react-native": "^0.71.3",
     "@what3words/api": "^4.0.8",
-    "@what3words/react-components": "^4.1.0-alpha.12",
+    "@what3words/react-components": "^4.1.0-alpha.35",
     "@wordpress/dom-ready": "^3.29.0",
     "bad-words": "^3.0.4",
     "cypress": "^12.4.1",
