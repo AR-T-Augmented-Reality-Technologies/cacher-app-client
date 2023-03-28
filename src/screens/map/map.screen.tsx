@@ -34,6 +34,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [showAddToScrapbook, setShowAddToScrapbook] = useState(false);
     const popupRefFlag = useRef<HTMLDivElement>(null);
     const [showDeleteMenu, setShowDeleteMenu] = useState(false);
+    const [showUI, setShowUI] = useState(true);
     const [openCamera, setOpenCamera] = useState(false);
     const popupRef = useRef<HTMLDivElement>(null);
     const popupRefDel = useRef<HTMLDivElement>(null);
@@ -94,16 +95,14 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
     const [videoConstraints, setVideoConstraints] = useState({
         width: 1080,
-        height: 2520,
+        height: 2560,
         facingMode: "environment",
         screenshotQuality: 1,
     });
 
     const toggleFacingMode = () => {
         const newFacingMode =
-            videoConstraints.facingMode === "user"
-                ? "environment"
-                : "environment";
+            videoConstraints.facingMode === "user" ? "environment" : "user";
         setVideoConstraints({
             ...videoConstraints,
             facingMode: newFacingMode,
@@ -129,6 +128,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
         setPictureType("capture");
         setOpenCamera(false);
+        setShowUI(true);
         setShowAddToScrapbook(true);
     }, [webcamRef]);
 
@@ -165,6 +165,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             setShowMarkerPopup(false);
             setShowAddToScrapbook(false);
             setOpenCamera(false);
+            setShowUI(true);
         } else if (
             popupRef.current &&
             !popupRefFlag.current &&
@@ -173,6 +174,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
             setShowMarkerPopup(false);
             setShowAddToScrapbook(false);
             setOpenCamera(false);
+            setShowUI(true);
         } else if (
             popupRefDel.current &&
             !popupRefDel.current.contains(event.target as Node)
@@ -514,7 +516,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         );
 
         const data = await response.json();
-        setChosenImage(data.uploadURL);
         console.log(data.uploadURL);
         console.log("scrapbook id", selectedScrapbook);
 
@@ -936,6 +937,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                             onClick={() => {
                                                 setOpenCamera(true);
                                                 setShowAddToScrapbook(false);
+                                                setShowUI(false);
                                             }}
                                         >
                                             <div className="flex items-center">
@@ -976,7 +978,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                 onClick={() => {
                                                     setChosenImage(null);
                                                     setFile(null);
-                                                  }}
+                                                }}
                                             >
                                                 X
                                             </button>
@@ -1164,7 +1166,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                     onClick={() => {
                                         capture();
                                         setChosenImage(null);
-                                      }}
+                                    }}
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -1209,6 +1211,30 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                     </svg>
                                 </button>
                             </div>
+                            <div className="col-start-1 col-span-2 justify-self-center fixed bottom-4 left-4 inline-flex pt-2">
+                                <button
+                                    className="dark:text-white dark:bg-dback w-14 h-14 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center transition duration-500 ease-in-out"
+                                    onClick={() => {
+                                        setOpenCamera(false);
+                                        setShowUI(true);
+                                    }}
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke-width="1.5"
+                                        stroke="currentColor"
+                                        className="w-6 h-6 mx-auto"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            d="M6 18L18 6M6 6l12 12"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </>
@@ -1229,79 +1255,65 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                 </>
             )}
 
-            {/* Add new scrapbook button */}
-            <button
-                className="dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-2 right-2 transition duration-500 ease-in-out"
-                onClick={() => {
-                    if (!locationEnabled) {
-                        setShowPopup(true);
-                    } else {
-                        addMarker(userLocation.lat + "," + userLocation.lng);
-                    }
-                }}
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    className="w-6 h-6 mx-auto my-auto"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 4.5v15m7.5-7.5h-15"
-                    />
-                </svg>
-                New
-            </button>
-            {/* options button */}
-            <button
-                className={`dark:bg-dback w-16 h-16 rounded-full text-xs text-black dark:text-white bg-white font-bold border-solid border-2 ${
-                    showOptions
-                        ? "border-custom-blue dark:border-dorange"
-                        : "border-black"
-                } text-center fixed bottom-2 left-2`}
-                onClick={displayOptions}
-            >
-                <svg
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    className="w-6 h-6 mx-auto my-auto"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-                    />
-                </svg>
-                Options
-            </button>
-            {/* options button */}
-            <button
-                className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
-                    showOptions ? "border-custom-blue" : "border-black"
-                } text-center fixed bottom-2 left-2`}
-                onClick={displayOptions}
-            >
-                <svg
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    className="w-6 h-6 mx-auto my-auto"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-                    />
-                </svg>
-                Options
-            </button>
+            {showUI && (
+                <>
+                    {/* Add new scrapbook button */}
+                    <button
+                        className="dark:text-white dark:bg-dback w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center fixed bottom-2 right-2 transition duration-500 ease-in-out"
+                        onClick={() => {
+                            if (!locationEnabled) {
+                                setShowPopup(true);
+                            } else {
+                                addMarker(
+                                    userLocation.lat + "," + userLocation.lng
+                                );
+                            }
+                        }}
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            className="w-6 h-6 mx-auto my-auto"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 4.5v15m7.5-7.5h-15"
+                            />
+                        </svg>
+                        New
+                    </button>
+                </>
+            )}
+            {showUI && (
+                <>
+                    {/* options button */}
+                    <button
+                        className={`w-16 h-16 rounded-full text-xs text-black bg-white font-bold border-solid border-2 ${
+                            showOptions ? "border-custom-blue" : "border-black"
+                        } text-center fixed bottom-2 left-2`}
+                        onClick={displayOptions}
+                    >
+                        <svg
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            className="w-6 h-6 mx-auto my-auto"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+                            />
+                        </svg>
+                        Options
+                    </button>
+                </>
+            )}
             {/* options menu - Display when the Options button is clicked*/}
             {showOptions && (
                 <>
