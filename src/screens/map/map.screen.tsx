@@ -10,8 +10,6 @@ import {
     focus_scrapbook,
     unfocus_scrapbook,
 } from "../../features/scrapbook.slice";
-import { useMediaQuery } from "react-responsive";
-
 interface MapScreenProps {
     navigation: any;
 }
@@ -39,6 +37,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [openCamera, setOpenCamera] = useState(false);
     const popupRef = useRef<HTMLDivElement>(null);
     const popupRefDel = useRef<HTMLDivElement>(null);
+    const [chosenImage, setChosenImage] = useState<any>("");
     const [userLocation, setUserLocation] = useState({
         lat: 0,
         lng: 0,
@@ -51,8 +50,6 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
     const [pictureType, setPictureType] = useState("capture"); // can be 'capture' or 'uploaded'
 
     const dispatch = useDispatch();
-
-    const isDesktop = useMediaQuery({ query: "(min-width: 1024px)" });
 
     const checkAdmin = async () => {
         const response = await fetch(
@@ -104,7 +101,9 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
     const toggleFacingMode = () => {
         const newFacingMode =
-            videoConstraints.facingMode === "user" ? "environment" : "environment";
+            videoConstraints.facingMode === "user"
+                ? "environment"
+                : "environment";
         setVideoConstraints({
             ...videoConstraints,
             facingMode: newFacingMode,
@@ -515,6 +514,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
         );
 
         const data = await response.json();
+        setChosenImage(data.uploadURL);
         console.log(data.uploadURL);
         console.log("scrapbook id", selectedScrapbook);
 
@@ -547,6 +547,8 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
 
             navigation.navigate("Image");
             setFile(null);
+            setChosenImage(null);
+            setImageSrc(null);
         } else {
             console.log("Error adding image to scrapbook");
         }
@@ -892,7 +894,7 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                     viewBox="0 0 24 24"
                                                     stroke-width="1.5"
                                                     stroke="currentColor"
-                                                    className="w-10 h-10 mr-2"
+                                                    className="w-10 h-10"
                                                 >
                                                     <path
                                                         stroke-linecap="round"
@@ -914,6 +916,13 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                         setPictureType(
                                                             "upload"
                                                         );
+                                                        setChosenImage(
+                                                            URL.createObjectURL(
+                                                                e.target
+                                                                    .files[0]
+                                                            )
+                                                        );
+                                                        setImageSrc(null);
                                                     }
                                                 }}
                                                 accept="image/*,image/heic"
@@ -949,12 +958,47 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                                                         d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
                                                     />
                                                 </svg>
+
                                                 <span className="text-sm">
                                                     Take a Picture
                                                 </span>
                                             </div>
                                         </button>
                                     </div>
+                                    {chosenImage && (
+                                        <div className="col-start-1 col-span-2 flex justify-center pt-2">
+                                            <img
+                                                src={chosenImage}
+                                                className="w-20 h-20"
+                                            />
+                                            <button
+                                                className="bg-red-500 text-white font-bold px-2 rounded-full fixed ml-16"
+                                                onClick={() => {
+                                                    setChosenImage(null);
+                                                    setFile(null);
+                                                  }}
+                                            >
+                                                X
+                                            </button>
+                                        </div>
+                                    )}
+                                    {imageSrc && (
+                                        <div className="col-start-1 col-span-2 flex justify-center pt-2">
+                                            <img
+                                                src={imageSrc}
+                                                className="w-20 h-20"
+                                            />
+                                            <button
+                                                className="bg-red-500 text-white font-bold px-2 rounded-full fixed ml-16"
+                                                onClick={() => {
+                                                    setImageSrc(null);
+                                                    setFile(null);
+                                                }}
+                                            >
+                                                X
+                                            </button>
+                                        </div>
+                                    )}
                                     <div className="col-start-1 col-span-2 justify-self-center inline-flex pt-2 w-full">
                                         <input
                                             className="border-solid border-2 rounded-lg m-2 p-1 w-full"
@@ -1094,11 +1138,11 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                         <div
                             className="fixed top-1/2 left-1/4 transform -translate-x-1/4 -translate-y-1/4 bg-white border-solid border-2 p-2 rounded-lg shadow-lg flex justify-center items-center 
                             sm:max-w-lg sm:mx-auto sm:top-1/3 sm:transform-none"
-                           style={{
-                               width: "100vw",
-                               top: "50%",
-                               transform: "translate(-25%, -50%)",
-                           }}
+                            style={{
+                                width: "100vw",
+                                top: "50%",
+                                transform: "translate(-25%, -50%)",
+                            }}
                         >
                             {imageSrc ? (
                                 <img src={imageSrc} alt="captured" />
@@ -1117,7 +1161,10 @@ export const MapScreen = ({ navigation }: MapScreenProps) => {
                             <div className="col-start-1 col-span-2 justify-self-center fixed bottom-4 inline-flex pt-2">
                                 <button
                                     className="dark:text-white dark:bg-dback w-14 h-14 rounded-full text-xs text-black bg-white font-bold border-solid border-2 border-black text-center transition duration-500 ease-in-out"
-                                    onClick={capture}
+                                    onClick={() => {
+                                        capture();
+                                        setChosenImage(null);
+                                      }}
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
