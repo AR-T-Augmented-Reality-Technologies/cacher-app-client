@@ -27,7 +27,7 @@ Installs all dependencies
 
 Runs the server in the development mode.\
 Server will run on [http://localhost:4000](http://localhost:4000).
-
+#
 # Running automated tests using Cypress
 
 In the client directory, run:
@@ -39,3 +39,7 @@ Opens the cypress automated testing GUI
 # Important
 
 The application will not run locally until you create the appropriate .env files in the client and server directories
+
+# Branches
+- master [Production]
+- development [Dev]
